@@ -11,17 +11,30 @@ namespace BackupManagerNamespace
 		public bool isLowerSymbol { get; }
 
 		//Méthodes
-		public void BrowseSourceDirectory(string path)
+
+		public (FileInfo[], long) BrowseSourceDirectory(string path)
 		{
-
-            // Get all files in the directory
-            string[] files = Directory.GetFiles(path);
-            foreach (string file in files)
-            {
-                Console.WriteLine(file);
-            }
-
-
+			long totalLength = 0;
+            DirectoryInfo di = new DirectoryInfo(path);
+            // Get a reference to each file in that directory.
+            FileInfo[] fiArr = di.GetFiles();
+			if (fiArr.Length == 0)
+			{
+				Console.WriteLine("Aucun fichier trouvé");
+			}
+			else
+			{
+				// Display the names and sizes of the files.
+				Console.WriteLine("The directory {0} contains the following files:", di.Name);
+				foreach (FileInfo f in fiArr)
+				{
+                    Console.WriteLine("The size of {0} is {1} bytes.\n  ce qu'est f     {2}", f.Name, f.Length, f);
+					totalLength += f.Length;
+                }
+					
+					
+			}
+			return (fiArr, totalLength);
         }
 	}
 }
