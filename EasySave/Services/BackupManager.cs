@@ -18,7 +18,8 @@ namespace BackupManagerNamespace
 			long totalLength = 0;
             DirectoryInfo di = new DirectoryInfo(path);
             // Get a reference to each file in that directory.
-            FileInfo[] fiArr = di.GetFiles();
+            FileInfo[] fiArr = di.GetFiles(); 
+
 			if (fiArr.Length == 0)
 			{
 				Console.WriteLine("Aucun fichier trouvé");
@@ -37,6 +38,7 @@ namespace BackupManagerNamespace
 			return (fiArr, totalLength);
         }
 		public void CopyFileImage(string sourpath, string despath) {
+
 
 			(FileInfo[],long)result = this.BrowseSourceDirectory(sourpath);
 
