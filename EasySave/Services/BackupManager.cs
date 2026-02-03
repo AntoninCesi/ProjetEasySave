@@ -40,10 +40,10 @@ namespace BackupManagerNamespace
 
 			(FileInfo[],long)result = this.BrowseSourceDirectory(sourpath);
 
-            foreach (FileInfo f in result.Item1)
+            foreach (FileInfo sourceFile in result.Item1)
             {
                 // Remove path from the file name.
-                string fName = f.FullName.Substring(sourpath.Length + 1);
+                string fName = sourceFile.FullName.Substring(sourpath.Length + 1);
 
                 // Use the Path.Combine method to safely append the file name to the path.
                 // Will overwrite if the destination file already exists.
@@ -77,7 +77,6 @@ namespace BackupManagerNamespace
                 }
             }
         }
-
 
 
     }
