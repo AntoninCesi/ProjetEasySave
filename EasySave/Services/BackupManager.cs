@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using EasySave.Models;
 
 namespace BackupManagerNamespace
 {
@@ -13,6 +14,9 @@ namespace BackupManagerNamespace
         //Méthodes
 
         //A command that allows you to browse the files contained in a folder and returns the size of the files in that folder in a tuple.
+        public void Execute (BackupJob job,   
+
+
         public (FileInfo[], long) BrowseSourceDirectory(string path)
 		{	
 			long totalLength = 0;
