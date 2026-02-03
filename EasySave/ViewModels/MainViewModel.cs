@@ -6,7 +6,8 @@ namespace EasySave.ViewModels;
 
 public class MainViewModel
 {
-    private readonly List<BackupJob> _jobs = new();
+	private readonly List<BackupState> _states = new();
+	private readonly List<BackupJob> _jobs = new();
     private readonly LogService _logService = new();
     private readonly StateService _stateService = new();
 
