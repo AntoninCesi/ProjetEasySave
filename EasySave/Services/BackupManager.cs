@@ -10,10 +10,11 @@ namespace BackupManagerNamespace
 		public char symbol { get; }
 		public bool isLowerSymbol { get; }
 
-		//Méthodes
+        //Méthodes
 
-		public (FileInfo[], long) BrowseSourceDirectory(string path)
-		{
+        //A command that allows you to browse the files contained in a folder and returns the size of the files in that folder in a tuple.
+        public (FileInfo[], long) BrowseSourceDirectory(string path)
+		{	
 			long totalLength = 0;
             DirectoryInfo di = new DirectoryInfo(path);
             // Get a reference to each file in that directory.
@@ -28,7 +29,7 @@ namespace BackupManagerNamespace
 				Console.WriteLine("The directory {0} contains the following files:", di.Name);
 				foreach (FileInfo f in fiArr)
 				{
-                    Console.WriteLine("The size of {0} is {1} bytes.\n  ce qu'est f     {2}", f.Name, f.Length, f);
+                    Console.WriteLine("The size of {0} is {1} bytes.", f.Name, f.Length);
 					totalLength += f.Length;
                 }
 					
@@ -36,5 +37,22 @@ namespace BackupManagerNamespace
 			}
 			return (fiArr, totalLength);
         }
+		public void CopyFiles(string sourpath, string despath) {
+
+			(FileInfo,long)result = this.BrowseSourceDirectory(sourpath);
+
+            foreach (string f in result.Item1)
+            {
+                // Remove path from the file name.
+                string fName = f.Substring(sourpath.Length + 1);
+
+                // Use the Path.Combine method to safely append the file name to the path.
+                // Will overwrite if the destination file already exists.
+                File.Copy(Path.Combine(sourpath, fName), Path.Combine(despath, fName), true);
+            }
+
+        }
+
+
 	}
 }
