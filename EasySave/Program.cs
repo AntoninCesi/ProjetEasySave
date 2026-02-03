@@ -11,6 +11,6 @@ class Program
         string path = @"C:\Users\jenni\Documents\testeasy1";
         BackupManager back = new BackupManager();
 
-        back.CopyFiles(path, @"C:\Users\jenni\Documents\testeasy2");
+        back.CopyFileImage(path, @"C:\Users\jenni\Documents\testeasy2");
     }
 }

@@ -33,11 +33,10 @@ namespace BackupManagerNamespace
 					totalLength += f.Length;
                 }
 					
-					
 			}
 			return (fiArr, totalLength);
         }
-		public void CopyFiles(string sourpath, string despath) {
+		public void CopyFileImage(string sourpath, string despath) {
 
 			(FileInfo[],long)result = this.BrowseSourceDirectory(sourpath);
 
@@ -52,7 +51,34 @@ namespace BackupManagerNamespace
             }
 
         }
+        public void CopyFileDifferential(string sourpath, string despath)
+        {
+            (FileInfo[], long) result = this.BrowseSourceDirectory(sourpath);
+
+            foreach (FileInfo sourceFile in result.Item1)
+            {
+                string relativePath = sourceFile.FullName.Substring(sourpath.Length + 1);
+                string destFilePath = Path.Combine(despath, relativePath);
+
+                // If the file does not exist in the destination
+                if (!File.Exists(destFilePath))
+                {
+                    File.Copy(sourceFile.FullName, destFilePath, true);
+                }
+                else
+                {
+                    FileInfo destFile = new FileInfo(destFilePath);
+
+                    // If the source file is more recent → differential copy
+                    if (sourceFile.LastWriteTime > destFile.LastWriteTime)
+                    {
+                        File.Copy(sourceFile.FullName, destFilePath, true);
+                    }
+                }
+            }
+        }
 
 
-	}
+
+    }
 }
