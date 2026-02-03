@@ -8,9 +8,9 @@ class Program
 {
     static void Main()
     {
-        string path = @"C:\Users\jenni\Documents\-Echec-";
+        string path = @"C:\Users\jenni\Documents\testeasy1";
         BackupManager back = new BackupManager();
 
-        back.BrowseSourceDirectory(path);
+        back.CopyFiles(path, @"C:\Users\jenni\Documents\testeasy2");
     }
 }

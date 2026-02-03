@@ -39,12 +39,12 @@ namespace BackupManagerNamespace
         }
 		public void CopyFiles(string sourpath, string despath) {
 
-			(FileInfo,long)result = this.BrowseSourceDirectory(sourpath);
+			(FileInfo[],long)result = this.BrowseSourceDirectory(sourpath);
 
-            foreach (string f in result.Item1)
+            foreach (FileInfo f in result.Item1)
             {
                 // Remove path from the file name.
-                string fName = f.Substring(sourpath.Length + 1);
+                string fName = f.FullName.Substring(sourpath.Length + 1);
 
                 // Use the Path.Combine method to safely append the file name to the path.
                 // Will overwrite if the destination file already exists.
