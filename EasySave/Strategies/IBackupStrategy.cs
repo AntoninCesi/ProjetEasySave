@@ -1,9 +1,11 @@
 ﻿using EasySave.Models;
 
-namespace EasySave.Strategies;
-
-public interface IBackupStrategy
+namespace EasySave.Strategies
 {
-    // The Action allows the strategy to "send back" info to the caller for logs/state
-    void Execute(BackupJob job, Action<string, string, long, long> onFileCopied);
+    public delegate void ProgressCallback(string fileName, int progress);
+
+    public interface IBackupStrategy
+    {
+        void Execute(BackupJob job, ProgressCallback callback);
+    }
 }

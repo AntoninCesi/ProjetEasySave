@@ -1,33 +1,30 @@
-﻿namespace EasySave.Strategies;
-
+﻿using System;
+using System.IO;
 using EasySave.Models;
-using System.Diagnostics;
 
-
-public class DifferentialBackupStrategy : IBackupStrategy
+namespace EasySave.Strategies
 {
-    public void Execute(BackupJob job, Action<string, string, long, long> onFileCopied)
+    public class DifferentialBackupStrategy : IBackupStrategy
     {
-        var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
-        foreach (var file in files)
+        public void Execute(BackupJob job, ProgressCallback callback)
         {
-            string destFile = file.Replace(job.SourcePath, job.TargetPath);
-            var sourceInfo = new FileInfo(file);
+            DirectoryInfo di = new DirectoryInfo(job.SourcePath);
+            FileInfo[] files = di.GetFiles();
+            int count = 0;
 
-            // Differential logic: skip if file exists and is identical
-            if (File.Exists(destFile))
+            foreach (FileInfo sourceFile in files)
             {
-                var destInfo = new FileInfo(destFile);
-                if (sourceInfo.Length == destInfo.Length && sourceInfo.LastWriteTime == destInfo.LastWriteTime)
-                    continue;
+                string destPath = Path.Combine(job.DestinationPath, sourceFile.Name);
+
+                if (!File.Exists(destPath) || sourceFile.LastWriteTime > File.GetLastWriteTime(destPath))
+                {
+                    File.Copy(sourceFile.FullName, destPath, true);
+                }
+
+                count++;
+                int progress = (int)((float)count / files.Length * 100);
+                callback?.Invoke(sourceFile.Name, progress);
             }
-
-            Directory.CreateDirectory(Path.GetDirectoryName(destFile)!);
-            var stopWatch = Stopwatch.StartNew();
-            File.Copy(file, destFile, true);
-            stopWatch.Stop();
-
-            onFileCopied(file, destFile, sourceInfo.Length, stopWatch.ElapsedMilliseconds);
         }
     }
 }
