@@ -1,11 +1,11 @@
 using System;
 
-class Program
+class ConsoleUI
 {
-    static void Main()
+    /*static void Main()
     {
         MenuPrincipal();
-    }
+    }*/
 
     static void MenuPrincipal()
     {
