@@ -8,18 +8,18 @@ namespace EasySave.Strategies
     {
         public void Execute(BackupJob job, ProgressCallback callback)
         {
-            var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
-            int totalFiles = files.Length;
-            int processedFiles = 0;
+            DirectoryInfo di = new DirectoryInfo(job.SourcePath);
+            FileInfo[] files = di.GetFiles();
+            int count = 0;
 
-            foreach (var file in files)
+            foreach (FileInfo file in files)
             {
-                // Perform file copy logic here
-                processedFiles++;
-                int progress = (int)((double)processedFiles / totalFiles * 100);
+                string destFile = Path.Combine(job.DestinationPath, file.Name);
+                File.Copy(file.FullName, destFile, true);
 
-                // Trigger callback to notify the manager (Observer)
-                callback?.Invoke(Path.GetFileName(file), progress);
+                count++;
+                int progress = (int)((float)count / files.Length * 100);
+                callback?.Invoke(file.Name, progress);
             }
         }
     }

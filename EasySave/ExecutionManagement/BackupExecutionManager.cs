@@ -1,20 +1,17 @@
 ﻿using System;
 using EasySave.Models;
 using EasySave.Strategies;
-using EasySave.Services;
+using EasySave.StateManagement;
 
 namespace EasySave.ExecutionManagement
 {
-    // Renamed to BackupExecutionManager as per diagram
     public class BackupExecutionManager
     {
-        private readonly StateService _stateService;
-        private readonly LogService _logService;
+        private readonly BackupStateManager _stateManager;
 
-        public BackupExecutionManager(StateService stateService, LogService logService)
+        public BackupExecutionManager(BackupStateManager stateManager)
         {
-            _stateService = stateService;
-            _logService = logService;
+            _stateManager = stateManager;
         }
 
         public void ExecuteJob(BackupJob job)
@@ -27,27 +24,27 @@ namespace EasySave.ExecutionManagement
 
             strategy.Execute(job, (fileName, progress) => {
                 job.Progress = progress;
-                // Calls the intermediate notification method
-                NotifyState(job, fileName);
+                NotifyState(job);
             });
 
             job.Status = BackupStatus.FINISHED;
-            _logService.WriteLog(job.Name, job.SourcePath, job.DestinationPath, job.TotalSize, 0);
+            NotifyState(job);
         }
 
-        // Added NotifyState method to match diagram's 'notifyState(job : BackupJob)'
-        private void NotifyState(BackupJob job, string currentFileName)
+        private void NotifyState(BackupJob job)
         {
-            _stateService.UpdateState(
-                job.Name,
-                job.Status.ToString(),
-                job.TotalFiles,
-                job.TotalSize,
-                0,
-                0,
-                job.SourcePath,
-                job.DestinationPath
-            );
+            // We call .Update(state) to correspond to the IBackupStateObserver interface
+                        _stateManager.Update(new BackupState
+            {
+                Name = job.Name,
+                LastActionTimestamp = DateTime.Now,
+                Status = job.Status,
+                TotalFiles = job.TotalFiles,
+                TotalSize = job.TotalSize,
+                Progress = job.Progress,
+                SourcePath = job.SourcePath,
+                DestinationPath = job.DestinationPath
+            });
         }
     }
 }

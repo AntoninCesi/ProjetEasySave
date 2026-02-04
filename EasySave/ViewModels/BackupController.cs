@@ -2,7 +2,7 @@
 
 public class BackupController
 {
-	public Class1()
+	public BackupController()
 	{
 	}
 

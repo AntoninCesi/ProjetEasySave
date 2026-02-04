@@ -8,18 +8,22 @@ namespace EasySave.Strategies
     {
         public void Execute(BackupJob job, ProgressCallback callback)
         {
-            // Differential logic: only copy if files are different or new
-            var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
-            int processedFiles = 0;
+            DirectoryInfo di = new DirectoryInfo(job.SourcePath);
+            FileInfo[] files = di.GetFiles();
+            int count = 0;
 
-            foreach (var file in files)
+            foreach (FileInfo sourceFile in files)
             {
-                // Logic to compare files would go here...
-                processedFiles++;
-                int progress = (int)((double)processedFiles / files.Length * 100);
+                string destPath = Path.Combine(job.DestinationPath, sourceFile.Name);
 
-                // Notify progress
-                callback?.Invoke(Path.GetFileName(file), progress);
+                if (!File.Exists(destPath) || sourceFile.LastWriteTime > File.GetLastWriteTime(destPath))
+                {
+                    File.Copy(sourceFile.FullName, destPath, true);
+                }
+
+                count++;
+                int progress = (int)((float)count / files.Length * 100);
+                callback?.Invoke(sourceFile.Name, progress);
             }
         }
     }
