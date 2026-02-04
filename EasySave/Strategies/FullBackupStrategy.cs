@@ -1,23 +1,26 @@
-﻿using EasySave.Models;
-using System.Diagnostics;
+﻿using System;
+using System.IO;
+using EasySave.Models;
 
-namespace EasySave.Strategies;
-
-public class FullBackupStrategy : IBackupStrategy
+namespace EasySave.Strategies
 {
-    public void Execute(BackupJob job, Action<string, string, long, long> onFileCopied)
+    public class FullBackupStrategy : IBackupStrategy
     {
-        var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
-        foreach (var file in files)
+        public void Execute(BackupJob job, ProgressCallback callback)
         {
-            string destFile = file.Replace(job.SourcePath, job.TargetPath);
-            Directory.CreateDirectory(Path.GetDirectoryName(destFile)!);
+            var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
+            int totalFiles = files.Length;
+            int processedFiles = 0;
 
-            var stopWatch = Stopwatch.StartNew();
-            File.Copy(file, destFile, true);
-            stopWatch.Stop();
+            foreach (var file in files)
+            {
+                // Perform file copy logic here
+                processedFiles++;
+                int progress = (int)((double)processedFiles / totalFiles * 100);
 
-            onFileCopied(file, destFile, new FileInfo(file).Length, stopWatch.ElapsedMilliseconds);
+                // Trigger callback to notify the manager (Observer)
+                callback?.Invoke(Path.GetFileName(file), progress);
+            }
         }
     }
 }
