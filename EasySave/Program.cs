@@ -10,20 +10,7 @@ class Program
             Console.WriteLine("Error: no arguments provided.");
             return;
         }
-
-        string input = string.Join("", args);
-
-        // Validate characters
-        foreach (char c in input)
-        {
-            if (!((c >= '0' && c <= '9') || c == ';' || c == '-'))
-            {
-                Console.WriteLine("Error: only digits (0-9), ';' and '-' are allowed.");
-                return;
-            }
-
-        }
-        Console.WriteLine(input);
+        Console.WriteLine(args[0][0]);
 
         
     }
