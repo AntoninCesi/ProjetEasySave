@@ -1,7 +1,4 @@
-﻿using System;
-
-
-namespace EasySave.Messaging
+﻿namespace EasySave.Messaging
 {
     public enum MessageType
     {
@@ -14,7 +11,9 @@ namespace EasySave.Messaging
         InvalidChoice,
         JobState,
         Error,
-        BackToMenu
+        BackToMenu,
+        MaxJobsReached,
+        JobAlreadyExists,
+        NoJobsAvailable
     }
 }
-

@@ -17,27 +17,27 @@ namespace EasySave.Messaging
             {
                 MessageType.InvalidFormat =>
                     isFrench
-                        ? "Erreur : le format doit être '3-5' ou '3,5'."
-                        : "Error: input must be in the form '3-5' or '3,5'.",
+                        ? "Erreur : le format doit être '3-5' ou '3;5'."
+                        : "Error: format must be '3-5' or '3;5'.",
 
                 MessageType.JobNotFound =>
                     isFrench
-                        ? "Erreur : job de sauvegarde introuvable."
+                        ? "Erreur : travail de sauvegarde introuvable."
                         : "Error: backup job not found.",
 
                 MessageType.JobNotFoundWithId =>
                     isFrench
-                        ? $"Erreur : le job {message.Parameters[0]} n'existe pas."
+                        ? $"Erreur : le travail {message.Parameters[0]} n'existe pas."
                         : $"Error: job {message.Parameters[0]} does not exist.",
 
                 MessageType.JobStarted =>
                     isFrench
-                        ? $"Job {message.Parameters[0]} démarré."
+                        ? $"Travail {message.Parameters[0]} démarré."
                         : $"Job {message.Parameters[0]} started.",
 
                 MessageType.JobState =>
                     isFrench
-                        ? $"État du job {message.Parameters[0]} : {message.Parameters[1]}"
+                        ? $"État du travail {message.Parameters[0]} : {message.Parameters[1]}"
                         : $"Job {message.Parameters[0]} state: {message.Parameters[1]}",
 
                 MessageType.Loading =>
@@ -63,7 +63,22 @@ namespace EasySave.Messaging
                 MessageType.BackToMenu =>
                     isFrench
                         ? "Appuyez sur une touche pour revenir au menu."
-                        : "Press any key to return to the menu.",
+                        : "Press any key to return to menu.",
+
+                MessageType.MaxJobsReached =>
+                    isFrench
+                        ? $"Limite de {message.Parameters[0]} travaux atteinte."
+                        : $"Maximum of {message.Parameters[0]} jobs reached.",
+
+                MessageType.JobAlreadyExists =>
+                    isFrench
+                        ? $"Un travail nommé '{message.Parameters[0]}' existe déjà."
+                        : $"A job named '{message.Parameters[0]}' already exists.",
+
+                MessageType.NoJobsAvailable =>
+                    isFrench
+                        ? "Aucun travail disponible."
+                        : "No jobs available.",
 
                 _ => string.Empty
             };

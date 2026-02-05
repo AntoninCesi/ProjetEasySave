@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using EasySave.Messaging;
 
 namespace EasySave.View
 {
     public interface IUserInterface
     {
-        void showMenu();
-        void displayMessage(string message);
-        void attach();//to update progress
-        void displayProgress();// to update progress
+        void ShowMenu();
+        void DisplayMessage(string message);
+        void Display(Message message);
+        void Attach();
+        void DisplayProgress();
     }
 }

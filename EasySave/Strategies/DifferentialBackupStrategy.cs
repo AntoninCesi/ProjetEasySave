@@ -6,37 +6,75 @@ namespace EasySave.Strategies
 {
     public class DifferentialBackupStrategy : IBackupStrategy
     {
+        private int filesProcessed = 0;
+        private int totalFiles = 0;
+
         public void Execute(BackupJob job, ProgressCallback callback)
         {
-            // Use System.IO.DirectoryInfo to avoid confusion with your own models
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(job.SourcePath);
-
-            // Explicitly use System.IO.FileInfo for the Windows file system tools
-            System.IO.FileInfo[] files = di.GetFiles();
-            int totalFiles = files.Length;
-            int count = 0;
-
-            foreach (System.IO.FileInfo sourceFile in files)
+            try
             {
-                string destPath = Path.Combine(job.DestinationPath, sourceFile.Name);
+                System.IO.DirectoryInfo sourceDir = new System.IO.DirectoryInfo(job.SourcePath);
 
-                // Differential logic: copy only if file doesn't exist or was modified
-                if (!File.Exists(destPath) || sourceFile.LastWriteTime > File.GetLastWriteTime(destPath))
+                if (!sourceDir.Exists)
+                    throw new DirectoryNotFoundException($"Source directory not found: {job.SourcePath}");
+
+                // Create destination directory
+                if (!Directory.Exists(job.DestinationPath))
                 {
-                    // Ensure destination directory exists
-                    if (!Directory.Exists(job.DestinationPath))
-                    {
-                        Directory.CreateDirectory(job.DestinationPath);
-                    }
-
-                    File.Copy(sourceFile.FullName, destPath, true);
+                    Directory.CreateDirectory(job.DestinationPath);
                 }
 
-                count++;
-                int remaining = totalFiles - count;
+                // Count all files
+                totalFiles = CountAllFiles(sourceDir);
+                filesProcessed = 0;
 
-                // Create your custom FileInfo object (the DTO) to send to the Manager
-                // Note: We use the full namespace to be 100% sure there's no error
+                // Copy recursively (differential mode)
+                CopyDirectoryDifferential(sourceDir, job.DestinationPath, callback);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Differential backup failed: {ex.Message}", ex);
+            }
+        }
+
+        private int CountAllFiles(DirectoryInfo dir)
+        {
+            int count = dir.GetFiles().Length;
+
+            foreach (var subDir in dir.GetDirectories())
+            {
+                count += CountAllFiles(subDir);
+            }
+
+            return count;
+        }
+
+        private void CopyDirectoryDifferential(DirectoryInfo sourceDir, string destDirPath, ProgressCallback callback)
+        {
+            // Create destination directory
+            if (!Directory.Exists(destDirPath))
+            {
+                Directory.CreateDirectory(destDirPath);
+            }
+
+            // Copy modified/new files
+            foreach (System.IO.FileInfo sourceFile in sourceDir.GetFiles())
+            {
+                string destPath = Path.Combine(destDirPath, sourceFile.Name);
+
+                // Differential logic: copy only if new or modified
+                bool shouldCopy = !File.Exists(destPath) ||
+                                  sourceFile.LastWriteTime > File.GetLastWriteTime(destPath);
+
+                if (shouldCopy)
+                {
+                    sourceFile.CopyTo(destPath, true);
+                }
+
+                filesProcessed++;
+                int remaining = totalFiles - filesProcessed;
+
+                // Create FileInfo DTO
                 EasySave.Models.FileInfo fileData = new EasySave.Models.FileInfo
                 {
                     fileName = sourceFile.Name,
@@ -46,8 +84,14 @@ namespace EasySave.Strategies
                     lastModified = sourceFile.LastWriteTime
                 };
 
-                // Invoke the callback with the custom object and the number of remaining files
                 callback?.Invoke(fileData, remaining);
+            }
+
+            // Process subdirectories recursively
+            foreach (DirectoryInfo subDir in sourceDir.GetDirectories())
+            {
+                string newDestDir = Path.Combine(destDirPath, subDir.Name);
+                CopyDirectoryDifferential(subDir, newDestDir, callback);
             }
         }
     }

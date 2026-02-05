@@ -1,7 +1,7 @@
 ﻿namespace EasySave.Models
 {
-    public enum BackupType { COMPLET, DIFFERENTIAL } // COMPLET matches diagram's 'COMPLET'
-    public enum BackupStatus { INACTIVE, ACTIVE, ERRROR, FINISHED } // Matches diagram states
+    public enum BackupType { FULL, DIFFERENTIAL }
+    public enum BackupStatus { INACTIVE, ACTIVE, ERROR, FINISHED }
 
     public class BackupJob
     {
