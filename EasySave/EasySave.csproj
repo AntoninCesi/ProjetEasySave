@@ -11,4 +11,8 @@
     <Folder Include="Views\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EasyLog\EasyLog.csproj" />
+  </ItemGroup>
+
 </Project>

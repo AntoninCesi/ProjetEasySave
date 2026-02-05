@@ -1,9 +1,10 @@
-﻿namespace EasySave.Models;
-
-public enum BackupStatus
+﻿namespace EasySave.Models
 {
-	Inactive,
-	Active,
-	Error,
-	Completed
+	public enum BackupStatus
+	{
+		ACTIF,
+		NON_ACTIF,
+		TERMINE,
+		EN_ERREUR
+	}
 }
