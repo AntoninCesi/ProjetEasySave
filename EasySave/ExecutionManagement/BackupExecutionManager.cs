@@ -9,16 +9,12 @@ namespace EasySave.ExecutionManagement
     {
         private readonly BackupStateManager _stateManager;
 
-<<<<<<< HEAD
-        public BackupExecutionManager()
-=======
         // Event for the ViewModel to subscribe to real-time updates
         public event EventHandler<EasySave.Models.FileInfo> OnFileProcess;
 
         public BackupExecutionManager(BackupStateManager stateManager)
->>>>>>> 6763ccef457345f2a476c826578a2a658eea2184
         {
-            //_stateManager = stateManager;
+            _stateManager = stateManager;
         }
 
         public void ExecuteJob(BackupJob job)
