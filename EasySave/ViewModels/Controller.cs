@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using EasySave.ExecutionManagement;
+using EasySave.View;
 
 namespace EasySave.ViewModels
 {
@@ -9,16 +10,17 @@ namespace EasySave.ViewModels
     {
 
         private BackupExecutionManager backupManager = new BackupExecutionManager();
+        private ConsoleUI consol = new ConsoleUI();
 
         public Controller(string[] args)
         {
-            Console.WriteLine("ici");
+            //Console.WriteLine("ici");
             if (args.Length == 0)
             {
                 this.createUI();
             }
 
-            if (args[0].Length == 3)
+            else if (args[0].Length == 3)
             {
                 Console.WriteLine(args[0].Length);
                 char first = args[0][0];
@@ -59,13 +61,16 @@ namespace EasySave.ViewModels
             }
         }
 
-        public void createUI() { }
+        public void createUI() {
+        
+            consol.showMenu();
+        }
         public void displayMessage(string message) { }
         public void getUIMessage(string message) { }
 
         private bool isBackupJobExist(int jobId)
         {
-            return true; // placeholder pour éviter erreur de compilation
+            return true; // placeholder 
         }
 
         //private BackupJob[] getBackupJobById(int[] jobId) { }
