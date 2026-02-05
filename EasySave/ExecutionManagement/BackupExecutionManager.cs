@@ -9,9 +9,9 @@ namespace EasySave.ExecutionManagement
     {
         private readonly BackupStateManager _stateManager;
 
-        public BackupExecutionManager(BackupStateManager stateManager)
+        public BackupExecutionManager()
         {
-            _stateManager = stateManager;
+            //_stateManager = stateManager;
         }
 
         public void ExecuteJob(BackupJob job)
