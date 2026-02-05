@@ -2,7 +2,8 @@
 
 namespace EasySave.Strategies
 {
-    public delegate void ProgressCallback(string fileName, int progress);
+    // Delegate to send the custom FileInfo object and the count of remaining files
+    public delegate void ProgressCallback(EasySave.Models.FileInfo file, int filesRemaining);
 
     public interface IBackupStrategy
     {

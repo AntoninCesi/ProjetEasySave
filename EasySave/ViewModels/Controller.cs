@@ -9,7 +9,7 @@ namespace EasySave.ViewModels
     public class Controller
     {
 
-        private BackupExecutionManager backupManager = new BackupExecutionManager();
+        //private BackupExecutionManager backupManager = new BackupExecutionManager();
         private ConsoleUI consol = new ConsoleUI();
 
         public Controller(string[] args)
