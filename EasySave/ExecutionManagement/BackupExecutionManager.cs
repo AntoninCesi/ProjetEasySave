@@ -2,26 +2,53 @@
 using EasySave.Models;
 using EasySave.Strategies;
 using EasySave.StateManagement;
+using Tool.Utils;
 
 namespace EasySave.ExecutionManagement
 {
+    
     public class BackupExecutionManager
     {
+        private List<BackupJob> listBackupJob = new List<BackupJob>();
         private readonly BackupStateManager _stateManager;
 
         //<<<<<<< HEAD
-        public BackupExecutionManager() { }
-//=======
+        //=======
         // Event for the ViewModel to subscribe to real-time updates
-        public event EventHandler<EasySave.Models.FileInfo> OnFileProcess;
+        //public event EventHandler<EasySave.Models.FileInfo> OnFileProcess;
 
-        public BackupExecutionManager(BackupStateManager stateManager)
+        /*public BackupExecutionManager(BackupStateManager stateManager)
 //>>>>>>> 6763ccef457345f2a476c826578a2a658eea2184
         {
             //_stateManager = stateManager;
+        }*/
+        public BackupExecutionManager() { }
+
+        public void createBackupJob(string name, string sourcePath, string destinationPath, BackupType type)
+        {
+            if (listBackupJob.Count >= 5)
+            {
+                Console.WriteLine("Error");
+            }
+            else
+            {
+                listBackupJob.Add(new BackupJob
+                {
+                    name = name,
+                    sourcePath = sourcePath,
+                    destinationPath = destinationPath,
+                    type = type
+                });
+
+                int idJob = listBackupJob.Count - 1; 
+
+                Console.WriteLine(listBackupJob[idJob].ToString());
+            }
+            
         }
 
-        public void ExecuteJob(BackupJob job)
+
+        /*public void ExecuteJob(BackupJob job)
         {
             // Choose the right strategy based on job type
             IBackupStrategy strategy = job.Type == BackupType.COMPLET
@@ -47,9 +74,8 @@ namespace EasySave.ExecutionManagement
                 Name = job.Name,
                 Status = job.Status
             });
-        }
-
-        private void NotifyState(BackupJob job, EasySave.Models.FileInfo file, int remaining)
+        }*/
+        /*private void NotifyState(BackupJob job, EasySave.Models.FileInfo file, int remaining)
         {
             // Mapping job data and current file data to the state model
             _stateManager.Update(new BackupState
@@ -62,6 +88,6 @@ namespace EasySave.ExecutionManagement
                 SourcePath = file.filePath,
                 // FilesRemaining = remaining // Uncomment if BackupState supports this field
             });
-        }
+        }*/
     }
 }

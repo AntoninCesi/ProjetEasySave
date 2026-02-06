@@ -1,15 +1,19 @@
 using System;
 using EasySave.Messaging;
+using EasySave.ViewModels;
+using Tool.Utils;
 
 namespace EasySave.View
 {
     public class ConsoleUI : IUserInterface
     {
         private readonly MessageProvider messageProvider;
+        private Controller _controller;
 
         // Constructor asks the language once and creates the provider
-        public ConsoleUI()
+        public ConsoleUI(Controller control)
         {
+            _controller = control;
             bool isFrench = AskLanguage();
             messageProvider = new MessageProvider(isFrench);
         }
@@ -40,10 +44,10 @@ namespace EasySave.View
                 switch (choice)
                 {
                     case "1":
-                        displayMessage(new Message(MessageType.JobStarted, 1));
+                        this.createBackupJob(BackupType.COMPLET);
                         break;
                     case "2":
-                        displayMessage(new Message(MessageType.JobStarted, 2));
+                        this.createBackupJob(BackupType.DIFFERENTIAL);
                         break;
                     case "3":
                         displayMessage(new Message(MessageType.Loading));
@@ -64,6 +68,19 @@ namespace EasySave.View
                     Console.ReadKey(true);
                 }
             }
+        }
+        private void createBackupJob(BackupType type)
+        {
+            Console.Write(messageProvider.Resolve (new Message( MessageType.AskSourceDirectory)));
+            string sourcePath = Console.ReadLine() ?? string.Empty;
+
+            Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
+            string destinationPath = Console.ReadLine() ?? string.Empty;
+
+            Console.Write(messageProvider.Resolve(new Message(MessageType.JobName)));
+            string jobName = Console.ReadLine() ?? string.Empty;
+
+            _controller.createBackupJob(jobName, sourcePath, destinationPath,type);
         }
 
         // Display a string directly

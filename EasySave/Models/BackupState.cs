@@ -6,7 +6,7 @@ namespace EasySave.Models
     {
         public string Name { get; set; } = string.Empty;
         public DateTime LastActionTimestamp { get; set; }
-        public BackupStatus Status { get; set; }
+        //public BackupStatus Status { get; set; }
         public int TotalFiles { get; set; }
         public long TotalSize { get; set; }
         public int RemainingFiles { get; set; }

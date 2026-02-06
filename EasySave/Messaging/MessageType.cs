@@ -5,7 +5,6 @@ namespace EasySave.Messaging
 {
     public enum MessageType
     {
-        // Menu
         MenuTitle,
         MenuOption1,
         MenuOption2,
@@ -14,11 +13,17 @@ namespace EasySave.Messaging
         MenuPrompt,
         BackToMenu,
 
+        // Path selection
+        AskSourceDirectory,
+        AskDestinationDirectory,
+        InvalidDirectory,
+
         // Job actions
         JobStarted,
         Loading,
         Goodbye,
         InvalidChoice,
+        JobName,
 
         // Errors
         InvalidFormat,
