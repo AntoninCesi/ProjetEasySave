@@ -20,7 +20,7 @@ public class BackupState
 	public string CurrentSourceUNC { get; set; } = string.Empty;
 	public string CurrentDestinationUNC { get; set; } = string.Empty;
 }
-=======
+
 ﻿using System;
 using Tool.Utils;
 
