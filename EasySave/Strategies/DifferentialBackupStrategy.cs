@@ -8,22 +8,46 @@ namespace EasySave.Strategies
     {
         public void Execute(BackupJob job, ProgressCallback callback)
         {
-            DirectoryInfo di = new DirectoryInfo(job.SourcePath);
-            FileInfo[] files = di.GetFiles();
+            // Use System.IO.DirectoryInfo to avoid confusion with your own models
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(job.sourcePath);
+
+            // Explicitly use System.IO.FileInfo for the Windows file system tools
+            System.IO.FileInfo[] files = di.GetFiles();
+            int totalFiles = files.Length;
             int count = 0;
 
-            foreach (FileInfo sourceFile in files)
+            foreach (System.IO.FileInfo sourceFile in files)
             {
-                string destPath = Path.Combine(job.DestinationPath, sourceFile.Name);
+                string destPath = Path.Combine(job.destinationPath, sourceFile.Name);
 
+                // Differential logic: copy only if file doesn't exist or was modified
                 if (!File.Exists(destPath) || sourceFile.LastWriteTime > File.GetLastWriteTime(destPath))
                 {
+                    // Ensure destination directory exists
+                    if (!Directory.Exists(job.destinationPath))
+                    {
+                        Directory.CreateDirectory(job.destinationPath);
+                    }
+
                     File.Copy(sourceFile.FullName, destPath, true);
                 }
 
                 count++;
-                int progress = (int)((float)count / files.Length * 100);
-                callback?.Invoke(sourceFile.Name, progress);
+                int remaining = totalFiles - count;
+
+                // Create your custom FileInfo object (the DTO) to send to the Manager
+                // Note: We use the full namespace to be 100% sure there's no error
+                EasySave.Models.FileInfo fileData = new EasySave.Models.FileInfo
+                {
+                    fileName = sourceFile.Name,
+                    filePath = sourceFile.FullName,
+                    fileSize = sourceFile.Length,
+                    isDirectory = false,
+                    lastModified = sourceFile.LastWriteTime
+                };
+
+                // Invoke the callback with the custom object and the number of remaining files
+                callback?.Invoke(fileData, remaining);
             }
         }
     }
