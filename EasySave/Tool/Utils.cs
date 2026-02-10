@@ -3,5 +3,5 @@
 namespace Tool.Utils
 {
     public enum BackupType { COMPLET, DIFFERENTIAL } // COMPLET matches diagram's 'COMPLET'
-    public enum BackupStatus { INACTIVE, ACTIVE, ERRROR, FINISHED } // Matches diagram states
+    public enum BackupStateResum { INACTIVE, ACTIVE, ERRROR, FINISHED } // Matches diagram states
 }

@@ -9,7 +9,7 @@ namespace EasySave.ExecutionManagement
     
     public class BackupExecutionManager
     {
-        private List<BackupJob> listBackupJob = new List<BackupJob>();
+        //private List<BackupJob> listBackupJob = new List<BackupJob>();
         private readonly BackupStateManager _stateManager;
 
         //<<<<<<< HEAD
@@ -22,17 +22,21 @@ namespace EasySave.ExecutionManagement
         {
             //_stateManager = stateManager;
         }*/
-        public BackupExecutionManager() { }
+        public BackupExecutionManager() {
+        
+            _stateManager = new BackupStateManager();
+        
+        }
 
         public void createBackupJob(string name, string sourcePath, string destinationPath, BackupType type)
         {
-            if (listBackupJob.Count >= 5)
+            if (_stateManager.listBackupJob.Count >= 5)
             {
                 Console.WriteLine("Error");
             }
             else
             {
-                listBackupJob.Add(new BackupJob
+                _stateManager.listBackupJob.Add(new BackupJob
                 {
                     name = name,
                     sourcePath = sourcePath,
@@ -40,9 +44,9 @@ namespace EasySave.ExecutionManagement
                     type = type
                 });
 
-                int idJob = listBackupJob.Count - 1; 
+                int idJob = _stateManager.listBackupJob.Count - 1; 
 
-                Console.WriteLine(listBackupJob[idJob].ToString());
+                Console.WriteLine(_stateManager.listBackupJob[idJob].ToString());
             }
             
         }
