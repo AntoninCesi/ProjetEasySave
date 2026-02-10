@@ -8,7 +8,7 @@ using static System.Reflection.Metadata.BlobBuilder;
 namespace EasySave.ViewModels;
 
 
-public class MainViewModel
+/*public class MainViewModel
 {
 	private readonly List<BackupState> _states = new();
 	private readonly List<BackupJob> _jobs = new();
@@ -140,3 +140,4 @@ public class MainViewModel
 		}
 	}
 }
+*/

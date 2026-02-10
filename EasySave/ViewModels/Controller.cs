@@ -3,85 +3,57 @@ using System.Collections.Generic;
 using System.Text;
 using EasySave.ExecutionManagement;
 using EasySave.View;
+using EasySave.Models;
 using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
     public class Controller
     {
-
         private BackupExecutionManager backupManager = new BackupExecutionManager();
-        
 
         public Controller(string[] args)
         {
-            //Console.WriteLine("ici");
             if (args.Length == 0)
             {
                 this.createUI().showMenu();
             }
-
             else if (args[0].Length == 3)
             {
-                Console.WriteLine(args[0].Length);
                 char first = args[0][0];
                 char middle = args[0][1];
                 char last = args[0][2];
 
                 if (char.IsDigit(first) && char.IsDigit(last) && (middle == '-' || middle == ','))
                 {
-                    if (this.isBackupJobExist(first) && this.isBackupJobExist(last))
-                    {
-                        if (middle == '-')
-                        {
-                            this.executBackupJob(new int[] { first, last });
-                        }
-                        else if (middle == ',')
-                        {
-                            List<int> toExecute = new List<int>();
+                    int fId = (int)char.GetNumericValue(first);
+                    int lId = (int)char.GetNumericValue(last);
 
-                            for (int i = first; i <= last; i++)
-                            {
-                                if (!this.isBackupJobExist(i))
-                                {
-                                    this.displayMessage(""); // error
-                                }
-                                else
-                                {
-                                    toExecute.Add(i);
-                                }
-                            }
-                            this.executBackupJob(toExecute.ToArray());
-                        }
+                    if (this.isBackupJobExist(fId) && this.isBackupJobExist(lId))
+                    {
+                        // Execution logic (handled by group members)
                     }
-                }
-                else
-                {
-                    this.displayMessage("Error: input must be in the form '3-2' or '4,9'.");
                 }
             }
         }
 
-        public ConsoleUI createUI() {
+        // Expose the job list to the View for validation purposes
+        public List<BackupJob> GetJobs() => backupManager.BackupJobs;
 
+        public ConsoleUI createUI()
+        {
             return new ConsoleUI(this);
-            
         }
-        public void displayMessage(string message) { }
+
+        public void displayMessage(string message) { Console.WriteLine(message); }
         public void getUIMessage(string message) { }
 
-        private bool isBackupJobExist(int jobId)
+        // Placeholder for job existence check
+        private bool isBackupJobExist(int jobId) => true;
+
+        public void createBackupJob(string jobName, string sourcePath, string destPath, BackupTypes type)
         {
-            return true; // placeholder 
-        }
-
-        //private BackupJob[] getBackupJobById(int[] jobId) { }
-
-        public void createBackupJob( string jobName, string sourcePath, string destPath, BackupType type) {
-
             backupManager.createBackupJob(jobName, sourcePath, destPath, type);
         }
-        private void executBackupJob(int[] jobId) { }
-        private void deleateBackupJob(int jobId) { }
     }
 }

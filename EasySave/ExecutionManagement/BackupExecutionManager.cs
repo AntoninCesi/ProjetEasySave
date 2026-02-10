@@ -12,6 +12,8 @@ namespace EasySave.ExecutionManagement
         //private List<BackupJob> listBackupJob = new List<BackupJob>();
         private readonly BackupStateManager _stateManager;
 
+        public List<BackupJob> BackupJobs => _stateManager.listBackupJob;
+
         //<<<<<<< HEAD
         //=======
         // Event for the ViewModel to subscribe to real-time updates
@@ -28,26 +30,20 @@ namespace EasySave.ExecutionManagement
         
         }
 
-        public void createBackupJob(string name, string sourcePath, string destinationPath, BackupType type)
+        public void createBackupJob(string name, string sourcePath, string destinationPath, BackupTypes type)
         {
-            if (_stateManager.listBackupJob.Count >= 5)
-            {
-                Console.WriteLine("Error");
-            }
-            else
-            {
-                _stateManager.listBackupJob.Add(new BackupJob
-                {
-                    name = name,
-                    sourcePath = sourcePath,
-                    destinationPath = destinationPath,
-                    type = type
-                });
+           
+             _stateManager.listBackupJob.Add(new BackupJob
+             {
+                 name = name,
+                 sourcePath = sourcePath,
+                 destinationPath = destinationPath,
+                 type = type
+             });
 
-                int idJob = _stateManager.listBackupJob.Count - 1; 
+             int idJob = _stateManager.listBackupJob.Count - 1; 
 
-                Console.WriteLine(_stateManager.listBackupJob[idJob].ToString());
-            }
+             Console.WriteLine(_stateManager.listBackupJob[idJob].ToString());
             
         }
 
