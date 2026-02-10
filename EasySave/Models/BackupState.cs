@@ -7,7 +7,7 @@ public class BackupState
 	public string JobName { get; set; } = string.Empty;
 	public DateTime LastActionTimestamp { get; set; }
 
-	public BackupStatus Status { get; set; }
+	public BackupStatus status { get; set; }
 
 	public int TotalFiles { get; set; }
 	public long TotalSizeBytes { get; set; }

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace EasySave.Models;
-public enum BackupType
+namespace EasySave.Models
 {
-	Full,
-	Differential
+    internal class BackupTypes
+    {
+    }
 }
