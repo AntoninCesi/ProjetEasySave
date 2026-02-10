@@ -9,7 +9,7 @@ namespace EasySave.Strategies
         public void Execute(BackupJob job, ProgressCallback callback)
         {
             // Use System.IO.DirectoryInfo to avoid confusion with your own models
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(job.SourcePath);
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(job.sourcePath);
 
             // Explicitly use System.IO.FileInfo for the Windows file system tools
             System.IO.FileInfo[] files = di.GetFiles();
@@ -18,15 +18,15 @@ namespace EasySave.Strategies
 
             foreach (System.IO.FileInfo sourceFile in files)
             {
-                string destPath = Path.Combine(job.DestinationPath, sourceFile.Name);
+                string destPath = Path.Combine(job.destinationPath, sourceFile.Name);
 
                 // Differential logic: copy only if file doesn't exist or was modified
                 if (!File.Exists(destPath) || sourceFile.LastWriteTime > File.GetLastWriteTime(destPath))
                 {
                     // Ensure destination directory exists
-                    if (!Directory.Exists(job.DestinationPath))
+                    if (!Directory.Exists(job.destinationPath))
                     {
-                        Directory.CreateDirectory(job.DestinationPath);
+                        Directory.CreateDirectory(job.destinationPath);
                     }
 
                     File.Copy(sourceFile.FullName, destPath, true);
