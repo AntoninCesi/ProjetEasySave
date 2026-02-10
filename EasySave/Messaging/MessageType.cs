@@ -5,16 +5,32 @@ namespace EasySave.Messaging
 {
     public enum MessageType
     {
-        InvalidFormat,
-        JobNotFound,
-        JobNotFoundWithId,
+        MenuTitle,
+        MenuOption1,
+        MenuOption2,
+        MenuOption3,
+        MenuOption4,
+        MenuPrompt,
+        BackToMenu,
+
+        // Path selection
+        AskSourceDirectory,
+        AskDestinationDirectory,
+        InvalidDirectory,
+
+        // Job actions
         JobStarted,
         Loading,
         Goodbye,
         InvalidChoice,
+        JobName,
+
+        // Errors
+        InvalidFormat,
+        JobNotFound,
+        JobNotFoundWithId,
         JobState,
-        Error,
-        BackToMenu
+        Error
     }
 }
 

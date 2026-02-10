@@ -15,55 +15,92 @@ namespace EasySave.Messaging
         {
             return message.Type switch
             {
-                MessageType.InvalidFormat =>
-                    isFrench
-                        ? "Erreur : le format doit être '3-5' ou '3,5'."
-                        : "Error: input must be in the form '3-5' or '3,5'.",
+                // Menu
+                MessageType.MenuTitle =>
+                    "===== MENU =====",
 
-                MessageType.JobNotFound =>
-                    isFrench
-                        ? "Erreur : job de sauvegarde introuvable."
-                        : "Error: backup job not found.",
+                MessageType.MenuOption1 =>
+                    isFrench ? "1 - Sauvegarde complète" : "1 - Full Save",
 
-                MessageType.JobNotFoundWithId =>
-                    isFrench
-                        ? $"Erreur : le job {message.Parameters[0]} n'existe pas."
-                        : $"Error: job {message.Parameters[0]} does not exist.",
+                MessageType.MenuOption2 =>
+                    isFrench ? "2 - Sauvegarde incrémentale" : "2 - Incremental Save",
 
-                MessageType.JobStarted =>
-                    isFrench
-                        ? $"Job {message.Parameters[0]} démarré."
-                        : $"Job {message.Parameters[0]} started.",
+                MessageType.MenuOption3 =>
+                    isFrench ? "3 - Charger" : "3 - Load",
 
-                MessageType.JobState =>
-                    isFrench
-                        ? $"État du job {message.Parameters[0]} : {message.Parameters[1]}"
-                        : $"Job {message.Parameters[0]} state: {message.Parameters[1]}",
+                MessageType.MenuOption4 =>
+                    isFrench ? "4 - Quitter" : "4 - Exit",
 
-                MessageType.Loading =>
-                    isFrench
-                        ? "Chargement en cours..."
-                        : "Loading...",
-
-                MessageType.Goodbye =>
-                    isFrench
-                        ? "Au revoir."
-                        : "Goodbye.",
-
-                MessageType.InvalidChoice =>
-                    isFrench
-                        ? "Choix invalide. Appuyez sur une touche pour réessayer."
-                        : "Invalid choice. Press any key to retry.",
-
-                MessageType.Error =>
-                    isFrench
-                        ? $"Erreur : {message.Parameters[0]}"
-                        : $"Error: {message.Parameters[0]}",
+                MessageType.MenuPrompt =>
+                    isFrench ? "Votre choix : " : "Your choice: ",
 
                 MessageType.BackToMenu =>
                     isFrench
                         ? "Appuyez sur une touche pour revenir au menu."
                         : "Press any key to return to the menu.",
+
+                // Directories
+                MessageType.AskSourceDirectory =>
+                    isFrench
+                        ? "Veuillez entrer le dossier source :"
+                        : "Please enter the source directory:",
+
+                MessageType.AskDestinationDirectory =>
+                    isFrench
+                        ? "Veuillez entrer le dossier de destination :"
+                        : "Please enter the destination directory:",
+
+                MessageType.InvalidDirectory =>
+                    isFrench
+                        ? "Dossier invalide. Veuillez réessayer."
+                        : "Invalid directory. Please try again.",
+
+                // Job actions
+                MessageType.JobStarted =>
+                    isFrench
+                        ? "Sauvegarde démarrée."
+                        : "Backup started.",
+                MessageType.JobName =>
+                isFrench
+                ? "Nom du travail."
+                : "Job name.",
+
+                MessageType.Loading =>
+                    isFrench ? "Chargement en cours..." : "Loading...",
+
+                MessageType.Goodbye =>
+                    isFrench ? "Au revoir." : "Goodbye.",
+
+                MessageType.InvalidChoice =>
+                    isFrench
+                        ? "Choix invalide."
+                        : "Invalid choice.",
+
+                // Errors
+                MessageType.InvalidFormat =>
+                    isFrench
+                        ? "Erreur : format invalide."
+                        : "Error: invalid format.",
+
+                MessageType.JobNotFound =>
+                    isFrench
+                        ? "Job introuvable."
+                        : "Job not found.",
+
+                MessageType.JobNotFoundWithId =>
+                    isFrench
+                        ? $"Le job {message.Parameters[0]} n'existe pas."
+                        : $"Job {message.Parameters[0]} does not exist.",
+
+                MessageType.JobState =>
+                    isFrench
+                        ? $"État du job : {message.Parameters[0]}"
+                        : $"Job state: {message.Parameters[0]}",
+
+                MessageType.Error =>
+                    isFrench
+                        ? $"Erreur : {message.Parameters[0]}"
+                        : $"Error: {message.Parameters[0]}",
 
                 _ => string.Empty
             };

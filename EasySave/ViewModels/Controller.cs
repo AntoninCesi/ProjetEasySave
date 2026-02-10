@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using System.Text;
 using EasySave.ExecutionManagement;
 using EasySave.View;
+using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
     public class Controller
     {
 
-        //private BackupExecutionManager backupManager = new BackupExecutionManager();
-        private ConsoleUI consol = new ConsoleUI();
+        private BackupExecutionManager backupManager = new BackupExecutionManager();
+        
 
         public Controller(string[] args)
         {
             //Console.WriteLine("ici");
             if (args.Length == 0)
             {
-                this.createUI();
+                this.createUI().showMenu();
             }
 
             else if (args[0].Length == 3)
@@ -61,9 +62,10 @@ namespace EasySave.ViewModels
             }
         }
 
-        public void createUI() {
-        
-            consol.showMenu();
+        public ConsoleUI createUI() {
+
+            return new ConsoleUI(this);
+            
         }
         public void displayMessage(string message) { }
         public void getUIMessage(string message) { }
@@ -75,7 +77,10 @@ namespace EasySave.ViewModels
 
         //private BackupJob[] getBackupJobById(int[] jobId) { }
 
-        private void createBackupJob(int jobId, string jobName, string sourcePath, string destPath) { }
+        public void createBackupJob( string jobName, string sourcePath, string destPath, BackupType type) {
+
+            backupManager.createBackupJob(jobName, sourcePath, destPath, type);
+        }
         private void executBackupJob(int[] jobId) { }
         private void deleateBackupJob(int jobId) { }
     }

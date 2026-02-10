@@ -8,7 +8,7 @@ namespace EasySave.Strategies
     {
         public void Execute(BackupJob job, ProgressCallback callback)
         {
-            var directory = new DirectoryInfo(job.SourcePath);
+            var directory = new DirectoryInfo(job.sourcePath);
             var files = directory.GetFiles();
             int total = files.Length;
 
@@ -26,12 +26,12 @@ namespace EasySave.Strategies
                     lastModified = f.LastWriteTime
                 };
 
-                string destFile = Path.Combine(job.DestinationPath, f.Name);
+                string destFile = Path.Combine(job.destinationPath, f.Name);
 
                 // Ensure destination directory exists
-                if (!Directory.Exists(job.DestinationPath))
+                if (!Directory.Exists(job.destinationPath))
                 {
-                    Directory.CreateDirectory(job.DestinationPath);
+                    Directory.CreateDirectory(job.destinationPath);
                 }
 
                 // Perform physical file copy

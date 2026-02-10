@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EasySave.Messaging
+﻿namespace EasySave.Messaging
 {
     public class Message
     {
@@ -10,8 +8,7 @@ namespace EasySave.Messaging
         public Message(MessageType type, params object[] parameters)
         {
             Type = type;
-            Parameters = parameters ?? Array.Empty<object>();
+            Parameters = parameters ?? System.Array.Empty<object>();
         }
     }
 }
-
