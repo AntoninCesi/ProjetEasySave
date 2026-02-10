@@ -3,7 +3,7 @@ using EasySave.Models;
 
 namespace EasySave.StateManagement
 {
-    // implement observer to manage JSON dump
+    // Minimal serializer interface used by the manager (default JSON implementation provided)
     public class BackupStateManager : IBackupStateObserver
     {
         public void Update(BackupState state)
