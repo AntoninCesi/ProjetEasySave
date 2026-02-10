@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +12,7 @@ public class BackupJob
 	public string TargetPath { get; set; } = string.Empty;
 	public BackupType Type { get; set; }
 }
-=======
+
 ﻿namespace EasySave.Models
 {
     public enum BackupType { COMPLET, DIFFERENTIAL } // COMPLET matches diagram's 'COMPLET'
@@ -30,4 +30,4 @@ public class BackupJob
         public int Progress { get; set; }
     }
 }
->>>>>>> origin/dev
+

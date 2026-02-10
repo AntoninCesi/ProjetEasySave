@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ﻿using EasySave.Models;
 
 public class BackupState
@@ -20,7 +19,7 @@ public class BackupState
 	public string CurrentSourceUNC { get; set; } = string.Empty;
 	public string CurrentDestinationUNC { get; set; } = string.Empty;
 }
-=======
+
 ﻿using System;
 
 namespace EasySave.Models
@@ -39,4 +38,3 @@ namespace EasySave.Models
         public string DestinationPath { get; set; } = string.Empty;
     }
 }
->>>>>>> origin/dev
