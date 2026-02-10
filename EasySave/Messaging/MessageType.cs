@@ -1,6 +1,5 @@
 ﻿using System;
 
-
 namespace EasySave.Messaging
 {
     public enum MessageType
@@ -30,7 +29,16 @@ namespace EasySave.Messaging
         JobNotFound,
         JobNotFoundWithId,
         JobState,
-        Error
+        Error,
+
+        // Security & Validation errors
+        SourceAndDestIdentical,
+        SourceDoesNotExist,
+        InsufficientDiskSpace,
+        FileLocked,
+        EmptyJobName,
+        DestinationAccessDenied,
+        SourceEmpty,
+        DuplicateJobName
     }
 }
-
