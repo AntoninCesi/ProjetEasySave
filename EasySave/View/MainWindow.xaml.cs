@@ -1,17 +1,13 @@
 ﻿using System.Windows;
-using EasySave.WPF.ViewModels;
+using EasySave.ViewModels;
 
-namespace EasySave.WPF.Views
+namespace EasySave.View
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            // Assign the ViewModel as the data context
             DataContext = new MainViewModel();
         }
     }

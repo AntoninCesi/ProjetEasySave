@@ -1,143 +1,116 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using EasyLog;
 using EasySave.Models;
 using EasySave.Services;
-using static System.Reflection.Metadata.BlobBuilder;
 
-namespace EasySave.ViewModels;
-
-
-/*public class MainViewModel
+namespace EasySave.ViewModels
 {
-	private readonly List<BackupState> _states = new();
-	private readonly List<BackupJob> _jobs = new();
-	private readonly StateService _stateService = new();
-	public MainViewModel()
-	{
-		_jobs.Add(new BackupJob
-		{
-			Name = "TestJob",
-			SourcePath = @"C:\Temp\SourceTest",
-			TargetPath = @"C:\Temp\TargetTest",
-			Type = BackupType.Full
-		});
-	}
-	public void ExecuteBackup(int jobIndex)
-	{
-		if (jobIndex < 0 || jobIndex >= _jobs.Count) return;
+    public class MainViewModel
+    {
+        public ObservableCollection<BackupJob> BackupJobs { get; set; }
+        private readonly List<BackupState> _states = new();
+        private readonly StateService _stateService = new();
 
-		var job = _jobs[jobIndex];
+        public MainViewModel()
+        {
+            BackupJobs = new ObservableCollection<BackupJob>();
 
-		// 1) Récupérer ou créer l'état du job
-		var state = _states.FirstOrDefault(s => s.JobName == job.Name);
-		if (state == null)
-		{
-			state = new BackupState { JobName = job.Name };
-			_states.Add(state);
-		}
+            // On utilise les noms en minuscules de tes collègues
+            BackupJobs.Add(new BackupJob
+            {
+                name = "TestJob_Full",
+                sourcePath = @"C:\Temp\SourceTest",
+                destinationPath = @"C:\Temp\TargetTest"
+            });
+        }
 
-		state.Status = BackupStatus.ACTIF;
-		state.LastActionTimestamp = DateTime.Now;
-		state.CurrentSourceUNC = job.SourcePath;
-		state.CurrentDestinationUNC = job.TargetPath;
+        public void ExecuteBackup(int jobIndex)
+        {
+            if (jobIndex < 0 || jobIndex >= BackupJobs.Count) return;
 
-		try
-		{
-			// 2) Lister les fichiers + calculer totaux
-			var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
+            var job = BackupJobs[jobIndex];
 
-			state.TotalFiles = files.Length;
-			state.TotalSizeBytes = files.Sum(f => new FileInfo(f).Length);
+            var state = _states.FirstOrDefault(s => s.JobName == job.name);
+            if (state == null)
+            {
+                state = new BackupState { JobName = job.name };
+                _states.Add(state);
+            }
 
-			state.RemainingFiles = state.TotalFiles;
-			state.RemainingSizeBytes = state.TotalSizeBytes;
-			state.Progress = 0f;
+            state.Status = BackupStatus.ACTIF;
+            state.LastActionTimestamp = DateTime.Now;
+            state.CurrentSourceUNC = job.sourcePath;
+            state.CurrentDestinationUNC = job.destinationPath;
 
-			_stateService.SaveStates(_states);
+            try
+            {
+                if (!Directory.Exists(job.sourcePath)) return;
 
-			// 3) Copier + logs + update state temps réel
-			foreach (var file in files)
-			{
-				var fileInfo = new FileInfo(file);
+                var files = Directory.GetFiles(job.sourcePath, "*.*", SearchOption.AllDirectories);
 
-				string destFile = file.Replace(job.SourcePath, job.TargetPath);
-				string destDir = Path.GetDirectoryName(destFile)!;
+                state.TotalFiles = files.Length;
 
-				// Différentiel : ne copie que si le fichier a changé
-				if (job.Type == BackupType.Differential && File.Exists(destFile))
-				{
-					var targetInfo = new FileInfo(destFile);
-					if (fileInfo.Length == targetInfo.Length && fileInfo.LastWriteTime == targetInfo.LastWriteTime)
-					{
-						// Si on skip, on considère quand même ce fichier comme "traité"
-						state.RemainingFiles -= 1;
-						state.RemainingSizeBytes -= fileInfo.Length;
+                // CORRECTION CS0104 : On utilise le nom complet pour éviter le conflit avec votre modèle FileInfo
+                state.TotalSizeBytes = files.Sum(f => new System.IO.FileInfo(f).Length);
 
-						state.Progress = state.TotalFiles > 0
-							? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
-							: 0f;
+                state.RemainingFiles = state.TotalFiles;
+                state.RemainingSizeBytes = state.TotalSizeBytes;
+                state.Progress = 0f;
 
-						state.LastActionTimestamp = DateTime.Now;
-						_stateService.SaveStates(_states);
-						continue;
-					}
-				}
+                _stateService.SaveStates(_states);
 
-				if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
+                foreach (var file in files)
+                {
+                    // Utilisation du FileInfo système
+                    var sysFileInfo = new System.IO.FileInfo(file);
+                    string destFile = file.Replace(job.sourcePath, job.destinationPath);
+                    string destDir = Path.GetDirectoryName(destFile)!;
 
-				// Update current file (avant copie)
-				state.CurrentSourceUNC = file;
-				state.CurrentDestinationUNC = destFile;
-				state.LastActionTimestamp = DateTime.Now;
-				_stateService.SaveStates(_states);
+                    if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
 
-				// Timer + copie
-				var stopWatch = Stopwatch.StartNew();
-				File.Copy(file, destFile, true);
-				stopWatch.Stop();
+                    state.CurrentSourceUNC = file;
+                    state.CurrentDestinationUNC = destFile;
 
-				// Log via la DLL EasyLog (1 ligne JSON par événement)
-				EasyLog.EasyLog.Instance.WriteLog(
-					DateTime.Now,
-					job.Name,
-					file,
-					destFile,
-					fileInfo.Length,
-					stopWatch.ElapsedMilliseconds
-				);
+                    var stopWatch = Stopwatch.StartNew();
+                    File.Copy(file, destFile, true);
+                    stopWatch.Stop();
 
-				// Update progress après traitement du fichier
-				state.RemainingFiles -= 1;
-				state.RemainingSizeBytes -= fileInfo.Length;
+                    EasyLog.EasyLog.Instance.WriteLog(
+                        DateTime.Now,
+                        job.name,
+                        file,
+                        destFile,
+                        sysFileInfo.Length,
+                        stopWatch.ElapsedMilliseconds
+                    );
 
-				state.Progress = state.TotalFiles > 0
-					? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
-					: 0f;
+                    UpdateStateProgress(state, sysFileInfo.Length);
+                }
 
-				state.LastActionTimestamp = DateTime.Now;
-				_stateService.SaveStates(_states);
-			}
+                state.Status = BackupStatus.TERMINE;
+                _stateService.SaveStates(_states);
+            }
+            catch (Exception)
+            {
+                state.Status = BackupStatus.EN_ERREUR;
+                _stateService.SaveStates(_states);
+            }
+        }
 
-			// 4) Fin OK
-			state.Status = BackupStatus.TERMINE;
-			state.Progress = 1f;
-			state.RemainingFiles = 0;
-			state.RemainingSizeBytes = 0;
-			state.CurrentSourceUNC = "";
-			state.CurrentDestinationUNC = "";
-			state.LastActionTimestamp = DateTime.Now;
-			_stateService.SaveStates(_states);
-		}
-		catch (Exception ex)
-		{
-			// 5) Erreur
-			Console.WriteLine($"Error during backup: {ex.Message}");
-
-			state.Status = BackupStatus.EN_ERREUR;
-			state.LastActionTimestamp = DateTime.Now;
-			_stateService.SaveStates(_states);
-		}
-	}
+        private void UpdateStateProgress(BackupState state, long fileSize)
+        {
+            state.RemainingFiles -= 1;
+            state.RemainingSizeBytes -= fileSize;
+            state.Progress = state.TotalFiles > 0
+                ? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
+                : 0f;
+            state.LastActionTimestamp = DateTime.Now;
+            _stateService.SaveStates(_states);
+        }
+    }
 }
-*/

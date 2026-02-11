@@ -1,5 +1,4 @@
 <Solution>
   <Project Path="EasyLog/EasyLog.csproj" />
-  <Project Path="EasySave.WPF/EasySave.WPF.csproj" Id="9be0eb66-d18d-4413-90d7-ecd45ff9c606" />
   <Project Path="EasySave/EasySave.csproj" />
 </Solution>

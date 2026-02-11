@@ -1,16 +1,17 @@
-using EasySave.ViewModels;
 using System;
-using System.Collections.Generic;
+using EasySave.View;
+using System.Windows;
 
-
+namespace EasySave;
 
 class Program
 {
-
+    [STAThread]
     static void Main(string[] args)
     {
-        Controller controller = new Controller(args);
-
+        // On crée l'application et on affiche la fenêtre
+        Application app = new Application();
+        MainWindow window = new MainWindow();
+        app.Run(window);
     }
-
 }
