@@ -63,7 +63,6 @@ namespace EasySave.View
             Console.Write(messageProvider.Resolve(new Message(MessageType.JobName)));
             string jobName = Console.ReadLine() ?? string.Empty;
 
-            // --- USER INPUT VALIDATIONS ---
 
             // 1. Validate that job name is not empty
             if (string.IsNullOrWhiteSpace(jobName))
@@ -102,6 +101,14 @@ namespace EasySave.View
 
             // Validation passed: Trigger job creation via Controller
             _controller.createBackupJob(jobName, sourcePath, destinationPath, type);
+        }
+
+        private void startBackupJob()
+        {
+            Console.WriteLine("quel ?");
+            Console.ReadLine();
+
+
         }
 
         public void displayMessage(string message) => Console.WriteLine(message);

@@ -24,14 +24,20 @@ namespace EasySave.ViewModels
                 char middle = args[0][1];
                 char last = args[0][2];
 
-                if (char.IsDigit(first) && char.IsDigit(last) && (middle == '-' || middle == ','))
+                if (char.IsDigit(first) && char.IsDigit(last))
                 {
                     int fId = (int)char.GetNumericValue(first);
                     int lId = (int)char.GetNumericValue(last);
 
-                    if (this.isBackupJobExist(fId) && this.isBackupJobExist(lId))
+                    if (GetJobs().Count >= fId && GetJobs().Count >= lId)
                     {
-                        // Execution logic (handled by group members)
+                        if (middle == '-') { 
+                            //lancer la sauvegarde de fId et lId
+                        }
+                        else if (middle == ',') 
+                        {
+                            // faire un for qui lance les sauvegard de fId et lId
+                        }
                     }
                 }
             }
@@ -40,17 +46,27 @@ namespace EasySave.ViewModels
         // Expose the job list to the View for validation purposes
         public List<BackupJob> GetJobs() => backupManager.BackupJobs;
 
+        public void startBackupJob(int jobId)
+        {
+            if (GetJobs().Count >= jobId)
+            {
+               //ask to the factory to start a backupjob
+            }
+            //else { displayMessage("y a pas de job"); }
+        }
+
         public ConsoleUI createUI()
         {
             return new ConsoleUI(this);
         }
-
         public void displayMessage(string message) { Console.WriteLine(message); }
         public void getUIMessage(string message) { }
 
         // Placeholder for job existence check
-        private bool isBackupJobExist(int jobId) => true;
-
+        public bool JobExists(string jobName)
+        {
+            return GetJobs().Any(job => job.name == jobName);
+        }
         public void createBackupJob(string jobName, string sourcePath, string destPath, BackupTypes type)
         {
             backupManager.createBackupJob(jobName, sourcePath, destPath, type);
