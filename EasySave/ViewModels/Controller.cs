@@ -77,7 +77,7 @@ namespace EasySave.ViewModels
 
         //private BackupJob[] getBackupJobById(int[] jobId) { }
 
-        public void createBackupJob( string jobName, string sourcePath, string destPath, BackupType type) {
+        public void createBackupJob( string jobName, string sourcePath, string destPath, BackupTypes type) {
 
             backupManager.createBackupJob(jobName, sourcePath, destPath, type);
         }

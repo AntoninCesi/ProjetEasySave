@@ -7,7 +7,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-<<<<<<< HEAD
   <ItemGroup>
     <Folder Include="Views\" />
   </ItemGroup>
@@ -15,7 +14,4 @@
   <ItemGroup>
     <ProjectReference Include="..\EasyLog\EasyLog.csproj" />
   </ItemGroup>
-
-=======
->>>>>>> origin/dev
 </Project>

@@ -7,7 +7,7 @@ namespace EasySave.Models
         public string name { get; set; } = string.Empty;
         public string sourcePath { get; set; } = string.Empty;
         public string destinationPath { get; set; } = string.Empty;
-        public BackupType type { get; set; }
+        public BackupTypes type { get; set; }
         public BackupState status { get; set; } = new BackupState();
         public int totalFiles { get; set; }
         public long totalSize { get; set; }
