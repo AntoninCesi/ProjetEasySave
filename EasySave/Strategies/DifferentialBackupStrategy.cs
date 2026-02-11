@@ -10,7 +10,7 @@ namespace EasySave.Strategies
     /// Stratégie de sauvegarde différentielle : copie uniquement les fichiers
     /// nouveaux ou modifiés depuis la dernière sauvegarde
     /// </summary>
-    public class DifferentialBackupStrategy 
+    public class DifferentialBackupStrategy : IBackupStrategy
     {
         public void Execute(BackupJob job)
         {
@@ -68,7 +68,7 @@ namespace EasySave.Strategies
                     job.destinationPath,
                     job,
                     ref remainingFiles);
-                
+
                 // Mise à jour de l'état final
                 /*job.status.Status = BackupStateResum.FINISHED;
                 job.status.RemainingFiles = 0;
@@ -78,7 +78,7 @@ namespace EasySave.Strategies
             }
             catch (Exception ex)
             {
-                job.status.Status = BackupStateResum.ERROR; 
+                job.status.Status = BackupStateResum.ERROR;
                 job.status.LastActionTimestamp = DateTime.Now;
                 throw new Exception($"Erreur lors de la sauvegarde différentielle : {ex.Message}", ex);
             }
@@ -201,8 +201,8 @@ namespace EasySave.Strategies
 
                     // Appel récursif pour copier le sous-répertoire
                     CopyDirectoryDifferential(
-                        subDir.FullName, 
-                        destSubDirPath, 
+                        subDir.FullName,
+                        destSubDirPath,
                         job,
                         ref remainingFiles);
                 }
@@ -270,7 +270,7 @@ namespace EasySave.Strategies
             try
             {
                 SysDirInfo dir = new SysDirInfo(path);
-                
+
                 // Compter les fichiers du répertoire courant
                 count += dir.GetFiles().Length;
 
@@ -302,7 +302,7 @@ namespace EasySave.Strategies
             try
             {
                 SysDirInfo dir = new SysDirInfo(path);
-                
+
                 // Additionner la taille des fichiers du répertoire courant
                 foreach (SysFileInfo file in dir.GetFiles())
                 {

@@ -6,11 +6,11 @@ using SysDirInfo = System.IO.DirectoryInfo;
 
 namespace EasySave.Strategies
 {
-    
+
     /// Stratégie de sauvegarde complète : copie tous les fichiers et dossiers
     /// de la source vers la destination de manière récursive
-    
-    public class FullBackupStrategy 
+
+    public class FullBackupStrategy : IBackupStrategy
     {
         public void Execute(BackupJob job)// ProgressCallback? callback)
         {
