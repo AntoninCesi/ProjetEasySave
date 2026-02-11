@@ -11,36 +11,44 @@ using EasySave.Commands;
 using EasySave.Models;
 using EasySave.Resources;
 using EasySave.Services;
+using EasySave.View;
 
 namespace EasySave.ViewModels
 {
+    /// <summary>
+    /// Main ViewModel for the application following MVVM pattern.
+    /// Manages backup jobs and handles user interactions.
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<BackupJob> BackupJobs { get; set; }
         private readonly List<BackupState> _states = new();
         private readonly StateService _stateService = new();
 
-        // Support multi-langue
+        // Language support
         public LanguageManager Lang => LanguageManager.Instance;
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Commandes pour les boutons
+        // Commands for user interactions
         public ICommand ChangeLanguageCommand { get; }
         public ICommand CreateJobCommand { get; }
         public ICommand RunSelectionCommand { get; }
         public ICommand OpenSettingsCommand { get; }
 
+        /// <summary>
+        /// Initializes a new instance of MainViewModel
+        /// </summary>
         public MainViewModel()
         {
             BackupJobs = new ObservableCollection<BackupJob>();
 
-            // Initialiser les commandes
+            // Initialize commands
             ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
             CreateJobCommand = new RelayCommand(_ => CreateNewJob());
             RunSelectionCommand = new RelayCommand(_ => RunSelectedBackups());
             OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
 
-            // Données de test
+            // Load test data
             BackupJobs.Add(new BackupJob
             {
                 name = "TestJob_Full",
@@ -49,22 +57,21 @@ namespace EasySave.ViewModels
             });
         }
 
-        // Changer de langue
+        /// <summary>
+        /// Changes the application language
+        /// </summary>
+        /// <param name="languageCode">Culture code (e.g., "en-US", "fr-FR")</param>
         private void ChangeLanguage(string? languageCode)
         {
-            Console.WriteLine($"ChangeLanguage appelée avec : {languageCode}"); // TEST
-
             if (string.IsNullOrEmpty(languageCode)) return;
-
-            Console.WriteLine($"Changement vers : {languageCode}");
-
             LanguageManager.Instance.ChangeLanguage(languageCode);
             OnPropertyChanged(nameof(Lang));
-
-            Console.WriteLine("Langue changée !");
         }
 
-        // Créer un nouveau travail
+        /// <summary>
+        /// Creates a new backup job
+        /// TODO: Implement dialog for job creation
+        /// </summary>
         private void CreateNewJob()
         {
             var newJob = new BackupJob
@@ -76,22 +83,35 @@ namespace EasySave.ViewModels
             BackupJobs.Add(newJob);
         }
 
-        // Lancer les sauvegardes sélectionnées
+        /// <summary>
+        /// Runs all selected backup jobs
+        /// TODO: Implement job selection mechanism
+        /// </summary>
         private void RunSelectedBackups()
         {
+            // Currently runs all jobs
             for (int i = 0; i < BackupJobs.Count; i++)
             {
                 ExecuteBackup(i);
             }
         }
 
-        // Ouvrir les paramètres
+        /// <summary>
+        /// Opens the Settings window
+        /// </summary>
         private void OpenSettings()
         {
-            // TODO: Ouvrir la fenêtre de paramètres
+            var settingsWindow = new SettingsWindow
+            {
+                Owner = System.Windows.Application.Current.MainWindow
+            };
+            settingsWindow.ShowDialog();
         }
 
-        // TON CODE EXISTANT - INCHANGÉ
+        /// <summary>
+        /// Executes a backup job by index
+        /// </summary>
+        /// <param name="jobIndex">Index of the job in BackupJobs collection</param>
         public void ExecuteBackup(int jobIndex)
         {
             if (jobIndex < 0 || jobIndex >= BackupJobs.Count) return;
@@ -117,10 +137,7 @@ namespace EasySave.ViewModels
                 var files = Directory.GetFiles(job.sourcePath, "*.*", SearchOption.AllDirectories);
 
                 state.TotalFiles = files.Length;
-
-                // CORRECTION CS0104 : On utilise le nom complet pour éviter le conflit avec votre modèle FileInfo
                 state.TotalSizeBytes = files.Sum(f => new System.IO.FileInfo(f).Length);
-
                 state.RemainingFiles = state.TotalFiles;
                 state.RemainingSizeBytes = state.TotalSizeBytes;
                 state.Progress = 0f;
@@ -129,7 +146,6 @@ namespace EasySave.ViewModels
 
                 foreach (var file in files)
                 {
-                    // Utilisation du FileInfo système
                     var sysFileInfo = new System.IO.FileInfo(file);
                     string destFile = file.Replace(job.sourcePath, job.destinationPath);
                     string destDir = Path.GetDirectoryName(destFile)!;
@@ -165,7 +181,11 @@ namespace EasySave.ViewModels
             }
         }
 
-        // TON CODE EXISTANT - INCHANGÉ
+        /// <summary>
+        /// Updates the progress of a backup state
+        /// </summary>
+        /// <param name="state">The backup state to update</param>
+        /// <param name="fileSize">Size of the file just backed up</param>
         private void UpdateStateProgress(BackupState state, long fileSize)
         {
             state.RemainingFiles -= 1;
@@ -177,6 +197,9 @@ namespace EasySave.ViewModels
             _stateService.SaveStates(_states);
         }
 
+        /// <summary>
+        /// Raises the PropertyChanged event
+        /// </summary>
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
