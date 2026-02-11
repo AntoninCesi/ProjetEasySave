@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" msdata:Ordinal="5" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  
+  <!-- Application Title -->
+  <data name="AppTitle" xml:space="preserve">
+    <value>EASYSAVE</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>Gérez et surveillez vos travaux de sauvegarde</value>
+  </data>
+  
+  <!-- Main Window -->
+  <data name="WindowTitle" xml:space="preserve">
+    <value>EasySave v2.0 - Tableau de bord</value>
+  </data>
+  
+  <!-- DataGrid Headers -->
+  <data name="JobName" xml:space="preserve">
+    <value>Nom du travail</value>
+  </data>
+  <data name="SourcePath" xml:space="preserve">
+    <value>Chemin source</value>
+  </data>
+  <data name="DestinationPath" xml:space="preserve">
+    <value>Chemin de destination</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Progression</value>
+  </data>
+  
+  <!-- Buttons -->
+  <data name="Settings" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="CreateNewJob" xml:space="preserve">
+    <value>Créer un travail</value>
+  </data>
+  <data name="RunSelection" xml:space="preserve">
+    <value>Lancer la sélection</value>
+  </data>
+  <data name="RunAll" xml:space="preserve">
+    <value>Tout lancer</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>Arrêter</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>Reprendre</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  
+  <!-- Backup Types -->
+  <data name="FullBackup" xml:space="preserve">
+    <value>Complète</value>
+  </data>
+  <data name="DifferentialBackup" xml:space="preserve">
+    <value>Différentielle</value>
+  </data>
+  
+  <!-- Status Messages -->
+  <data name="StatusActive" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="StatusInactive" xml:space="preserve">
+    <value>Inactif</value>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="StatusError" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>En pause</value>
+  </data>
+  
+  <!-- Settings Dialog -->
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="LogFormat" xml:space="preserve">
+    <value>Format de log</value>
+  </data>
+  <data name="EncryptionExtensions" xml:space="preserve">
+    <value>Extensions à crypter</value>
+  </data>
+  <data name="BusinessSoftware" xml:space="preserve">
+    <value>Logiciel métier</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  
+  <!-- Messages -->
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir supprimer ce travail ?</value>
+  </data>
+  <data name="BackupStarted" xml:space="preserve">
+    <value>Sauvegarde démarrée</value>
+  </data>
+  <data name="BackupCompleted" xml:space="preserve">
+    <value>Sauvegarde terminée avec succès</value>
+  </data>
+  <data name="BackupError" xml:space="preserve">
+    <value>Erreur lors de la sauvegarde</value>
+  </data>
+  <data name="BusinessSoftwareDetected" xml:space="preserve">
+    <value>Logiciel métier détecté. Sauvegarde bloquée.</value>
+  </data>
+  
+  <!-- Validation Messages -->
+  <data name="ErrorInvalidPath" xml:space="preserve">
+    <value>Chemin invalide</value>
+  </data>
+  <data name="ErrorEmptyJobName" xml:space="preserve">
+    <value>Le nom du travail ne peut pas être vide</value>
+  </data>
+  <data name="ErrorSourceNotFound" xml:space="preserve">
+    <value>Le répertoire source n'existe pas</value>
+  </data>
+</root>

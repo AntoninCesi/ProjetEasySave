@@ -1,26 +1,46 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows.Input;
 using EasyLog;
+using EasySave.Commands;
 using EasySave.Models;
+using EasySave.Resources;
 using EasySave.Services;
 
 namespace EasySave.ViewModels
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<BackupJob> BackupJobs { get; set; }
         private readonly List<BackupState> _states = new();
         private readonly StateService _stateService = new();
 
+        // Support multi-langue
+        public LanguageManager Lang => LanguageManager.Instance;
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        // Commandes pour les boutons
+        public ICommand ChangeLanguageCommand { get; }
+        public ICommand CreateJobCommand { get; }
+        public ICommand RunSelectionCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
+
         public MainViewModel()
         {
             BackupJobs = new ObservableCollection<BackupJob>();
 
-            // On utilise les noms en minuscules de tes collègues
+            // Initialiser les commandes
+            ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
+            CreateJobCommand = new RelayCommand(_ => CreateNewJob());
+            RunSelectionCommand = new RelayCommand(_ => RunSelectedBackups());
+            OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
+
+            // Données de test
             BackupJobs.Add(new BackupJob
             {
                 name = "TestJob_Full",
@@ -29,6 +49,49 @@ namespace EasySave.ViewModels
             });
         }
 
+        // Changer de langue
+        private void ChangeLanguage(string? languageCode)
+        {
+            Console.WriteLine($"ChangeLanguage appelée avec : {languageCode}"); // TEST
+
+            if (string.IsNullOrEmpty(languageCode)) return;
+
+            Console.WriteLine($"Changement vers : {languageCode}");
+
+            LanguageManager.Instance.ChangeLanguage(languageCode);
+            OnPropertyChanged(nameof(Lang));
+
+            Console.WriteLine("Langue changée !");
+        }
+
+        // Créer un nouveau travail
+        private void CreateNewJob()
+        {
+            var newJob = new BackupJob
+            {
+                name = $"NewJob_{BackupJobs.Count + 1}",
+                sourcePath = string.Empty,
+                destinationPath = string.Empty
+            };
+            BackupJobs.Add(newJob);
+        }
+
+        // Lancer les sauvegardes sélectionnées
+        private void RunSelectedBackups()
+        {
+            for (int i = 0; i < BackupJobs.Count; i++)
+            {
+                ExecuteBackup(i);
+            }
+        }
+
+        // Ouvrir les paramètres
+        private void OpenSettings()
+        {
+            // TODO: Ouvrir la fenêtre de paramètres
+        }
+
+        // TON CODE EXISTANT - INCHANGÉ
         public void ExecuteBackup(int jobIndex)
         {
             if (jobIndex < 0 || jobIndex >= BackupJobs.Count) return;
@@ -102,6 +165,7 @@ namespace EasySave.ViewModels
             }
         }
 
+        // TON CODE EXISTANT - INCHANGÉ
         private void UpdateStateProgress(BackupState state, long fileSize)
         {
             state.RemainingFiles -= 1;
@@ -111,6 +175,11 @@ namespace EasySave.ViewModels
                 : 0f;
             state.LastActionTimestamp = DateTime.Now;
             _stateService.SaveStates(_states);
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
