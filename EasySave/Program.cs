@@ -1,21 +1,30 @@
+using System;
 using EasySave.ViewModels;
+using EasyLog;
 
-var vm = new MainViewModel();
-vm.ExecuteBackup(0);
-
-Console.WriteLine("Backup terminé. Appuie sur une touche...");
-Console.ReadKey();
-﻿using System;
-using System.Collections.Generic;
-using EasySave.ViewModels;
-
-
-class Program
+namespace EasySave
 {
-    static void Main(string[] args)
+    internal class Program
     {
-        Controller controller = new Controller(args);
+        static void Main(string[] args)
+        {
+            // Test EasyLog
+            EasyLog.EasyLog.Instance.WriteLog(
+                DateTime.Now,
+                "TEST_EASYLOG",
+                @"C:\test\source.txt",
+                @"D:\backup\source.txt",
+                1024,
+                150
+            );
 
+            Console.WriteLine("✅ Test EasyLog écrit. On lance la backup...");
+
+            var vm = new MainViewModel();
+            vm.ExecuteBackup(0);
+
+            Console.WriteLine("Backup terminé. Appuie sur une touche...");
+            Console.ReadKey();
+        }
     }
-        
 }
