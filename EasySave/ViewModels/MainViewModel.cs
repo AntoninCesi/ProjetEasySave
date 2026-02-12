@@ -8,6 +8,7 @@ using EasySave.Models;
 using EasySave.Resources;
 using EasySave.Services;
 using EasySave.View;
+using System.IO;
 
 namespace EasySave.ViewModels
 {
@@ -80,6 +81,12 @@ namespace EasySave.ViewModels
 
         private void RunSelectedBackups()
         {
+
+            // === TEST CRYPTOSOFT ===
+            TestCryptoSoft();
+            return;
+            // === FIN TEST ===
+
             // Check if there are any jobs
             if (BackupJobs.Count == 0)
             {
@@ -130,6 +137,53 @@ namespace EasySave.ViewModels
             // - Pass it to BackupStateObservator
             // - Start the actual backup with progress updates
         }
+
+        private void TestCryptoSoft()
+        {
+            try
+            {
+                // Create a test file
+                string testFile = Path.Combine(Path.GetTempPath(), "test_crypto.txt");
+                string encryptedFile = testFile + ".encrypted";
+                string decryptedFile = Path.Combine(Path.GetTempPath(), "test_crypto_decrypted.txt");
+
+                // Write test content
+                File.WriteAllText(testFile, "Hello World! This is a test file for CryptoSoft encryption.");
+
+                MessageBox.Show($"Original file created:\n{testFile}\n\nContent: Hello World! This is a test...");
+
+                // Encrypt
+                bool encryptSuccess = CryptoSoftService.EncryptFile(testFile, encryptedFile, "TestKey123");
+
+                if (encryptSuccess)
+                {
+                    MessageBox.Show($"✅ Encryption successful!\n\nEncrypted file:\n{encryptedFile}\n\nCheck the console for multi-threading logs!");
+
+                    // Decrypt
+                    bool decryptSuccess = CryptoSoftService.DecryptFile(encryptedFile, decryptedFile, "TestKey123");
+
+                    if (decryptSuccess)
+                    {
+                        string decryptedContent = File.ReadAllText(decryptedFile);
+                        MessageBox.Show($"✅ Decryption successful!\n\nDecrypted content:\n{decryptedContent}");
+
+                        // Cleanup
+                        File.Delete(testFile);
+                        File.Delete(encryptedFile);
+                        File.Delete(decryptedFile);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("❌ Encryption failed!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"❌ Error: {ex.Message}");
+            }
+        }
+
 
         private void OpenSettings()
         {
