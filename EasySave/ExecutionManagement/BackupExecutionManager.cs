@@ -28,7 +28,7 @@ namespace EasySave.ExecutionManagement
         
         }
 
-        public void createBackupJob(string name, string sourcePath, string destinationPath, BackupType type)
+        public void createBackupJob(string name, string sourcePath, string destinationPath, BackupTypes type)
         {
             if (_stateManager.listBackupJob.Count >= 5)
             {

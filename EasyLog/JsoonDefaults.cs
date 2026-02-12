@@ -9,7 +9,7 @@ namespace EasyLog
         internal static readonly JsonSerializerOptions Options = new()
         {
             WriteIndented = false,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping // évite des \uXXXX sur certains caractères
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
     }
 }

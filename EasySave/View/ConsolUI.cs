@@ -44,10 +44,10 @@ namespace EasySave.View
                 switch (choice)
                 {
                     case "1":
-                        this.createBackupJob(BackupType.COMPLET);
+                        this.createBackupJob(BackupTypes.COMPLET);
                         break;
                     case "2":
-                        this.createBackupJob(BackupType.DIFFERENTIAL);
+                        this.createBackupJob(BackupTypes.DIFFERENTIAL);
                         break;
                     case "3":
                         displayMessage(new Message(MessageType.Loading));
@@ -69,7 +69,7 @@ namespace EasySave.View
                 }
             }
         }
-        private void createBackupJob(BackupType type)
+        private void createBackupJob(BackupTypes type)
         {
             Console.Write(messageProvider.Resolve (new Message( MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;

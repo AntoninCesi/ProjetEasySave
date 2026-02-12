@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿/*
+using System.Diagnostics;
 using System.Linq;
 using EasyLog;
 using EasySave.Models;
@@ -17,9 +18,9 @@ public class MainViewModel
 	{
 		_jobs.Add(new BackupJob
 		{
-			Name = "TestJob",
-			SourcePath = @"C:\Temp\SourceTest",
-			TargetPath = @"C:\Temp\TargetTest",
+			name = "TestJob",
+			sourcePath = @"C:\Temp\SourceTest",
+			targetPath = @"C:\Temp\TargetTest",
 			Type = BackupType.Full
 		});
 	}
@@ -140,3 +141,4 @@ public class MainViewModel
 		}
 	}
 }
+*/
