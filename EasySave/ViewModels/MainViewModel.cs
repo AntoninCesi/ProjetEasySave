@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
+using System.Windows;
 using System.Windows.Input;
-using EasyLog;
 using EasySave.Commands;
 using EasySave.Models;
 using EasySave.Resources;
@@ -17,13 +13,13 @@ namespace EasySave.ViewModels
 {
     /// <summary>
     /// Main ViewModel for the application following MVVM pattern.
-    /// Manages backup jobs and handles user interactions.
+    /// Manages backup jobs display and user interactions.
+    /// Business logic for backup execution is handled by BackupController (from Console team).
     /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<BackupJob> BackupJobs { get; set; }
-        private readonly List<BackupState> _states = new();
-        private readonly StateService _stateService = new();
+        private readonly BusinessSoftwareMonitor _businessMonitor;
 
         // Language support
         public LanguageManager Lang => LanguageManager.Instance;
@@ -41,6 +37,7 @@ namespace EasySave.ViewModels
         public MainViewModel()
         {
             BackupJobs = new ObservableCollection<BackupJob>();
+            _businessMonitor = BusinessSoftwareMonitor.Instance;
 
             // Initialize commands
             ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
@@ -48,13 +45,8 @@ namespace EasySave.ViewModels
             RunSelectionCommand = new RelayCommand(_ => RunSelectedBackups());
             OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
 
-            // Load test data
-            BackupJobs.Add(new BackupJob
-            {
-                name = "TestJob_Full",
-                sourcePath = @"C:\Temp\SourceTest",
-                destinationPath = @"C:\Temp\TargetTest"
-            });
+            // TODO: Load backup jobs from configuration file
+            // This will be integrated when Console team's job management is ready
         }
 
         /// <summary>
@@ -69,31 +61,55 @@ namespace EasySave.ViewModels
         }
 
         /// <summary>
-        /// Creates a new backup job
-        /// TODO: Implement dialog for job creation
+        /// Opens dialog to create a new backup job
+        /// TODO: Implement job creation dialog
         /// </summary>
         private void CreateNewJob()
         {
-            var newJob = new BackupJob
-            {
-                name = $"NewJob_{BackupJobs.Count + 1}",
-                sourcePath = string.Empty,
-                destinationPath = string.Empty
-            };
-            BackupJobs.Add(newJob);
+            MessageBox.Show(
+                "Job creation dialog will be implemented here.\n" +
+                "This will allow users to specify:\n" +
+                "- Job name\n" +
+                "- Source path\n" +
+                "- Destination path\n" +
+                "- Backup type (Full/Differential)",
+                "Coming Soon",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
 
         /// <summary>
-        /// Runs all selected backup jobs
-        /// TODO: Implement job selection mechanism
+        /// Runs selected backup jobs
+        /// Checks for business software before starting
         /// </summary>
         private void RunSelectedBackups()
         {
-            // Currently runs all jobs
-            for (int i = 0; i < BackupJobs.Count; i++)
+            // Check if business software is running
+            if (_businessMonitor.IsBusinessSoftwareRunning())
             {
-                ExecuteBackup(i);
+                var settings = AppSettings.Instance;
+                MessageBox.Show(
+                    $"Cannot start backup: Business software '{settings.BusinessSoftware}' is running.\n\n" +
+                    "Please close the business software and try again.",
+                    "Backup Blocked",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+
+                Console.WriteLine($"[{DateTime.Now}] Backup blocked: Business software '{settings.BusinessSoftware}' detected");
+                return;
             }
+
+            // TODO: Integrate with Console team's BackupController
+            // This will call their backup execution logic
+            MessageBox.Show(
+                "Backup execution will be integrated here.\n" +
+                "This will use the BackupController from the Console team.",
+                "Coming Soon",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
         }
 
         /// <summary>
@@ -103,98 +119,9 @@ namespace EasySave.ViewModels
         {
             var settingsWindow = new SettingsWindow
             {
-                Owner = System.Windows.Application.Current.MainWindow
+                Owner = Application.Current.MainWindow
             };
             settingsWindow.ShowDialog();
-        }
-
-        /// <summary>
-        /// Executes a backup job by index
-        /// </summary>
-        /// <param name="jobIndex">Index of the job in BackupJobs collection</param>
-        public void ExecuteBackup(int jobIndex)
-        {
-            if (jobIndex < 0 || jobIndex >= BackupJobs.Count) return;
-
-            var job = BackupJobs[jobIndex];
-
-            var state = _states.FirstOrDefault(s => s.JobName == job.name);
-            if (state == null)
-            {
-                state = new BackupState { JobName = job.name };
-                _states.Add(state);
-            }
-
-            state.Status = BackupStatus.ACTIF;
-            state.LastActionTimestamp = DateTime.Now;
-            state.CurrentSourceUNC = job.sourcePath;
-            state.CurrentDestinationUNC = job.destinationPath;
-
-            try
-            {
-                if (!Directory.Exists(job.sourcePath)) return;
-
-                var files = Directory.GetFiles(job.sourcePath, "*.*", SearchOption.AllDirectories);
-
-                state.TotalFiles = files.Length;
-                state.TotalSizeBytes = files.Sum(f => new System.IO.FileInfo(f).Length);
-                state.RemainingFiles = state.TotalFiles;
-                state.RemainingSizeBytes = state.TotalSizeBytes;
-                state.Progress = 0f;
-
-                _stateService.SaveStates(_states);
-
-                foreach (var file in files)
-                {
-                    var sysFileInfo = new System.IO.FileInfo(file);
-                    string destFile = file.Replace(job.sourcePath, job.destinationPath);
-                    string destDir = Path.GetDirectoryName(destFile)!;
-
-                    if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
-
-                    state.CurrentSourceUNC = file;
-                    state.CurrentDestinationUNC = destFile;
-
-                    var stopWatch = Stopwatch.StartNew();
-                    File.Copy(file, destFile, true);
-                    stopWatch.Stop();
-
-                    EasyLog.EasyLog.Instance.WriteLog(
-                        DateTime.Now,
-                        job.name,
-                        file,
-                        destFile,
-                        sysFileInfo.Length,
-                        stopWatch.ElapsedMilliseconds
-                    );
-
-                    UpdateStateProgress(state, sysFileInfo.Length);
-                }
-
-                state.Status = BackupStatus.TERMINE;
-                _stateService.SaveStates(_states);
-            }
-            catch (Exception)
-            {
-                state.Status = BackupStatus.EN_ERREUR;
-                _stateService.SaveStates(_states);
-            }
-        }
-
-        /// <summary>
-        /// Updates the progress of a backup state
-        /// </summary>
-        /// <param name="state">The backup state to update</param>
-        /// <param name="fileSize">Size of the file just backed up</param>
-        private void UpdateStateProgress(BackupState state, long fileSize)
-        {
-            state.RemainingFiles -= 1;
-            state.RemainingSizeBytes -= fileSize;
-            state.Progress = state.TotalFiles > 0
-                ? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
-                : 0f;
-            state.LastActionTimestamp = DateTime.Now;
-            _stateService.SaveStates(_states);
         }
 
         /// <summary>
