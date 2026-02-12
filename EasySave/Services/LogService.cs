@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿/*using System.Text.Json;
 
 namespace EasySave.Services;
 
@@ -43,3 +43,4 @@ public class LogService
         File.AppendAllText(filePath, jsonString + Environment.NewLine);
     }
 }
+*/

@@ -19,5 +19,7 @@ namespace EasyLog
         public long FileSizeBytes { get; set; }
 
         public long TransferTimeMs { get; set; }
+
+        public int ThreadId { get; set; }
     }
 }

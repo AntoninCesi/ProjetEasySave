@@ -1,4 +1,4 @@
-﻿using System;
+﻿/* using System;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -73,3 +73,4 @@ namespace EasyLog
         public string GetLogFolderPath() => _baseFolder;
     }
 }
+*/
