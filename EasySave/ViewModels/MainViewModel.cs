@@ -80,20 +80,55 @@ namespace EasySave.ViewModels
 
         private void RunSelectedBackups()
         {
+            // Check if there are any jobs
             if (BackupJobs.Count == 0)
             {
-                MessageBox.Show("No backup jobs to run.", "No Jobs", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "No backup jobs to run.\n\nPlease create a job first by clicking 'Create New Job'.",
+                    "No Jobs",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
                 return;
             }
 
+            // Check if business software is running
             if (_businessMonitor.IsBusinessSoftwareRunning())
             {
                 var settings = AppSettings.Instance;
-                MessageBox.Show($"Cannot start: Business software '{settings.BusinessSoftware}' is running.", "Blocked", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    $"Cannot start backup: Business software '{settings.BusinessSoftware}' is running.\n\n" +
+                    "Please close the business software and try again.",
+                    "Backup Blocked",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+
+                Console.WriteLine($"[{DateTime.Now}] Backup blocked: Business software '{settings.BusinessSoftware}' detected");
                 return;
             }
 
-            MessageBox.Show("Execution logic will be integrated soon.", "Coming Soon", MessageBoxButton.OK, MessageBoxImage.Information);
+            // TEMPORARY: Show progress window for demo
+            var progressVM = new ProgressViewModel
+            {
+                JobName = "Backup Test",
+                TotalFiles = 150,
+                ProcessedFiles = 67,
+                ProgressPercentage = 44.7,
+                CurrentFile = @"C:\Users\Documents\Photos\Vacances2024.jpg",
+                TotalBytes = 1024L * 1024L * 750,
+                ProcessedBytes = 1024L * 1024L * 335,
+                TransferSpeed = "12.5 MB/s",
+                TimeRemaining = "2 min 15 sec"
+            };
+
+            var progressWindow = new ProgressWindow(progressVM);
+            progressWindow.ShowDialog();
+
+            // TODO: When colleague finishes BackupStateObservator, replace above with:
+            // - Create ProgressViewModel
+            // - Pass it to BackupStateObservator
+            // - Start the actual backup with progress updates
         }
 
         private void OpenSettings()

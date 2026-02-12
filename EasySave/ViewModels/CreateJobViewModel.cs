@@ -1,7 +1,9 @@
 using EasySave.Commands;
 using EasySave.Models;
+using EasySave.Resources;
 using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
@@ -15,9 +17,12 @@ namespace EasySave.ViewModels
         private string _jobName = string.Empty;
         private string _sourcePath = string.Empty;
         private string _destinationPath = string.Empty;
-        private string _selectedType = "Complete";
+        private string _selectedType;
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        // Language support
+        public LanguageManager Lang => LanguageManager.Instance;
 
         // Properties bound to the View
         public string JobName { get => _jobName; set { _jobName = value; OnPropertyChanged(nameof(JobName)); } }
@@ -25,7 +30,7 @@ namespace EasySave.ViewModels
         public string DestinationPath { get => _destinationPath; set { _destinationPath = value; OnPropertyChanged(nameof(DestinationPath)); } }
         public string SelectedType { get => _selectedType; set { _selectedType = value; OnPropertyChanged(nameof(SelectedType)); } }
 
-        public string[] BackupTypeNames { get; } = new[] { "Complete", "Differential" };
+        public ObservableCollection<string> BackupTypeNames { get; }
 
         public ICommand BrowseSourceCommand { get; }
         public ICommand BrowseDestinationCommand { get; }
@@ -38,6 +43,14 @@ namespace EasySave.ViewModels
 
         public CreateJobViewModel()
         {
+            // Initialize translated backup type names
+            BackupTypeNames = new ObservableCollection<string>
+            {
+                Lang["Complete"],
+                Lang["Differential"]
+            };
+            _selectedType = BackupTypeNames[0];
+
             BrowseSourceCommand = new RelayCommand(_ => BrowseSource());
             BrowseDestinationCommand = new RelayCommand(_ => BrowseDestination());
             CreateCommand = new RelayCommand(_ => CreateJob());
@@ -64,15 +77,18 @@ namespace EasySave.ViewModels
             // Simple validation
             if (string.IsNullOrWhiteSpace(JobName) || string.IsNullOrWhiteSpace(SourcePath) || string.IsNullOrWhiteSpace(DestinationPath))
             {
-                MessageBox.Show("Please fill all fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang["PleaseEnterJobName"], Lang["ValidationError"], MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             if (!Directory.Exists(SourcePath))
             {
-                MessageBox.Show("Source folder does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(Lang["SourceNotExist"], Lang["ValidationError"], MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+
+            // Determine if Complete or Differential based on selected index
+            bool isComplete = SelectedType == BackupTypeNames[0];
 
             // Create the model instance
             CreatedJob = new BackupJob
@@ -80,7 +96,7 @@ namespace EasySave.ViewModels
                 name = JobName,
                 sourcePath = SourcePath,
                 destinationPath = DestinationPath,
-                type = SelectedType == BackupTypeNames[0] ? BackupTypes.COMPLET : BackupTypes.DIFFERENTIAL
+                type = isComplete ? BackupTypes.COMPLET : BackupTypes.DIFFERENTIAL
             };
 
             IsConfirmed = true;

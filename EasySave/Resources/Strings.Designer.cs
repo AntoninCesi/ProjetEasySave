@@ -79,47 +79,20 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Sauvegarde terminée avec succès.
+        ///   Recherche une chaîne localisée semblable à Type de sauvegarde.
         /// </summary>
-        internal static string BackupCompleted {
+        internal static string BackupTypeLabel {
             get {
-                return ResourceManager.GetString("BackupCompleted", resourceCulture);
+                return ResourceManager.GetString("BackupTypeLabel", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Erreur lors de la sauvegarde.
+        ///   Recherche une chaîne localisée semblable à Parcourir....
         /// </summary>
-        internal static string BackupError {
+        internal static string Browse {
             get {
-                return ResourceManager.GetString("BackupError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Sauvegarde démarrée.
-        /// </summary>
-        internal static string BackupStarted {
-            get {
-                return ResourceManager.GetString("BackupStarted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Logiciel métier.
-        /// </summary>
-        internal static string BusinessSoftware {
-            get {
-                return ResourceManager.GetString("BusinessSoftware", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Logiciel métier détecté. Sauvegarde bloquée..
-        /// </summary>
-        internal static string BusinessSoftwareDetected {
-            get {
-                return ResourceManager.GetString("BusinessSoftwareDetected", resourceCulture);
+                return ResourceManager.GetString("Browse", resourceCulture);
             }
         }
         
@@ -133,11 +106,38 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Êtes-vous sûr de vouloir supprimer ce travail ?.
+        ///   Recherche une chaîne localisée semblable à Complète.
         /// </summary>
-        internal static string ConfirmDelete {
+        internal static string Complete {
             get {
-                return ResourceManager.GetString("ConfirmDelete", resourceCulture);
+                return ResourceManager.GetString("Complete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Créer le travail.
+        /// </summary>
+        internal static string CreateJob {
+            get {
+                return ResourceManager.GetString("CreateJob", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Configurer un nouveau travail de sauvegarde.
+        /// </summary>
+        internal static string CreateJobSubtitle {
+            get {
+                return ResourceManager.GetString("CreateJobSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à CRÉER UN NOUVEAU TRAVAIL.
+        /// </summary>
+        internal static string CreateJobTitle {
+            get {
+                return ResourceManager.GetString("CreateJobTitle", resourceCulture);
             }
         }
         
@@ -151,11 +151,11 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Supprimer.
+        ///   Recherche une chaîne localisée semblable à Dossier de destination.
         /// </summary>
-        internal static string Delete {
+        internal static string DestinationFolderLabel {
             get {
-                return ResourceManager.GetString("Delete", resourceCulture);
+                return ResourceManager.GetString("DestinationFolderLabel", resourceCulture);
             }
         }
         
@@ -171,63 +171,18 @@ namespace EasySave.Resources {
         /// <summary>
         ///   Recherche une chaîne localisée semblable à Différentielle.
         /// </summary>
-        internal static string DifferentialBackup {
+        internal static string Differential {
             get {
-                return ResourceManager.GetString("DifferentialBackup", resourceCulture);
+                return ResourceManager.GetString("Differential", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Modifier.
+        ///   Recherche une chaîne localisée semblable à Travail &apos;{0}&apos; créé avec succès !\n\nRemarque : Le travail sera persisté lors de l&apos;intégration avec la gestion des travaux de l&apos;équipe Console..
         /// </summary>
-        internal static string Edit {
+        internal static string JobCreatedSuccess {
             get {
-                return ResourceManager.GetString("Edit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Extensions à crypter.
-        /// </summary>
-        internal static string EncryptionExtensions {
-            get {
-                return ResourceManager.GetString("EncryptionExtensions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Le nom du travail ne peut pas être vide.
-        /// </summary>
-        internal static string ErrorEmptyJobName {
-            get {
-                return ResourceManager.GetString("ErrorEmptyJobName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Chemin invalide.
-        /// </summary>
-        internal static string ErrorInvalidPath {
-            get {
-                return ResourceManager.GetString("ErrorInvalidPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Le répertoire source n&apos;existe pas.
-        /// </summary>
-        internal static string ErrorSourceNotFound {
-            get {
-                return ResourceManager.GetString("ErrorSourceNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Complète.
-        /// </summary>
-        internal static string FullBackup {
-            get {
-                return ResourceManager.GetString("FullBackup", resourceCulture);
+                return ResourceManager.GetString("JobCreatedSuccess", resourceCulture);
             }
         }
         
@@ -241,7 +196,16 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Langue.
+        ///   Recherche une chaîne localisée semblable à Nom du travail.
+        /// </summary>
+        internal static string JobNameLabel {
+            get {
+                return ResourceManager.GetString("JobNameLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Langue :.
         /// </summary>
         internal static string Language {
             get {
@@ -250,47 +214,29 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Format de log.
+        ///   Recherche une chaîne localisée semblable à Veuillez entrer un nom de travail..
         /// </summary>
-        internal static string LogFormat {
+        internal static string PleaseEnterJobName {
             get {
-                return ResourceManager.GetString("LogFormat", resourceCulture);
+                return ResourceManager.GetString("PleaseEnterJobName", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Pause.
+        ///   Recherche une chaîne localisée semblable à Veuillez sélectionner un dossier de destination..
         /// </summary>
-        internal static string Pause {
+        internal static string PleaseSelectDestination {
             get {
-                return ResourceManager.GetString("Pause", resourceCulture);
+                return ResourceManager.GetString("PleaseSelectDestination", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Progression.
+        ///   Recherche une chaîne localisée semblable à Veuillez sélectionner un dossier source..
         /// </summary>
-        internal static string Progress {
+        internal static string PleaseSelectSource {
             get {
-                return ResourceManager.GetString("Progress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Reprendre.
-        /// </summary>
-        internal static string Resume {
-            get {
-                return ResourceManager.GetString("Resume", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Tout lancer.
-        /// </summary>
-        internal static string RunAll {
-            get {
-                return ResourceManager.GetString("RunAll", resourceCulture);
+                return ResourceManager.GetString("PleaseSelectSource", resourceCulture);
             }
         }
         
@@ -304,15 +250,6 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Enregistrer.
-        /// </summary>
-        internal static string Save {
-            get {
-                return ResourceManager.GetString("Save", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Recherche une chaîne localisée semblable à Paramètres.
         /// </summary>
         internal static string Settings {
@@ -322,11 +259,29 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Paramètres.
+        ///   Recherche une chaîne localisée semblable à Les dossiers source et destination ne peuvent pas être identiques..
         /// </summary>
-        internal static string SettingsTitle {
+        internal static string SourceDestinationSame {
             get {
-                return ResourceManager.GetString("SettingsTitle", resourceCulture);
+                return ResourceManager.GetString("SourceDestinationSame", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Dossier source.
+        /// </summary>
+        internal static string SourceFolderLabel {
+            get {
+                return ResourceManager.GetString("SourceFolderLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Le dossier source n&apos;existe pas..
+        /// </summary>
+        internal static string SourceNotExist {
+            get {
+                return ResourceManager.GetString("SourceNotExist", resourceCulture);
             }
         }
         
@@ -340,65 +295,11 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Statut.
+        ///   Recherche une chaîne localisée semblable à Succès.
         /// </summary>
-        internal static string Status {
+        internal static string Success {
             get {
-                return ResourceManager.GetString("Status", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Actif.
-        /// </summary>
-        internal static string StatusActive {
-            get {
-                return ResourceManager.GetString("StatusActive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Terminé.
-        /// </summary>
-        internal static string StatusCompleted {
-            get {
-                return ResourceManager.GetString("StatusCompleted", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Erreur.
-        /// </summary>
-        internal static string StatusError {
-            get {
-                return ResourceManager.GetString("StatusError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Inactif.
-        /// </summary>
-        internal static string StatusInactive {
-            get {
-                return ResourceManager.GetString("StatusInactive", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à En pause.
-        /// </summary>
-        internal static string StatusPaused {
-            get {
-                return ResourceManager.GetString("StatusPaused", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Recherche une chaîne localisée semblable à Arrêter.
-        /// </summary>
-        internal static string Stop {
-            get {
-                return ResourceManager.GetString("Stop", resourceCulture);
+                return ResourceManager.GetString("Success", resourceCulture);
             }
         }
         
@@ -408,6 +309,15 @@ namespace EasySave.Resources {
         internal static string Type {
             get {
                 return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Erreur de validation.
+        /// </summary>
+        internal static string ValidationError {
+            get {
+                return ResourceManager.GetString("ValidationError", resourceCulture);
             }
         }
         

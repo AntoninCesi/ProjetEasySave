@@ -69,7 +69,7 @@
   
   <!-- Main Window -->
   <data name="WindowTitle" xml:space="preserve">
-    <value>EasySave v2.0 - Management Dashboard</value>
+    <value>EasySave v2.0 - Dashboard</value>
   </data>
   
   <!-- DataGrid Headers -->
@@ -85,12 +85,6 @@
   <data name="Type" xml:space="preserve">
     <value>Type</value>
   </data>
-  <data name="Status" xml:space="preserve">
-    <value>Status</value>
-  </data>
-  <data name="Progress" xml:space="preserve">
-    <value>Progress</value>
-  </data>
   
   <!-- Buttons -->
   <data name="Settings" xml:space="preserve">
@@ -102,98 +96,68 @@
   <data name="RunSelection" xml:space="preserve">
     <value>Run Selection</value>
   </data>
-  <data name="RunAll" xml:space="preserve">
-    <value>Run All</value>
-  </data>
-  <data name="Stop" xml:space="preserve">
-    <value>Stop</value>
-  </data>
-  <data name="Pause" xml:space="preserve">
-    <value>Pause</value>
-  </data>
-  <data name="Resume" xml:space="preserve">
-    <value>Resume</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="Edit" xml:space="preserve">
-    <value>Edit</value>
-  </data>
-  
-  <!-- Backup Types -->
-  <data name="FullBackup" xml:space="preserve">
-    <value>Full</value>
-  </data>
-  <data name="DifferentialBackup" xml:space="preserve">
-    <value>Differential</value>
-  </data>
-  
-  <!-- Status Messages -->
-  <data name="StatusActive" xml:space="preserve">
-    <value>Active</value>
-  </data>
-  <data name="StatusInactive" xml:space="preserve">
-    <value>Inactive</value>
-  </data>
-  <data name="StatusCompleted" xml:space="preserve">
-    <value>Completed</value>
-  </data>
-  <data name="StatusError" xml:space="preserve">
-    <value>Error</value>
-  </data>
-  <data name="StatusPaused" xml:space="preserve">
-    <value>Paused</value>
-  </data>
-  
-  <!-- Settings Dialog -->
-  <data name="SettingsTitle" xml:space="preserve">
-    <value>Settings</value>
-  </data>
   <data name="Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Language:</value>
   </data>
-  <data name="LogFormat" xml:space="preserve">
-    <value>Log Format</value>
+  
+  <!-- Create Job Dialog -->
+  <data name="CreateJobTitle" xml:space="preserve">
+    <value>CREATE NEW JOB</value>
   </data>
-  <data name="EncryptionExtensions" xml:space="preserve">
-    <value>Extensions to Encrypt</value>
+  <data name="CreateJobSubtitle" xml:space="preserve">
+    <value>Configure a new backup job</value>
   </data>
-  <data name="BusinessSoftware" xml:space="preserve">
-    <value>Business Software</value>
+  <data name="JobNameLabel" xml:space="preserve">
+    <value>Job Name</value>
   </data>
-  <data name="Save" xml:space="preserve">
-    <value>Save</value>
+  <data name="SourceFolderLabel" xml:space="preserve">
+    <value>Source Folder</value>
+  </data>
+  <data name="DestinationFolderLabel" xml:space="preserve">
+    <value>Destination Folder</value>
+  </data>
+  <data name="BackupTypeLabel" xml:space="preserve">
+    <value>Backup Type</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Browse...</value>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  
-  <!-- Messages -->
-  <data name="ConfirmDelete" xml:space="preserve">
-    <value>Are you sure you want to delete this job?</value>
+  <data name="CreateJob" xml:space="preserve">
+    <value>Create Job</value>
   </data>
-  <data name="BackupStarted" xml:space="preserve">
-    <value>Backup started</value>
+  <data name="Complete" xml:space="preserve">
+    <value>Complete</value>
   </data>
-  <data name="BackupCompleted" xml:space="preserve">
-    <value>Backup completed successfully</value>
-  </data>
-  <data name="BackupError" xml:space="preserve">
-    <value>Error during backup</value>
-  </data>
-  <data name="BusinessSoftwareDetected" xml:space="preserve">
-    <value>Business software detected. Backup blocked.</value>
+  <data name="Differential" xml:space="preserve">
+    <value>Differential</value>
   </data>
   
   <!-- Validation Messages -->
-  <data name="ErrorInvalidPath" xml:space="preserve">
-    <value>Invalid path</value>
+  <data name="ValidationError" xml:space="preserve">
+    <value>Validation Error</value>
   </data>
-  <data name="ErrorEmptyJobName" xml:space="preserve">
-    <value>Job name cannot be empty</value>
+  <data name="PleaseEnterJobName" xml:space="preserve">
+    <value>Please enter a job name.</value>
   </data>
-  <data name="ErrorSourceNotFound" xml:space="preserve">
-    <value>Source directory does not exist</value>
+  <data name="PleaseSelectSource" xml:space="preserve">
+    <value>Please select a source folder.</value>
+  </data>
+  <data name="PleaseSelectDestination" xml:space="preserve">
+    <value>Please select a destination folder.</value>
+  </data>
+  <data name="SourceNotExist" xml:space="preserve">
+    <value>Source folder does not exist.</value>
+  </data>
+  <data name="SourceDestinationSame" xml:space="preserve">
+    <value>Source and destination folders cannot be the same.</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="JobCreatedSuccess" xml:space="preserve">
+    <value>Job '{0}' created successfully!\n\nNote: Job will be persisted when integrated with Console team's job management.</value>
   </data>
 </root>
