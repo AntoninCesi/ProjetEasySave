@@ -14,11 +14,10 @@ namespace EasySave
     {
         static void Main(string[] args)
         {
-<<<<<<< HEAD
+
             Console.WriteLine("=== Test Temps Réel ===\n");
-=======
-            //Controller controller = new Controller(args);
->>>>>>> ec736776ddace35e3bd30d76ac2639d02c907c9a
+
+
 
             // Créer la stratégie
             FullBackupStrategy strategy = new FullBackupStrategy();
@@ -32,7 +31,7 @@ namespace EasySave
             // Créer et exécuter
             BackupJob job = new BackupJob
             {
-                sourcePath = @"C:\Users\ademr\Downloads",
+                sourcePath = @"C:\SourceTEST",
                 destinationPath = @"C:\DestTEST",
                 type = BackupTypes.FULL,
                 status = new BackupState()

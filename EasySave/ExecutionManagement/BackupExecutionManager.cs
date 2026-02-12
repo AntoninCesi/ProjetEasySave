@@ -6,32 +6,33 @@ using Tool.Utils;
 
 namespace EasySave.ExecutionManagement
 {
-    
+
     public class BackupExecutionManager
     {
         //private List<BackupJob> listBackupJob = new List<BackupJob>();
         private readonly BackupStateManager _stateManager;
-        public BackupExecutionManager() {
-        
+        public BackupExecutionManager()
+        {
+
             _stateManager = new BackupStateManager();
-        
+
         }
 
         public void createBackupJob(string name, string sourcePath, string destinationPath, BackupTypes type)
         {
-           
-             _stateManager.listBackupJob.Add(new BackupJob
-             {
-                 name = name,
-                 sourcePath = sourcePath,
-                 destinationPath = destinationPath,
-                 type = type
-             });
 
-             int jobId = _stateManager.listBackupJob.Count - 1; 
+            _stateManager.listBackupJob.Add(new BackupJob
+            {
+                name = name,
+                sourcePath = sourcePath,
+                destinationPath = destinationPath,
+                type = type
+            });
 
-             Console.WriteLine(_stateManager.listBackupJob[jobId].ToString());
-            
+            int jobId = _stateManager.listBackupJob.Count - 1;
+
+            Console.WriteLine(_stateManager.listBackupJob[jobId].ToString());
+
         }
         public void ExecuteJobAsyncExecuteJob(int jobId)
         {
@@ -51,51 +52,35 @@ namespace EasySave.ExecutionManagement
             var job = _stateManager.getJobById(jobId);
             if (job == null)
             {
-<<<<<<< HEAD
-                Name = job.Name,
-                Status = job.Status
-            });
-        }*/
-        /*private void NotifyState(BackupJob job, EasySave.Models.FileInfo
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * 
-         * file, int remaining)
-=======
                 Console.WriteLine($"Job {jobId} introuvable !");
                 return;
             }
 
-                await Task.Run(() =>
+            await Task.Run(() =>
+            {
+                try
                 {
-                    try
-                    {
-                        Console.WriteLine($"Démarrage du job {job.name}");
-                        // Appelle la factory qui exécute la stratégie
-                        BackupStrategyFactory.ExecuteBackup(job);
+                    Console.WriteLine($"Démarrage du job {job.name}");
+                    // Appelle la factory qui exécute la stratégie
+                    BackupStrategyFactory.ExecuteBackup(job);
 
-                        // Job terminé avec succès
-                        job.status.Status = BackupStateResum.FINISHED;
-                        job.status.LastActionTimestamp = DateTime.Now;
-                        Console.WriteLine($"Job {job.name} terminé avec succès !");
-                    }
-                    catch (Exception ex)
-                    {
-                        // Gestion de l'erreur pour ce job uniquement
-                        job.status.Status = BackupStateResum.ERROR;
-                        job.status.LastActionTimestamp = DateTime.Now;
-                        Console.WriteLine($"Erreur dans le job {job.name} : {ex.Message}");
-                    }
-                });
+                    // Job terminé avec succès
+                    job.status.Status = BackupStateResum.FINISHED;
+                    job.status.LastActionTimestamp = DateTime.Now;
+                    Console.WriteLine($"Job {job.name} terminé avec succès !");
+                }
+                catch (Exception ex)
+                {
+                    // Gestion de l'erreur pour ce job uniquement
+                    job.status.Status = BackupStateResum.ERROR;
+                    job.status.LastActionTimestamp = DateTime.Now;
+                    Console.WriteLine($"Erreur dans le job {job.name} : {ex.Message}");
+                }
+            });
         }
 
-        // Exécute tous les jobs de la liste **simultanément** sans limite
+        // Exécute tous les jobs de la liste simultanément sans limite
         public async Task ExecuteAllJob()
->>>>>>> ec736776ddace35e3bd30d76ac2639d02c907c9a
         {
             var tasks = new List<Task>();
 
@@ -103,7 +88,7 @@ namespace EasySave.ExecutionManagement
             {
                 tasks.Add(ExecuteJob(i));
             }
-               
+
             // Attend que tous les jobs soient terminés
             await Task.WhenAll(tasks);
         }
