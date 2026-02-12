@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -18,14 +19,26 @@ namespace EasySave.Services
         private const int CHUNK_SIZE = 1024 * 64; // 64 KB chunks
 
         /// <summary>
+        /// Result of an encryption operation
+        /// </summary>
+        public class EncryptionResult
+        {
+            public bool Success { get; set; }
+            public long TimeMs { get; set; }
+            public string ErrorMessage { get; set; } = string.Empty;
+        }
+
+        /// <summary>
         /// Encrypts a file using XOR algorithm with multi-threading
         /// </summary>
         /// <param name="sourceFile">Path to the source file</param>
         /// <param name="destinationFile">Path to save encrypted file</param>
         /// <param name="key">Encryption key</param>
-        /// <returns>True if encryption succeeded, false otherwise</returns>
-        public static bool EncryptFile(string sourceFile, string destinationFile, string key = "DefaultKey2025")
+        /// <returns>EncryptionResult with success status and time taken</returns>
+        public static EncryptionResult EncryptFile(string sourceFile, string destinationFile, string key = "DefaultKey2025")
         {
+            var stopwatch = Stopwatch.StartNew();
+            
             try
             {
                 Console.WriteLine($"[CryptoSoft] Starting encryption: {Path.GetFileName(sourceFile)}");
@@ -34,13 +47,23 @@ namespace EasySave.Services
                 if (!File.Exists(sourceFile))
                 {
                     Console.WriteLine($"[CryptoSoft] ERROR: Source file not found: {sourceFile}");
-                    return false;
+                    return new EncryptionResult 
+                    { 
+                        Success = false, 
+                        TimeMs = 0,
+                        ErrorMessage = "Source file not found"
+                    };
                 }
 
                 if (string.IsNullOrEmpty(key))
                 {
                     Console.WriteLine("[CryptoSoft] ERROR: Encryption key cannot be empty");
-                    return false;
+                    return new EncryptionResult 
+                    { 
+                        Success = false, 
+                        TimeMs = 0,
+                        ErrorMessage = "Encryption key cannot be empty"
+                    };
                 }
 
                 // Read entire file into memory
@@ -91,24 +114,44 @@ namespace EasySave.Services
                 // Write encrypted data to destination
                 File.WriteAllBytes(destinationFile, encryptedData);
 
-                Console.WriteLine($"[CryptoSoft] Encryption completed: {Path.GetFileName(destinationFile)}");
-                return true;
+                stopwatch.Stop();
+                
+                Console.WriteLine($"[CryptoSoft] Encryption completed: {Path.GetFileName(destinationFile)} in {stopwatch.ElapsedMilliseconds}ms");
+                
+                return new EncryptionResult 
+                { 
+                    Success = true, 
+                    TimeMs = stopwatch.ElapsedMilliseconds 
+                };
             }
             catch (Exception ex)
             {
+                stopwatch.Stop();
                 Console.WriteLine($"[CryptoSoft] ERROR during encryption: {ex.Message}");
-                return false;
+                
+                return new EncryptionResult 
+                { 
+                    Success = false, 
+                    TimeMs = stopwatch.ElapsedMilliseconds,
+                    ErrorMessage = ex.Message
+                };
             }
+        }
+
+        /// <summary>
+        /// Encrypts a file (backward compatible - returns only bool)
+        /// Use EncryptFile() for detailed results with timing
+        /// </summary>
+        public static bool EncryptFileSimple(string sourceFile, string destinationFile, string key = "DefaultKey2025")
+        {
+            var result = EncryptFile(sourceFile, destinationFile, key);
+            return result.Success;
         }
 
         /// <summary>
         /// Decrypts a file (XOR is symmetric, so same process as encryption)
         /// </summary>
-        /// <param name="sourceFile">Path to encrypted file</param>
-        /// <param name="destinationFile">Path to save decrypted file</param>
-        /// <param name="key">Decryption key</param>
-        /// <returns>True if decryption succeeded, false otherwise</returns>
-        public static bool DecryptFile(string sourceFile, string destinationFile, string key = "DefaultKey2025")
+        public static EncryptionResult DecryptFile(string sourceFile, string destinationFile, string key = "DefaultKey2025")
         {
             // XOR is symmetric: encrypting twice returns original
             return EncryptFile(sourceFile, destinationFile, key);
@@ -117,9 +160,6 @@ namespace EasySave.Services
         /// <summary>
         /// Checks if a file extension should be encrypted based on user settings
         /// </summary>
-        /// <param name="filePath">Path to the file</param>
-        /// <param name="encryptionExtensions">Comma-separated list of extensions (e.g., ".docx,.xlsx,.pdf")</param>
-        /// <returns>True if file should be encrypted</returns>
         public static bool ShouldEncrypt(string filePath, string encryptionExtensions)
         {
             if (string.IsNullOrWhiteSpace(encryptionExtensions))

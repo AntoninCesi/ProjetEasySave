@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using EasySave.Commands;
@@ -8,7 +9,6 @@ using EasySave.Models;
 using EasySave.Resources;
 using EasySave.Services;
 using EasySave.View;
-using System.IO;
 
 namespace EasySave.ViewModels
 {
@@ -70,8 +70,8 @@ namespace EasySave.ViewModels
                     BackupJobs.Add(createVm.CreatedJob);
 
                     MessageBox.Show(
-                        $"Job '{createVm.CreatedJob.name}' created successfully!",
-                        "Success",
+                        string.Format(Lang["JobCreatedSuccess"], createVm.CreatedJob.name),
+                        Lang["Success"],
                         MessageBoxButton.OK,
                         MessageBoxImage.Information
                     );
@@ -81,7 +81,6 @@ namespace EasySave.ViewModels
 
         private void RunSelectedBackups()
         {
-
             // === TEST CRYPTOSOFT ===
             TestCryptoSoft();
             return;
@@ -91,8 +90,8 @@ namespace EasySave.ViewModels
             if (BackupJobs.Count == 0)
             {
                 MessageBox.Show(
-                    "No backup jobs to run.\n\nPlease create a job first by clicking 'Create New Job'.",
-                    "No Jobs",
+                    Lang["NoJobsMessage"],
+                    Lang["NoJobs"],
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
@@ -104,9 +103,8 @@ namespace EasySave.ViewModels
             {
                 var settings = AppSettings.Instance;
                 MessageBox.Show(
-                    $"Cannot start backup: Business software '{settings.BusinessSoftware}' is running.\n\n" +
-                    "Please close the business software and try again.",
-                    "Backup Blocked",
+                    string.Format(Lang["BackupBlockedMessage"], settings.BusinessSoftware),
+                    Lang["BackupBlocked"],
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning
                 );
@@ -146,26 +144,48 @@ namespace EasySave.ViewModels
                 string testFile = Path.Combine(Path.GetTempPath(), "test_crypto.txt");
                 string encryptedFile = testFile + ".encrypted";
                 string decryptedFile = Path.Combine(Path.GetTempPath(), "test_crypto_decrypted.txt");
+                string content = "Hello World! This is a test file for CryptoSoft encryption.";
 
                 // Write test content
-                File.WriteAllText(testFile, "Hello World! This is a test file for CryptoSoft encryption.");
+                File.WriteAllText(testFile, content);
 
-                MessageBox.Show($"Original file created:\n{testFile}\n\nContent: Hello World! This is a test...");
+                MessageBox.Show(
+                    string.Format(Lang["OriginalFileCreated"], testFile, content),
+                    "CryptoSoft Test",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
 
                 // Encrypt
-                bool encryptSuccess = CryptoSoftService.EncryptFile(testFile, encryptedFile, "TestKey123");
+                var encryptResult = CryptoSoftService.EncryptFile(testFile, encryptedFile, "TestKey123");
 
-                if (encryptSuccess)
+                if (encryptResult.Success)
                 {
-                    MessageBox.Show($"✅ Encryption successful!\n\nEncrypted file:\n{encryptedFile}\n\nCheck the console for multi-threading logs!");
+                    string message = string.Format(Lang["EncryptionSuccess"], encryptedFile, encryptResult.TimeMs);
+                    message += "\n\n" + Lang["CheckConsole"];
+
+                    MessageBox.Show(
+                        message,
+                        Lang["Success"],
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
 
                     // Decrypt
-                    bool decryptSuccess = CryptoSoftService.DecryptFile(encryptedFile, decryptedFile, "TestKey123");
+                    var decryptResult = CryptoSoftService.DecryptFile(encryptedFile, decryptedFile, "TestKey123");
 
-                    if (decryptSuccess)
+                    if (decryptResult.Success)
                     {
                         string decryptedContent = File.ReadAllText(decryptedFile);
-                        MessageBox.Show($"✅ Decryption successful!\n\nDecrypted content:\n{decryptedContent}");
+                        string decryptMessage = string.Format(Lang["DecryptionSuccess"], decryptResult.TimeMs);
+                        decryptMessage += $"\n\n{decryptedContent}";
+
+                        MessageBox.Show(
+                            decryptMessage,
+                            Lang["Success"],
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information
+                        );
 
                         // Cleanup
                         File.Delete(testFile);
@@ -175,15 +195,24 @@ namespace EasySave.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("❌ Encryption failed!");
+                    MessageBox.Show(
+                        string.Format(Lang["EncryptionFailed"], encryptResult.ErrorMessage),
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"❌ Error: {ex.Message}");
+                MessageBox.Show(
+                    string.Format(Lang["EncryptionFailed"], ex.Message),
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
             }
         }
-
 
         private void OpenSettings()
         {

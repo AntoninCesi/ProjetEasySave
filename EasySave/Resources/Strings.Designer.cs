@@ -79,7 +79,34 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Type de sauvegarde.
+        ///   Recherche une chaîne localisée semblable à Sauvegarde bloquée.
+        /// </summary>
+        internal static string BackupBlocked {
+            get {
+                return ResourceManager.GetString("BackupBlocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Impossible de démarrer la sauvegarde : Le logiciel métier &apos;{0}&apos; est en cours d&apos;exécution.\n\nVeuillez fermer le logiciel métier et réessayer..
+        /// </summary>
+        internal static string BackupBlockedMessage {
+            get {
+                return ResourceManager.GetString("BackupBlockedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⚡ SAUVEGARDE EN COURS.
+        /// </summary>
+        internal static string BackupInProgress {
+            get {
+                return ResourceManager.GetString("BackupInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⚙️ Type de sauvegarde.
         /// </summary>
         internal static string BackupTypeLabel {
             get {
@@ -102,6 +129,15 @@ namespace EasySave.Resources {
         internal static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Consultez la console pour les logs multi-threading !.
+        /// </summary>
+        internal static string CheckConsole {
+            get {
+                return ResourceManager.GetString("CheckConsole", resourceCulture);
             }
         }
         
@@ -133,7 +169,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à CRÉER UN NOUVEAU TRAVAIL.
+        ///   Recherche une chaîne localisée semblable à 📋 CRÉER UN NOUVEAU TRAVAIL.
         /// </summary>
         internal static string CreateJobTitle {
             get {
@@ -151,7 +187,34 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Dossier de destination.
+        ///   Recherche une chaîne localisée semblable à 📄 Fichier actuel :.
+        /// </summary>
+        internal static string CurrentFile {
+            get {
+                return ResourceManager.GetString("CurrentFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 💾 Données :.
+        /// </summary>
+        internal static string Data {
+            get {
+                return ResourceManager.GetString("Data", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ✅ Décryptage réussi !\n\n⏱️ Temps : {0} ms.
+        /// </summary>
+        internal static string DecryptionSuccess {
+            get {
+                return ResourceManager.GetString("DecryptionSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 💾 Dossier de destination.
         /// </summary>
         internal static string DestinationFolderLabel {
             get {
@@ -178,6 +241,33 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ❌ Échec du cryptage !\n\nErreur : {0}.
+        /// </summary>
+        internal static string EncryptionFailed {
+            get {
+                return ResourceManager.GetString("EncryptionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ✅ Cryptage réussi !\n\nFichier crypté : {0}\n\n⏱️ Temps : {1} ms.
+        /// </summary>
+        internal static string EncryptionSuccess {
+            get {
+                return ResourceManager.GetString("EncryptionSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 📁 Fichiers :.
+        /// </summary>
+        internal static string Files {
+            get {
+                return ResourceManager.GetString("Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Travail &apos;{0}&apos; créé avec succès !\n\nRemarque : Le travail sera persisté lors de l&apos;intégration avec la gestion des travaux de l&apos;équipe Console..
         /// </summary>
         internal static string JobCreatedSuccess {
@@ -196,7 +286,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Nom du travail.
+        ///   Recherche une chaîne localisée semblable à 📝 Nom du travail.
         /// </summary>
         internal static string JobNameLabel {
             get {
@@ -210,6 +300,42 @@ namespace EasySave.Resources {
         internal static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Aucun travail.
+        /// </summary>
+        internal static string NoJobs {
+            get {
+                return ResourceManager.GetString("NoJobs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Aucun travail de sauvegarde à exécuter.\n\nVeuillez d&apos;abord créer un travail en cliquant sur &apos;Créer un travail&apos;..
+        /// </summary>
+        internal static string NoJobsMessage {
+            get {
+                return ResourceManager.GetString("NoJobsMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Fichier original créé :\n{0}\n\nContenu : {1}.
+        /// </summary>
+        internal static string OriginalFileCreated {
+            get {
+                return ResourceManager.GetString("OriginalFileCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏸️ Pause.
+        /// </summary>
+        internal static string Pause {
+            get {
+                return ResourceManager.GetString("Pause", resourceCulture);
             }
         }
         
@@ -241,6 +367,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏱️ Restant :.
+        /// </summary>
+        internal static string Remaining {
+            get {
+                return ResourceManager.GetString("Remaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Lancer la sélection.
         /// </summary>
         internal static string RunSelection {
@@ -268,7 +403,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Dossier source.
+        ///   Recherche une chaîne localisée semblable à 📂 Dossier source.
         /// </summary>
         internal static string SourceFolderLabel {
             get {
@@ -291,6 +426,15 @@ namespace EasySave.Resources {
         internal static string SourcePath {
             get {
                 return ResourceManager.GetString("SourcePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⚡ Vitesse :.
+        /// </summary>
+        internal static string Speed {
+            get {
+                return ResourceManager.GetString("Speed", resourceCulture);
             }
         }
         

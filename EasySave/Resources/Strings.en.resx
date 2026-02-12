@@ -102,22 +102,22 @@
   
   <!-- Create Job Dialog -->
   <data name="CreateJobTitle" xml:space="preserve">
-    <value>CREATE NEW JOB</value>
+    <value>📋 CREATE NEW JOB</value>
   </data>
   <data name="CreateJobSubtitle" xml:space="preserve">
     <value>Configure a new backup job</value>
   </data>
   <data name="JobNameLabel" xml:space="preserve">
-    <value>Job Name</value>
+    <value>📝 Job Name</value>
   </data>
   <data name="SourceFolderLabel" xml:space="preserve">
-    <value>Source Folder</value>
+    <value>📂 Source Folder</value>
   </data>
   <data name="DestinationFolderLabel" xml:space="preserve">
-    <value>Destination Folder</value>
+    <value>💾 Destination Folder</value>
   </data>
   <data name="BackupTypeLabel" xml:space="preserve">
-    <value>Backup Type</value>
+    <value>⚙️ Backup Type</value>
   </data>
   <data name="Browse" xml:space="preserve">
     <value>Browse...</value>
@@ -159,5 +159,59 @@
   </data>
   <data name="JobCreatedSuccess" xml:space="preserve">
     <value>Job '{0}' created successfully!\n\nNote: Job will be persisted when integrated with Console team's job management.</value>
+  </data>
+  
+  <!-- Progress Window -->
+  <data name="BackupInProgress" xml:space="preserve">
+    <value>⚡ BACKUP IN PROGRESS</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>📁 Files:</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>💾 Data:</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>⚡ Speed:</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>⏱️ Remaining:</value>
+  </data>
+  <data name="CurrentFile" xml:space="preserve">
+    <value>📄 Current file:</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>⏸️ Pause</value>
+  </data>
+  
+  <!-- CryptoSoft Messages -->
+  <data name="EncryptionSuccess" xml:space="preserve">
+    <value>✅ Encryption successful!\n\nEncrypted file: {0}\n\n⏱️ Time: {1} ms</value>
+  </data>
+  <data name="EncryptionFailed" xml:space="preserve">
+    <value>❌ Encryption failed!\n\nError: {0}</value>
+  </data>
+  <data name="DecryptionSuccess" xml:space="preserve">
+    <value>✅ Decryption successful!\n\n⏱️ Time: {0} ms</value>
+  </data>
+  <data name="OriginalFileCreated" xml:space="preserve">
+    <value>Original file created:\n{0}\n\nContent: {1}</value>
+  </data>
+  <data name="CheckConsole" xml:space="preserve">
+    <value>Check the console for multi-threading logs!</value>
+  </data>
+  
+  <!-- Backup Messages -->
+  <data name="NoJobs" xml:space="preserve">
+    <value>No Jobs</value>
+  </data>
+  <data name="NoJobsMessage" xml:space="preserve">
+    <value>No backup jobs to run.\n\nPlease create a job first by clicking 'Create New Job'.</value>
+  </data>
+  <data name="BackupBlocked" xml:space="preserve">
+    <value>Backup Blocked</value>
+  </data>
+  <data name="BackupBlockedMessage" xml:space="preserve">
+    <value>Cannot start backup: Business software '{0}' is running.\n\nPlease close the business software and try again.</value>
   </data>
 </root>
