@@ -13,7 +13,7 @@ namespace EasySave
     {
         static void Main(string[] args)
         {
-            Controller controller = new Controller(args);
+            //Controller controller = new Controller(args);
 
 
 
