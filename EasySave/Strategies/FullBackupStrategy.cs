@@ -1,41 +1,19 @@
 using System;
+using System.IO;
 using EasySave.Models;
+using EasySave.Strategies;
 using Tool.Utils;
 using SysFileInfo = System.IO.FileInfo;
 using SysDirInfo = System.IO.DirectoryInfo;
 
 namespace EasySave.Strategies
 {
-
-    /// Stratégie de sauvegarde complète : copie tous les fichiers et dossiers
-    /// de la source vers la destination de manière récursive
-
+    /// <summary>
+    /// Stratégie de sauvegarde complète optimisée
+    /// </summary>
     public class FullBackupStrategy : IBackupStrategy
     {
-        private BackupProgressObserver _progressObserver;
-
-        public FullBackupStrategy()
-        {
-            _progressObserver = new BackupProgressObserver();
-        }
-
-        /// <summary>
-        /// Permet d'attacher un observateur externe
-        /// </summary>
-        public void SetProgressObserver(BackupProgressObserver observer)
-        {
-            _progressObserver = observer ?? new BackupProgressObserver();
-        }
-
-        /// <summary>
-        /// Récupère l'observateur de progression
-        /// </summary>
-        public BackupProgressObserver GetProgressObserver()
-        {
-            return _progressObserver;
-        }
-
-        public void Execute(BackupJob job)// ProgressCallback? callback)
+        public void Execute(BackupJob job)
         {
             if (job == null)
                 throw new ArgumentNullException(nameof(job));
@@ -46,39 +24,36 @@ namespace EasySave.Strategies
             if (string.IsNullOrWhiteSpace(job.destinationPath))
                 throw new ArgumentException("Le chemin de destination ne peut pas être vide");
 
-            if (!System.IO.Directory.Exists(job.sourcePath))
-                throw new System.IO.DirectoryNotFoundException($"Le répertoire source n'existe pas : {job.sourcePath}");
+            if (!Directory.Exists(job.sourcePath))
+                throw new DirectoryNotFoundException($"Le répertoire source n'existe pas : {job.sourcePath}");
 
-            // Création du répertoire de destination s'il n'existe pas
-            if (!System.IO.Directory.Exists(job.destinationPath))
+            // Créer le répertoire de destination
+            if (!Directory.Exists(job.destinationPath))
             {
-                System.IO.Directory.CreateDirectory(job.destinationPath);
+                Directory.CreateDirectory(job.destinationPath);
             }
 
-            // Calcul du nombre total de fichiers pour le suivi de progression
-            int totalFiles = CountFilesRecursive(job.sourcePath);
-            int remainingFiles = totalFiles;
+            // Initialiser l'observateur du job
+            if (job.progressObserver == null)
+            {
+                job.progressObserver = new BackupProgressObserver();
+            }
 
-            // Calcul de la taille totale
-            long totalSize = CalculateTotalSize(job.sourcePath);
-
-            // Réinitialiser l'observateur pour cette nouvelle sauvegarde
-            _progressObserver.Reset();
-
-            // Pré-analyser tous les fichiers à sauvegarder
-            CollectFilesToBackup(job.sourcePath);
+            job.progressObserver.Reset();
 
             try
             {
-                // Copie récursive de tous les fichiers et dossiers
-                CopyDirectoryRecursive(
-                    job.sourcePath,
-                    job.destinationPath,
-                    job,
-                    ref remainingFiles);
+                // Marquer le job comme actif
+                job.status.Status = BackupStateResum.ACTIVE;
+                job.status.LastActionTimestamp = DateTime.Now;
 
+                // Copie récursive
+                CopyDirectoryRecursive(job.sourcePath, job.destinationPath, job);
 
-
+                // Marquer comme terminé
+                job.status.Status = BackupStateResum.FINISHED;
+                job.status.Progress = 100;
+                job.status.LastActionTimestamp = DateTime.Now;
             }
             catch (Exception ex)
             {
@@ -88,209 +63,59 @@ namespace EasySave.Strategies
             }
         }
 
-
-        /// Copie récursivement un répertoire et tout son contenu
-
-        private void CopyDirectoryRecursive(
-            string sourcePath,
-            string destinationPath,
-            BackupJob job,
-            ref int remainingFiles)
-
+        /// <summary>
+        /// Copie récursive des fichiers et dossiers
+        /// </summary>
+        private void CopyDirectoryRecursive(string sourcePath, string destinationPath, BackupJob job)
         {
             SysDirInfo sourceDir = new SysDirInfo(sourcePath);
 
-            // S'assurer que le répertoire de destination existe
-            if (!System.IO.Directory.Exists(destinationPath))
+            // Créer le répertoire de destination
+            if (!Directory.Exists(destinationPath))
             {
-                System.IO.Directory.CreateDirectory(destinationPath);
+                Directory.CreateDirectory(destinationPath);
             }
 
-            // Copier tous les fichiers du répertoire courant
+            // Copier tous les fichiers
             SysFileInfo[] files = sourceDir.GetFiles();
             foreach (SysFileInfo file in files)
             {
                 try
                 {
-                    // Créer l'objet FileInfo personnalisé pour le callback
-                    var fileData = new EasySave.Models.FileInfo
-                    {
-                        fileName = file.Name,
-                        filePath = file.FullName,
-                        fileSize = file.Length,
-                        isDirectory = false,
-                        lastModified = file.LastWriteTime,
-                        backupStatus = FileBackupStatus.InProgress,
-                        backupStartTime = DateTime.Now
-                    };
+                    string destFilePath = Path.Combine(destinationPath, file.Name);
 
-                    string destFilePath = System.IO.Path.Combine(destinationPath, file.Name);
+                    // Enregistrer le début
+                    DateTime startTime = DateTime.Now;
 
-                    // Copie physique du fichier
+                    // Copie physique
                     file.CopyTo(destFilePath, true);
 
-                    // Enregistrer le temps de fin et calculer la durée
-                    fileData.backupEndTime = DateTime.Now;
-                    fileData.backupDuration = fileData.backupEndTime - fileData.backupStartTime;
+                    // Calculer le temps
+                    TimeSpan duration = DateTime.Now - startTime;
 
-                    // Marquer comme terminé et notifier
-                    fileData.backupStatus = FileBackupStatus.Completed;
-                    _progressObserver.NotifyFileSaved(fileData);
-
-
-
-
-
-
-                    // Notification de progression au Manager
+                    // Notifier l'observateur
+                    job.progressObserver.NotifyFileSaved(file.Length, duration);
 
                 }
                 catch (Exception ex)
                 {
-                    // Log de l'erreur mais continue avec les autres fichiers
                     Console.WriteLine($"Erreur lors de la copie de {file.FullName} : {ex.Message}");
-                    // Optionnel : vous pouvez choisir de throw ici selon votre gestion d'erreur
                 }
             }
 
-            // Copier récursivement tous les sous-répertoires
+            // Copier récursivement les sous-répertoires
             SysDirInfo[] subDirs = sourceDir.GetDirectories();
             foreach (SysDirInfo subDir in subDirs)
             {
                 try
                 {
-                    // Créer l'objet FileInfo pour le répertoire (optionnel, pour le tracking)
-                    var dirData = new EasySave.Models.FileInfo
-                    {
-                        fileName = subDir.Name,
-                        filePath = subDir.FullName,
-                        fileSize = 0,
-                        isDirectory = true,
-                        lastModified = subDir.LastWriteTime
-                    };
-
-                    string destSubDirPath = System.IO.Path.Combine(destinationPath, subDir.Name);
-
-                    // Appel récursif pour copier le sous-répertoire
-                    CopyDirectoryRecursive(
-                        subDir.FullName,
-                        destSubDirPath,
-                        job,
-                        ref remainingFiles
-                       );
+                    string destSubDirPath = Path.Combine(destinationPath, subDir.Name);
+                    CopyDirectoryRecursive(subDir.FullName, destSubDirPath, job);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Erreur lors de la copie du répertoire {subDir.FullName} : {ex.Message}");
                 }
-            }
-        }
-
-        /// <summary>
-        /// Compte récursivement le nombre total de fichiers dans un répertoire
-        /// </summary>
-        private int CountFilesRecursive(string path)
-        {
-            int count = 0;
-
-            try
-            {
-                SysDirInfo dir = new SysDirInfo(path);
-
-                // Compter les fichiers du répertoire courant
-                count += dir.GetFiles().Length;
-
-                // Compter récursivement dans les sous-répertoires
-                foreach (SysDirInfo subDir in dir.GetDirectories())
-                {
-                    count += CountFilesRecursive(subDir.FullName);
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignorer les répertoires auxquels on n'a pas accès
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur lors du comptage des fichiers dans {path} : {ex.Message}");
-            }
-
-            return count;
-        }
-
-        /// <summary>
-        /// Calcule récursivement la taille totale des fichiers dans un répertoire
-        /// </summary>
-        private long CalculateTotalSize(string path)
-        {
-            long totalSize = 0;
-
-            try
-            {
-                SysDirInfo dir = new SysDirInfo(path);
-
-                // Additionner la taille des fichiers du répertoire courant
-                foreach (SysFileInfo file in dir.GetFiles())
-                {
-                    totalSize += file.Length;
-                }
-
-                // Calculer récursivement dans les sous-répertoires
-                foreach (SysDirInfo subDir in dir.GetDirectories())
-                {
-                    totalSize += CalculateTotalSize(subDir.FullName);
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignorer les répertoires auxquels on n'a pas accès
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur lors du calcul de la taille dans {path} : {ex.Message}");
-            }
-
-            return totalSize;
-        }
-
-        /// <summary>
-        /// Collecte tous les fichiers à sauvegarder et les ajoute à l'observateur
-        /// </summary>
-        private void CollectFilesToBackup(string path)
-        {
-            try
-            {
-                SysDirInfo dir = new SysDirInfo(path);
-
-                // Ajouter tous les fichiers du répertoire courant
-                foreach (SysFileInfo file in dir.GetFiles())
-                {
-                    var fileData = new EasySave.Models.FileInfo
-                    {
-                        fileName = file.Name,
-                        filePath = file.FullName,
-                        fileSize = file.Length,
-                        isDirectory = false,
-                        lastModified = file.LastWriteTime,
-                        backupStatus = FileBackupStatus.Pending
-                    };
-
-                    _progressObserver.AddFileToBackup(fileData);
-                }
-
-                // Collecter récursivement dans les sous-répertoires
-                foreach (SysDirInfo subDir in dir.GetDirectories())
-                {
-                    CollectFilesToBackup(subDir.FullName);
-                }
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignorer les répertoires auxquels on n'a pas accès
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erreur lors de la collecte des fichiers dans {path} : {ex.Message}");
             }
         }
     }
