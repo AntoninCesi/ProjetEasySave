@@ -23,6 +23,10 @@ namespace EasySave.Messaging
         Goodbye,
         InvalidChoice,
         JobName,
+        NoJobAvailable,
+        SelectJob,
+        BackupStarted,
+
 
         // Errors
         InvalidFormat,

@@ -36,8 +36,12 @@ namespace EasySave.Messaging
                 MessageType.DestinationAccessDenied => isFrench ? "Erreur : Destination inaccessible ou protégée." : "Error: Destination path is not accessible or write-protected.",
                 MessageType.SourceEmpty => isFrench ? "Attention : Le dossier source est vide." : "Warning: Source directory is empty. Nothing to backup.",
                 MessageType.DuplicateJobName => isFrench ? "Erreur : Un travail avec ce nom existe déjà." : "Error: A backup job with this name already exists.",
+                MessageType.NoJobAvailable => isFrench ? "Aucun job disponible." : "No available job",
+                MessageType.SelectJob => isFrench ? "Quel job voulez-vous lancer ?" : "What kind of job do you want to start?",
+                MessageType.BackupStarted => isFrench ? "Backup lancé." : "Backup initiated.",
 
-                _ => string.Empty
+
+                                _ => string.Empty
             };
         }
     }

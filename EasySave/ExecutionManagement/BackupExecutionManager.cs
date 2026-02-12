@@ -11,19 +11,6 @@ namespace EasySave.ExecutionManagement
     {
         //private List<BackupJob> listBackupJob = new List<BackupJob>();
         private readonly BackupStateManager _stateManager;
-
-        public List<BackupJob> BackupJobs => _stateManager.listBackupJob;
-
-        //<<<<<<< HEAD
-        //=======
-        // Event for the ViewModel to subscribe to real-time updates
-        //public event EventHandler<EasySave.Models.FileInfo> OnFileProcess;
-
-        /*public BackupExecutionManager(BackupStateManager stateManager)
-//>>>>>>> 6763ccef457345f2a476c826578a2a658eea2184
-        {
-            //_stateManager = stateManager;
-        }*/
         public BackupExecutionManager() {
         
             _stateManager = new BackupStateManager();
@@ -41,12 +28,21 @@ namespace EasySave.ExecutionManagement
                  type = type
              });
 
-             int idJob = _stateManager.listBackupJob.Count - 1; 
+             int jobId = _stateManager.listBackupJob.Count - 1; 
 
-             Console.WriteLine(_stateManager.listBackupJob[idJob].ToString());
+             Console.WriteLine(_stateManager.listBackupJob[jobId].ToString());
             
         }
-
+        public void ExecuteJob(int jobId)
+        {
+            Console.WriteLine("= Test de la Factory =\n");
+            BackupStrategyFactory.ExecuteBackup(_stateManager.getJobById(jobId));
+            Console.WriteLine("Sauvegarde terminée !");
+        }
+        public List<BackupJob> getBackupJobList()
+        {
+            return _stateManager.listBackupJob;
+        }
 
         /*public void ExecuteJob(BackupJob job)
         {

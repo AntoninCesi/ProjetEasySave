@@ -1,5 +1,6 @@
 using System;
 using EasySave.Models;
+using Tool.Utils;
 
 namespace EasySave.Strategies
 {
@@ -8,34 +9,35 @@ namespace EasySave.Strategies
  
     public class BackupStrategyFactory
     {
-        
+
         /// Exécute une sauvegarde selon le type spécifié
-       
+
         /// <param name="backupType">Type de sauvegarde (Full ou Differential)</param>
         /// <param name="job">Job de sauvegarde contenant les paramètres</param>
-        public static void ExecuteBackup(BackupType backupType, BackupJob job)
+        public static void ExecuteBackup(BackupJob job)
         {
             if (job == null)
                 throw new ArgumentNullException(nameof(job));
 
-            switch (backupType)
+            switch (job.type)
             {
-                case BackupType.Full:
+                case BackupTypes.FULL:
                     ExecuteFullBackup(job);
                     break;
 
-                case BackupType.Differential:
+                case BackupTypes.DIFFERENTIAL:
                     ExecuteDifferentialBackup(job);
                     break;
 
                 default:
-                    throw new ArgumentException($"Type de sauvegarde non supporté : {backupType}");
+                    throw new ArgumentException($"Type de sauvegarde non supporté : {job.type}");
             }
         }
 
-   
+
+
         /// Exécute une sauvegarde complète
-        
+
         private static void ExecuteFullBackup(BackupJob job)
         {
             FullBackupStrategy strategy = new FullBackupStrategy();
@@ -57,14 +59,14 @@ namespace EasySave.Strategies
         /// <returns>Instance de la stratégie correspondante</returns>
         /// 
 
-        public static IBackupStrategy CreateStrategy(BackupType backupType)
+        public static IBackupStrategy CreateStrategy(BackupTypes backupType)
         {
             switch (backupType)
             {
-                case BackupType.Full:
+                case BackupTypes.FULL:
                     return new FullBackupStrategy();
 
-                case BackupType.Differential:
+                case BackupTypes.DIFFERENTIAL:
                     return new DifferentialBackupStrategy();
 
                 default:

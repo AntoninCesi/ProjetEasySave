@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using EasySave.ViewModels;
 using System;
 using System.Collections.Generic;
+using System;
+using EasySave.Models;
+using EasySave.Strategies;
 
-
-
-class Program
+namespace EasySave
 {
-
-    static void Main(string[] args)
+    class Program
     {
-        Controller controller = new Controller(args);
+        static void Main(string[] args)
+        {
+            Controller controller = new Controller(args);
 
+
+
+        }
     }
-        
 }
-

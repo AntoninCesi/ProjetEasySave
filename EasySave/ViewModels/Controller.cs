@@ -29,7 +29,7 @@ namespace EasySave.ViewModels
                     int fId = (int)char.GetNumericValue(first);
                     int lId = (int)char.GetNumericValue(last);
 
-                    if (GetJobs().Count >= fId && GetJobs().Count >= lId)
+                    if (getJobs().Count >= fId && getJobs().Count >= lId)
                     {
                         if (middle == '-') { 
                             //lancer la sauvegarde de fId et lId
@@ -44,13 +44,14 @@ namespace EasySave.ViewModels
         }
 
         // Expose the job list to the View for validation purposes
-        public List<BackupJob> GetJobs() => backupManager.BackupJobs;
+
+        public List<BackupJob> getJobs() => backupManager.getBackupJobList();
 
         public void startBackupJob(int jobId)
         {
-            if (GetJobs().Count >= jobId)
+            if (getJobs().Count >= jobId)
             {
-               //ask to the factory to start a backupjob
+                backupManager.ExecuteJob(jobId);
             }
             //else { displayMessage("y a pas de job"); }
         }
@@ -65,7 +66,11 @@ namespace EasySave.ViewModels
         // Placeholder for job existence check
         public bool JobExists(string jobName)
         {
-            return GetJobs().Any(job => job.name == jobName);
+            return getJobs().Any(job => job.name == jobName);
+        }
+        public string[] getJobName()
+        {
+            return getJobs().Select(job => job.name).ToArray();
         }
         public void createBackupJob(string jobName, string sourcePath, string destPath, BackupTypes type)
         {

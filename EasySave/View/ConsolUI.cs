@@ -35,9 +35,9 @@ namespace EasySave.View
                 string? choice = Console.ReadLine()?.Trim();
                 switch (choice)
                 {
-                    case "1": this.createBackupJob(BackupTypes.COMPLET); break;
+                    case "1": this.createBackupJob(BackupTypes.FULL); break;
                     case "2": this.createBackupJob(BackupTypes.DIFFERENTIAL); break;
-                    case "3": displayMessage(new Message(MessageType.Loading)); break;
+                    case "3": this.startBackupJob(); break;
                     case "4": quit = true; displayMessage(new Message(MessageType.Goodbye)); break;
                     default: displayMessage(new Message(MessageType.InvalidChoice)); break;
                 }
@@ -64,7 +64,7 @@ namespace EasySave.View
             string jobName = Console.ReadLine() ?? string.Empty;
 
 
-            // 1. Validate that job name is not empty
+            /*// 1. Validate that job name is not empty
             if (string.IsNullOrWhiteSpace(jobName))
             {
                 displayMessage(new Message(MessageType.EmptyJobName));
@@ -97,7 +97,7 @@ namespace EasySave.View
             if (Directory.Exists(sourcePath) && !Directory.EnumerateFileSystemEntries(sourcePath).Any())
             {
                 displayMessage(new Message(MessageType.SourceEmpty));
-            }
+            }*/
 
             // Validation passed: Trigger job creation via Controller
             _controller.createBackupJob(jobName, sourcePath, destinationPath, type);
@@ -105,11 +105,40 @@ namespace EasySave.View
 
         private void startBackupJob()
         {
-            Console.WriteLine("quel ?");
-            Console.ReadLine();
+            var jobNames = _controller.getJobName()?.ToList();
 
+            // No existing jobs
+            if (jobNames == null || jobNames.Count == 0)
+            {
+                displayMessage(new Message(MessageType.NoJobAvailable));
+                return;
+            }
 
+            // Job postings
+            Console.WriteLine(messageProvider.Resolve(new Message(MessageType.SelectJob)));
+            for (int i = 0; i < jobNames.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {jobNames[i]}");
+            }
+
+            Console.Write("> ");
+            string? input = Console.ReadLine();
+
+            // Confirmation of choice
+            if (!int.TryParse(input, out int choice) || choice < 1 || choice > jobNames.Count)
+            {
+                displayMessage(new Message(MessageType.InvalidChoice));
+                return;
+            }
+
+            string selectedJobName = jobNames[choice - 1];
+
+            // Job launch
+            _controller.startBackupJob(choice - 1);
+
+            displayMessage(new Message(MessageType.BackupStarted));
         }
+
 
         public void displayMessage(string message) => Console.WriteLine(message);
         public void displayMessage(Message message) => Console.WriteLine(messageProvider.Resolve(message));

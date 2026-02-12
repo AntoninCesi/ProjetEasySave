@@ -48,5 +48,8 @@ namespace EasySave.StateManagement
         {
             listBackupJob[jobId].status.DestinationPath = destinationPath;
         }
+
+        public BackupJob getJobById (int jobId) {  return listBackupJob[jobId]; }
     }
+    
 }
