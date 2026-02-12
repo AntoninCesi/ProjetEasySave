@@ -33,7 +33,7 @@ namespace EasySave.ExecutionManagement
              Console.WriteLine(_stateManager.listBackupJob[jobId].ToString());
             
         }
-        public void ExecuteJob(int jobId)
+        public void ExecuteJobAsyncExecuteJob(int jobId)
         {
             Console.WriteLine("= Test de la Factory =\n");
             BackupStrategyFactory.ExecuteBackup(_stateManager.getJobById(jobId));
@@ -44,29 +44,14 @@ namespace EasySave.ExecutionManagement
             return _stateManager.listBackupJob;
         }
 
-        /*public void ExecuteJob(BackupJob job)
+
+        // Executes a specific job in a separate thread
+        public async Task ExecuteJob(int jobId)
         {
-            // Choose the right strategy based on job type
-            IBackupStrategy strategy = job.Type == BackupType.COMPLET
-                ? (IBackupStrategy)new FullBackupStrategy()
-                : (IBackupStrategy)new DifferentialBackupStrategy();
-
-            job.Status = BackupStatus.ACTIVE;
-
-            // Execution with the callback to catch each file process
-            strategy.Execute(job, (fileData, remaining) => {
-                // 1. Trigger the event for the UI/ViewModel
-                OnFileProcess?.Invoke(this, fileData);
-
-                // 2. Update the state (JSON logging)
-                NotifyState(job, fileData, remaining);
-            });
-
-            job.Status = BackupStatus.FINISHED;
-
-            // Final update to notify completion
-            _stateManager.Update(new BackupState
+            var job = _stateManager.getJobById(jobId);
+            if (job == null)
             {
+<<<<<<< HEAD
                 Name = job.Name,
                 Status = job.Status
             });
@@ -80,18 +65,49 @@ namespace EasySave.ExecutionManagement
          * 
          * 
          * file, int remaining)
+=======
+                Console.WriteLine($"Job {jobId} introuvable !");
+                return;
+            }
+
+                await Task.Run(() =>
+                {
+                    try
+                    {
+                        Console.WriteLine($"Démarrage du job {job.name}");
+                        // Appelle la factory qui exécute la stratégie
+                        BackupStrategyFactory.ExecuteBackup(job);
+
+                        // Job terminé avec succès
+                        job.status.Status = BackupStateResum.FINISHED;
+                        job.status.LastActionTimestamp = DateTime.Now;
+                        Console.WriteLine($"Job {job.name} terminé avec succès !");
+                    }
+                    catch (Exception ex)
+                    {
+                        // Gestion de l'erreur pour ce job uniquement
+                        job.status.Status = BackupStateResum.ERROR;
+                        job.status.LastActionTimestamp = DateTime.Now;
+                        Console.WriteLine($"Erreur dans le job {job.name} : {ex.Message}");
+                    }
+                });
+        }
+
+        // Exécute tous les jobs de la liste **simultanément** sans limite
+        public async Task ExecuteAllJob()
+>>>>>>> ec736776ddace35e3bd30d76ac2639d02c907c9a
         {
-            // Mapping job data and current file data to the state model
-            _stateManager.Update(new BackupState
+            var tasks = new List<Task>();
+
+            for (int i = 0; i < _stateManager.listBackupJob.Count; i++)
             {
-                Name = job.Name,
-                LastActionTimestamp = DateTime.Now,
-                Status = job.Status,
-                TotalFiles = job.TotalFiles,
-                TotalSize = job.TotalSize,
-                SourcePath = file.filePath,
-                // FilesRemaining = remaining // Uncomment if BackupState supports this field
-            });
-        }*/
+                tasks.Add(ExecuteJob(i));
+            }
+               
+            // Attend que tous les jobs soient terminés
+            await Task.WhenAll(tasks);
+        }
+
+
     }
 }

@@ -14,7 +14,11 @@ namespace EasySave
     {
         static void Main(string[] args)
         {
+<<<<<<< HEAD
             Console.WriteLine("=== Test Temps Réel ===\n");
+=======
+            //Controller controller = new Controller(args);
+>>>>>>> ec736776ddace35e3bd30d76ac2639d02c907c9a
 
             // Créer la stratégie
             FullBackupStrategy strategy = new FullBackupStrategy();
