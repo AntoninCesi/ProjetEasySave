@@ -1,4 +1,9 @@
 <Solution>
+<<<<<<< HEAD
   <Project Path="C:\Users\SALOME\source\repos\ProjetEasySave\EasyLog\EasyLog.csproj" />
   <Project Path="C:\Users\SALOME\source\repos\ProjetEasySave\EasySave\EasyLog.csproj" />
+=======
+  <Project Path="C:\Users\HakamAlnemer\ProjetEasySave\EasyLog\EasyLog.csproj" />
+  <Project Path="C:\Users\HakamAlnemer\ProjetEasySave\EasySave\EasySave.csproj" />
+>>>>>>> 26cf00ad4509cf95cee5f78a9c00a6775e7f2161
 </Solution>
