@@ -10,10 +10,42 @@ namespace EasySave.Strategies
     public class BackupStrategyFactory
     {
 
-        /// Exécute une sauvegarde selon le type spécifié
+        /// <summary>
+        /// Exécute une sauvegarde avec un observateur de progression
+        /// </summary>
+        public static BackupProgressObserver ExecuteBackupWithObserver(BackupJob job)
+        {
+            if (job == null)
+                throw new ArgumentNullException(nameof(job));
 
-        /// <param name="backupType">Type de sauvegarde (Full ou Differential)</param>
-        /// <param name="job">Job de sauvegarde contenant les paramètres</param>
+            BackupProgressObserver observer = new BackupProgressObserver();
+
+            switch (job.type)
+            {
+                case BackupTypes.FULL:
+                    {
+                        FullBackupStrategy strategy = new FullBackupStrategy();
+                        strategy.SetProgressObserver(observer);
+                        strategy.Execute(job);
+                        return strategy.GetProgressObserver();
+                    }
+
+                case BackupTypes.DIFFERENTIAL:
+                    {
+                        DifferentialBackupStrategy strategy = new DifferentialBackupStrategy();
+                        strategy.SetProgressObserver(observer);
+                        strategy.Execute(job);
+                        return strategy.GetProgressObserver();
+                    }
+
+                default:
+                    throw new ArgumentException($"Type de sauvegarde non supporté : {job.type}");
+            }
+        }
+
+        /// <summary>
+        /// Exécute une sauvegarde selon le type spécifié
+        /// </summary>
         public static void ExecuteBackup(BackupJob job)
         {
             if (job == null)
@@ -55,9 +87,7 @@ namespace EasySave.Strategies
         
         /// Crée une instance de la stratégie appropriée sans l'exécuter
         
-        /// <param name="backupType">Type de sauvegarde</param>
-        /// <returns>Instance de la stratégie correspondante</returns>
-        /// 
+     
 
         public static IBackupStrategy CreateStrategy(BackupTypes backupType)
         {

@@ -71,7 +71,15 @@ namespace EasySave.ExecutionManagement
                 Status = job.Status
             });
         }*/
-        /*private void NotifyState(BackupJob job, EasySave.Models.FileInfo file, int remaining)
+        /*private void NotifyState(BackupJob job, EasySave.Models.FileInfo
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * file, int remaining)
         {
             // Mapping job data and current file data to the state model
             _stateManager.Update(new BackupState

@@ -12,6 +12,29 @@ namespace EasySave.Strategies
 
     public class FullBackupStrategy : IBackupStrategy
     {
+        private BackupProgressObserver _progressObserver;
+
+        public FullBackupStrategy()
+        {
+            _progressObserver = new BackupProgressObserver();
+        }
+
+        /// <summary>
+        /// Permet d'attacher un observateur externe
+        /// </summary>
+        public void SetProgressObserver(BackupProgressObserver observer)
+        {
+            _progressObserver = observer ?? new BackupProgressObserver();
+        }
+
+        /// <summary>
+        /// Récupère l'observateur de progression
+        /// </summary>
+        public BackupProgressObserver GetProgressObserver()
+        {
+            return _progressObserver;
+        }
+
         public void Execute(BackupJob job)// ProgressCallback? callback)
         {
             if (job == null)
@@ -39,7 +62,12 @@ namespace EasySave.Strategies
             // Calcul de la taille totale
             long totalSize = CalculateTotalSize(job.sourcePath);
 
-           
+            // Réinitialiser l'observateur pour cette nouvelle sauvegarde
+            _progressObserver.Reset();
+
+            // Pré-analyser tous les fichiers à sauvegarder
+            CollectFilesToBackup(job.sourcePath);
+
             try
             {
                 // Copie récursive de tous les fichiers et dossiers
@@ -48,13 +76,13 @@ namespace EasySave.Strategies
                     job.destinationPath,
                     job,
                     ref remainingFiles);
-                
 
-            
+
+
             }
             catch (Exception ex)
             {
-                job.status.Status = BackupStateResum.ERROR; 
+                job.status.Status = BackupStateResum.ERROR;
                 job.status.LastActionTimestamp = DateTime.Now;
                 throw new Exception($"Erreur lors de la sauvegarde complète : {ex.Message}", ex);
             }
@@ -68,7 +96,7 @@ namespace EasySave.Strategies
             string destinationPath,
             BackupJob job,
             ref int remainingFiles)
-           
+
         {
             SysDirInfo sourceDir = new SysDirInfo(sourcePath);
 
@@ -91,7 +119,9 @@ namespace EasySave.Strategies
                         filePath = file.FullName,
                         fileSize = file.Length,
                         isDirectory = false,
-                        lastModified = file.LastWriteTime
+                        lastModified = file.LastWriteTime,
+                        backupStatus = FileBackupStatus.InProgress,
+                        backupStartTime = DateTime.Now
                     };
 
                     string destFilePath = System.IO.Path.Combine(destinationPath, file.Name);
@@ -99,13 +129,21 @@ namespace EasySave.Strategies
                     // Copie physique du fichier
                     file.CopyTo(destFilePath, true);
 
-             
-                    
-                    
-                 
+                    // Enregistrer le temps de fin et calculer la durée
+                    fileData.backupEndTime = DateTime.Now;
+                    fileData.backupDuration = fileData.backupEndTime - fileData.backupStartTime;
+
+                    // Marquer comme terminé et notifier
+                    fileData.backupStatus = FileBackupStatus.Completed;
+                    _progressObserver.NotifyFileSaved(fileData);
+
+
+
+
+
 
                     // Notification de progression au Manager
-                    
+
                 }
                 catch (Exception ex)
                 {
@@ -135,8 +173,8 @@ namespace EasySave.Strategies
 
                     // Appel récursif pour copier le sous-répertoire
                     CopyDirectoryRecursive(
-                        subDir.FullName, 
-                        destSubDirPath, 
+                        subDir.FullName,
+                        destSubDirPath,
                         job,
                         ref remainingFiles
                        );
@@ -158,7 +196,7 @@ namespace EasySave.Strategies
             try
             {
                 SysDirInfo dir = new SysDirInfo(path);
-                
+
                 // Compter les fichiers du répertoire courant
                 count += dir.GetFiles().Length;
 
@@ -190,7 +228,7 @@ namespace EasySave.Strategies
             try
             {
                 SysDirInfo dir = new SysDirInfo(path);
-                
+
                 // Additionner la taille des fichiers du répertoire courant
                 foreach (SysFileInfo file in dir.GetFiles())
                 {
@@ -213,6 +251,47 @@ namespace EasySave.Strategies
             }
 
             return totalSize;
+        }
+
+        /// <summary>
+        /// Collecte tous les fichiers à sauvegarder et les ajoute à l'observateur
+        /// </summary>
+        private void CollectFilesToBackup(string path)
+        {
+            try
+            {
+                SysDirInfo dir = new SysDirInfo(path);
+
+                // Ajouter tous les fichiers du répertoire courant
+                foreach (SysFileInfo file in dir.GetFiles())
+                {
+                    var fileData = new EasySave.Models.FileInfo
+                    {
+                        fileName = file.Name,
+                        filePath = file.FullName,
+                        fileSize = file.Length,
+                        isDirectory = false,
+                        lastModified = file.LastWriteTime,
+                        backupStatus = FileBackupStatus.Pending
+                    };
+
+                    _progressObserver.AddFileToBackup(fileData);
+                }
+
+                // Collecter récursivement dans les sous-répertoires
+                foreach (SysDirInfo subDir in dir.GetDirectories())
+                {
+                    CollectFilesToBackup(subDir.FullName);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Ignorer les répertoires auxquels on n'a pas accès
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors de la collecte des fichiers dans {path} : {ex.Message}");
+            }
         }
     }
 }

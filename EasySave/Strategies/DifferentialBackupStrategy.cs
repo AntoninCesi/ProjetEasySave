@@ -12,6 +12,29 @@ namespace EasySave.Strategies
     /// </summary>
     public class DifferentialBackupStrategy : IBackupStrategy
     {
+        private BackupProgressObserver _progressObserver;
+
+        public DifferentialBackupStrategy()
+        {
+            _progressObserver = new BackupProgressObserver();
+        }
+
+        /// <summary>
+        /// Permet d'attacher un observateur externe
+        /// </summary>
+        public void SetProgressObserver(BackupProgressObserver observer)
+        {
+            _progressObserver = observer ?? new BackupProgressObserver();
+        }
+
+        /// <summary>
+        /// Récupère l'observateur de progression
+        /// </summary>
+        public BackupProgressObserver GetProgressObserver()
+        {
+            return _progressObserver;
+        }
+
         public void Execute(BackupJob job)
         {
             if (job == null)
@@ -43,6 +66,12 @@ namespace EasySave.Strategies
 
             // Analyse préalable pour déterminer quels fichiers doivent être sauvegardés
             AnalyzeBackupNeeds(job.sourcePath, job.destinationPath, ref filesToBackup, ref sizeToBackup);
+
+            // Réinitialiser l'observateur pour cette nouvelle sauvegarde
+            _progressObserver.Reset();
+
+            // Pré-analyser et ajouter tous les fichiers à sauvegarder à l'observateur
+            CollectFilesToBackup(job.sourcePath, job.destinationPath);
 
             // Mise à jour de l'état initial
             /*job.status.Status = BackupStateResum.ACTIVE;
@@ -157,19 +186,44 @@ namespace EasySave.Strategies
                             filePath = file.FullName,
                             fileSize = file.Length,
                             isDirectory = false,
-                            lastModified = file.LastWriteTime
+                            lastModified = file.LastWriteTime,
+                            backupStatus = FileBackupStatus.InProgress,
+                            backupStartTime = DateTime.Now
                         };
 
                         // Copie physique du fichier
                         file.CopyTo(destFilePath, true);
 
+                        // Enregistrer le temps de fin et calculer la durée
+                        fileData.backupEndTime = DateTime.Now;
+                        fileData.backupDuration = fileData.backupEndTime - fileData.backupStartTime;
+
+                        // Marquer comme terminé et notifier
+                        fileData.backupStatus = FileBackupStatus.Completed;
+                        _progressObserver.NotifyFileSaved(fileData);
+
                         // Décrémenter le nombre de fichiers restants
                         remainingFiles--;
-
-                        // Notification de progression au Manager
                     }
                     else
                     {
+                        // Fichier déjà à jour, marquer comme ignoré
+                        var fileData = new EasySave.Models.FileInfo
+                        {
+                            fileName = file.Name,
+                            filePath = file.FullName,
+                            fileSize = file.Length,
+                            isDirectory = false,
+                            lastModified = file.LastWriteTime,
+                            backupStatus = FileBackupStatus.Skipped,
+                            backupStartTime = DateTime.Now,
+                            backupEndTime = DateTime.Now,
+                            backupDuration = TimeSpan.Zero
+                        };
+
+                        // On notifie quand même pour le comptage
+                        _progressObserver.NotifyFileSaved(fileData);
+
                         // Fichier déjà à jour, on le compte quand même comme traité
                         remainingFiles--;
                     }
@@ -325,6 +379,51 @@ namespace EasySave.Strategies
             }
 
             return totalSize;
+        }
+
+        /// <summary>
+        /// Collecte tous les fichiers qui nécessitent une sauvegarde et les ajoute à l'observateur
+        /// </summary>
+        private void CollectFilesToBackup(string sourcePath, string destinationPath)
+        {
+            try
+            {
+                SysDirInfo dir = new SysDirInfo(sourcePath);
+
+                // Analyser tous les fichiers du répertoire courant
+                foreach (SysFileInfo file in dir.GetFiles())
+                {
+                    if (NeedsBackup(file, destinationPath))
+                    {
+                        var fileData = new EasySave.Models.FileInfo
+                        {
+                            fileName = file.Name,
+                            filePath = file.FullName,
+                            fileSize = file.Length,
+                            isDirectory = false,
+                            lastModified = file.LastWriteTime,
+                            backupStatus = FileBackupStatus.Pending
+                        };
+
+                        _progressObserver.AddFileToBackup(fileData);
+                    }
+                }
+
+                // Collecter récursivement dans les sous-répertoires
+                foreach (SysDirInfo subDir in dir.GetDirectories())
+                {
+                    string destSubDirPath = System.IO.Path.Combine(destinationPath, subDir.Name);
+                    CollectFilesToBackup(subDir.FullName, destSubDirPath);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Ignorer les répertoires auxquels on n'a pas accès
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erreur lors de la collecte des fichiers dans {sourcePath} : {ex.Message}");
+            }
         }
     }
 }

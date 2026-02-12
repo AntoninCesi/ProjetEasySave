@@ -48,7 +48,9 @@ namespace EasySave.ViewModels;
 			var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
 
 			state.TotalFiles = files.Length;
-			state.TotalSizeBytes = files.Sum(f => new FileInfo(f).Length);
+			state.TotalSizeBytes = files.Sum(f => new 
+
+(f).Length);
 
 			state.RemainingFiles = state.TotalFiles;
 			state.RemainingSizeBytes = state.TotalSizeBytes;
@@ -59,7 +61,9 @@ namespace EasySave.ViewModels;
 			// 3) Copier + logs + update state temps réel
 			foreach (var file in files)
 			{
-				var fileInfo = new FileInfo(file);
+				var 
+
+= new FileInfo(file);
 
 				string destFile = file.Replace(job.SourcePath, job.TargetPath);
 				string destDir = Path.GetDirectoryName(destFile)!;
