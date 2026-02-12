@@ -17,8 +17,8 @@ namespace EasySave
             BackupJob job = new BackupJob
             {
                 name = "Test Backup",
-                sourcePath = @"C:\SourceTEST",
-                destinationPath = @"C:\DestTEST",
+                sourcePath = @"C:\Users\jenni\Downloads",
+                destinationPath = @"C:\Users\jenni\Documents\CESI\CESI2025-2026\Genie logiciel\s3",
                 type = BackupTypes.FULL,
                 status = new BackupState()
             };

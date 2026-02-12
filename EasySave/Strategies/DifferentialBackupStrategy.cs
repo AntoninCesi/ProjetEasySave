@@ -24,20 +24,8 @@ namespace EasySave.Strategies
             if (string.IsNullOrWhiteSpace(job.destinationPath))
                 throw new ArgumentException("Le chemin de destination ne peut pas être vide");
 
-            if (!Directory.Exists(job.sourcePath))
+            if (!Directory.Exists(job.sourcePath) || !Directory.Exists(job.destinationPath))
                 throw new DirectoryNotFoundException($"Le répertoire source n'existe pas : {job.sourcePath}");
-
-            // Créer le répertoire de destination
-            if (!Directory.Exists(job.destinationPath))
-            {
-                Directory.CreateDirectory(job.destinationPath);
-            }
-
-            // Initialiser l'observateur du job
-            if (job.progressObserver == null)
-            {
-                job.progressObserver = new BackupProgressObserver();
-            }
 
             job.progressObserver.Reset();
 
