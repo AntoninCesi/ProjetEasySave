@@ -1,6 +1,6 @@
 using System;
 using EasySave.Models;
-using EasySave.Strategies;
+using EasySave.ViewModels;
 using Tool.Utils;
 
 namespace EasySave
@@ -9,6 +9,7 @@ namespace EasySave
     {
         static void Main(string[] args)
         {
+<<<<<<< HEAD
             Console.WriteLine("=== Test Système Optimisé ===\n");
 
             // ========================================
@@ -73,6 +74,9 @@ namespace EasySave
             Console.WriteLine(new string('=', 60));
 
             Console.ReadKey();
+=======
+            Controller controller = new Controller(args);
+>>>>>>> feature/backupstate
         }
     }
 }

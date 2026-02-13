@@ -2,19 +2,24 @@ using System;
 using System.IO;
 using System.Linq;
 using EasySave.Messaging;
-using EasySave.ViewModels;
+using EasySave.Models;
+using EasySave.StateManagement;
 using Tool.Utils;
+using EasySave.ViewModels;
 
 namespace EasySave.View
 {
     public class ConsoleUI : IUserInterface
     {
         private readonly MessageProvider messageProvider;
-        private Controller _controller;
+        private readonly Controller _controller;
 
-        public ConsoleUI(Controller control)
+        // Verrou pour écrire dans la console sans chevauchement
+        private readonly object _consoleLock = new object();
+
+        public ConsoleUI(Controller controller)
         {
-            _controller = control;
+            _controller = controller;
             bool isFrench = AskLanguage();
             messageProvider = new MessageProvider(isFrench);
         }
@@ -35,9 +40,9 @@ namespace EasySave.View
                 string? choice = Console.ReadLine()?.Trim();
                 switch (choice)
                 {
-                    case "1": this.createBackupJob(BackupTypes.FULL); break;
-                    case "2": this.createBackupJob(BackupTypes.DIFFERENTIAL); break;
-                    case "3": this.startBackupJob(); break;
+                    case "1": createBackupJob(BackupTypes.FULL); break;
+                    case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
+                    case "3": startBackupJob(); break;
                     case "4": quit = true; displayMessage(new Message(MessageType.Goodbye)); break;
                     default: displayMessage(new Message(MessageType.InvalidChoice)); break;
                 }
@@ -53,68 +58,50 @@ namespace EasySave.View
 
         private void createBackupJob(BackupTypes type)
         {
-            // Data collection
+           
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
+            if (string.IsNullOrWhiteSpace(sourcePath) || !Directory.Exists(sourcePath))
+            {
+                Console.WriteLine("Le répertoire source n'existe pas ou est vide.");
+                return;
+            }
+            
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
             string destinationPath = Console.ReadLine() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(destinationPath) || !Directory.Exists(destinationPath))
+            {
+                Console.WriteLine("Le répertoire de destination n'existe pas ou est vide.");
+                return;
+            }
 
+
+            // Demande le nom du job
             Console.Write(messageProvider.Resolve(new Message(MessageType.JobName)));
             string jobName = Console.ReadLine() ?? string.Empty;
 
-
-            /*// 1. Validate that job name is not empty
             if (string.IsNullOrWhiteSpace(jobName))
             {
-                displayMessage(new Message(MessageType.EmptyJobName));
+                Console.WriteLine("Le nom du job ne peut pas être vide.");
                 return;
             }
 
-            // 2. Validate that job name is unique (using .name property from team's model)
-            var jobs = _controller.GetJobs();
-            if (jobs != null && jobs.Any(j => j.name != null && j.name.Equals(jobName, StringComparison.OrdinalIgnoreCase)))
-            {
-                displayMessage(new Message(MessageType.DuplicateJobName));
-                return;
-            }
-
-            // 3. Validate that source directory actually exists
-            if (!Directory.Exists(sourcePath))
-            {
-                displayMessage(new Message(MessageType.SourceDoesNotExist));
-                return;
-            }
-
-            // 4. Validate that source and destination are different paths
-            if (sourcePath.Trim().Equals(destinationPath.Trim(), StringComparison.OrdinalIgnoreCase))
-            {
-                displayMessage(new Message(MessageType.SourceAndDestIdentical));
-                return;
-            }
-
-            // 5. Warning if the source directory is empty
-            if (Directory.Exists(sourcePath) && !Directory.EnumerateFileSystemEntries(sourcePath).Any())
-            {
-                displayMessage(new Message(MessageType.SourceEmpty));
-            }*/
-
-            // Validation passed: Trigger job creation via Controller
+            // Tout est ok, crée le job via le controller
             _controller.createBackupJob(jobName, sourcePath, destinationPath, type);
+            Console.WriteLine("Le job de backup a été créé avec succès !");
         }
 
         private void startBackupJob()
         {
             var jobNames = _controller.getJobName()?.ToList();
 
-            // No existing jobs
             if (jobNames == null || jobNames.Count == 0)
             {
                 displayMessage(new Message(MessageType.NoJobAvailable));
                 return;
             }
 
-            // Job postings
             Console.WriteLine(messageProvider.Resolve(new Message(MessageType.SelectJob)));
             for (int i = 0; i < jobNames.Count; i++)
             {
@@ -124,19 +111,39 @@ namespace EasySave.View
             Console.Write("> ");
             string? input = Console.ReadLine();
 
-            // Confirmation of choice
             if (!int.TryParse(input, out int choice) || choice < 1 || choice > jobNames.Count)
             {
                 displayMessage(new Message(MessageType.InvalidChoice));
                 return;
             }
 
-            string selectedJobName = jobNames[choice - 1];
+            int jobId = choice - 1;
 
-            // Job launch
-            _controller.startBackupJob(choice - 1);
+            // S'abonner aux notifications de progression avant de lancer le job
+            AttachJobProgress(jobId);
+
+            // Lancer le job via le controller
+            _controller.startBackupJob(jobId);
 
             displayMessage(new Message(MessageType.BackupStarted));
+        }
+
+        // Connecte l'UI à l'observer du job pour afficher la progression
+        private void AttachJobProgress(int jobId)
+        {
+            var stateManager = _controller.getJobStateManager(jobId); // Controller renvoie un BackupStateManager
+            if (stateManager == null) return;
+
+            stateManager.ProgressChanged += (filesSaved, totalSize, elapsed, jobName) =>
+            {
+                lock (_consoleLock)
+                {
+                    Console.SetCursorPosition(0, Console.CursorTop);
+                    Console.Write(
+                        $"[{jobName}] Fichiers: {filesSaved}, Taille: {totalSize / 1024} KB, Temps: {elapsed:c}"
+                    );
+                }
+            };
         }
 
 

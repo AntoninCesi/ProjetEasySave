@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 using EasySave.ExecutionManagement;
 using EasySave.View;
 using EasySave.Models;
+using EasySave.StateManagement; // <-- ajouter pour BackupStateManager
 using Tool.Utils;
 
 namespace EasySave.ViewModels
@@ -11,6 +12,9 @@ namespace EasySave.ViewModels
     public class Controller
     {
         private BackupExecutionManager backupManager = new BackupExecutionManager();
+
+        // Map des jobs vers leurs BackupStateManager
+        private readonly Dictionary<int, BackupStateManager> _stateManagers = new();
 
         public Controller(string[] args)
         {
@@ -31,10 +35,11 @@ namespace EasySave.ViewModels
 
                     if (getJobs().Count >= fId && getJobs().Count >= lId)
                     {
-                        if (middle == '-') { 
+                        if (middle == '-')
+                        {
                             //lancer la sauvegarde de fId et lId
                         }
-                        else if (middle == ',') 
+                        else if (middle == ',')
                         {
                             // faire un for qui lance les sauvegard de fId et lId
                         }
@@ -44,12 +49,11 @@ namespace EasySave.ViewModels
         }
 
         // Expose the job list to the View for validation purposes
-
         public List<BackupJob> getJobs() => backupManager.getBackupJobList();
 
         public void startBackupJob(int jobId)
         {
-            if (getJobs().Count >= jobId)
+            if (getJobs().Count > jobId)
             {
                 backupManager.ExecuteJob(jobId);
             }
@@ -60,6 +64,7 @@ namespace EasySave.ViewModels
         {
             return new ConsoleUI(this);
         }
+
         public void displayMessage(string message) { Console.WriteLine(message); }
         public void getUIMessage(string message) { }
 
@@ -68,13 +73,35 @@ namespace EasySave.ViewModels
         {
             return getJobs().Any(job => job.name == jobName);
         }
+
         public string[] getJobName()
         {
-            return getJobs().Select(job => job.name).ToArray();
+            var jobNames = new List<string>();
+            foreach (var job in getJobs())
+            {
+                if (job.status.Status == BackupStateResum.INACTIVE || job.status.Status == BackupStateResum.ERROR)
+                {
+                    jobNames.Add(job.name);
+                }
+            }
+            return jobNames.ToArray();
         }
+
         public void createBackupJob(string jobName, string sourcePath, string destPath, BackupTypes type)
         {
             backupManager.createBackupJob(jobName, sourcePath, destPath, type);
+
+            // Créer le BackupStateManager correspondant pour ce job
+            int jobId = backupManager.getBackupJobList().Count - 1;
+            var job = backupManager.getBackupJobList()[jobId];
+            _stateManagers[jobId] = new BackupStateManager(job);
+        }
+
+        public BackupStateManager getJobStateManager(int jobId)
+        {
+            if (_stateManagers.ContainsKey(jobId))
+                return _stateManagers[jobId];
+            return null;
         }
     }
 }
