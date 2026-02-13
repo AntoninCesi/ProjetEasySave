@@ -1,147 +1,244 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using EasyLog;
+using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Windows;
+using System.Windows.Input;
+using EasySave.Commands;
 using EasySave.Models;
+using EasySave.Resources;
 using EasySave.Services;
-using static System.Reflection.Metadata.BlobBuilder;
+using EasySave.View;
 
-namespace EasySave.ViewModels;
-
-
-/*public class MainViewModel
+namespace EasySave.ViewModels
 {
-	private readonly List<BackupState> _states = new();
-	private readonly List<BackupJob> _jobs = new();
-	private readonly StateService _stateService = new();
-	public MainViewModel()
-	{
-		_jobs.Add(new BackupJob
-		{
-			Name = "TestJob",
-			SourcePath = @"C:\Temp\SourceTest",
-			TargetPath = @"C:\Temp\TargetTest",
-			Type = BackupType.Full
-		});
-	}
-	public void ExecuteBackup(int jobIndex)
-	{
-		if (jobIndex < 0 || jobIndex >= _jobs.Count) return;
+    public class MainViewModel : INotifyPropertyChanged
+    {
+        // Collection of jobs that automatically notifies the UI (DataGrid) on changes
+        public ObservableCollection<BackupJob> BackupJobs { get; set; }
+        private readonly BusinessSoftwareMonitor _businessMonitor;
 
-		var job = _jobs[jobIndex];
+        public LanguageManager Lang => LanguageManager.Instance;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-		// 1) Récupérer ou créer l'état du job
-		var state = _states.FirstOrDefault(s => s.JobName == job.Name);
-		if (state == null)
-		{
-			state = new BackupState { JobName = job.Name };
-			_states.Add(state);
-		}
+        // Commands for UI interactions
+        public ICommand ChangeLanguageCommand { get; }
+        public ICommand CreateJobCommand { get; }
+        public ICommand RunSelectionCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
 
-		state.Status = BackupStatus.ACTIF;
-		state.LastActionTimestamp = DateTime.Now;
-		state.CurrentSourceUNC = job.SourcePath;
-		state.CurrentDestinationUNC = job.TargetPath;
+        public MainViewModel()
+        {
+            BackupJobs = new ObservableCollection<BackupJob>();
+            _businessMonitor = BusinessSoftwareMonitor.Instance;
 
-		try
-		{
-			// 2) Lister les fichiers + calculer totaux
-			var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
+            // Initialize commands with their respective methods
+            ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
+            CreateJobCommand = new RelayCommand(_ => CreateNewJob());
+            RunSelectionCommand = new RelayCommand(_ => RunSelectedBackups());
+            OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
+        }
 
+<<<<<<< HEAD
 			state.TotalFiles = files.Length;
 			state.TotalSizeBytes = files.Sum(f => new 
 
 (f).Length);
+=======
+        private void ChangeLanguage(string? languageCode)
+        {
+            if (string.IsNullOrEmpty(languageCode)) return;
+            LanguageManager.Instance.ChangeLanguage(languageCode);
+            OnPropertyChanged(nameof(Lang));
+        }
+>>>>>>> feature/wpf-interface
 
-			state.RemainingFiles = state.TotalFiles;
-			state.RemainingSizeBytes = state.TotalSizeBytes;
-			state.Progress = 0f;
+        /// <summary>
+        /// Logic to open the Create Job window and retrieve the result
+        /// </summary>
+        private void CreateNewJob()
+        {
+            // Instantiate the ViewModel for the dialog
+            var createVm = new CreateJobViewModel();
 
-			_stateService.SaveStates(_states);
+            // Create the View and link it to the ViewModel via DataContext
+            var dialog = new CreateJobDialog
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = createVm
+            };
 
+<<<<<<< HEAD
 			// 3) Copier + logs + update state temps réel
 			foreach (var file in files)
 			{
 				var 
 
 = new FileInfo(file);
+=======
+            // ShowDialog returns true only if window.DialogResult is set to true
+            if (dialog.ShowDialog() == true)
+            {
+                if (createVm.CreatedJob != null)
+                {
+                    // Adding to ObservableCollection automatically refreshes the DataGrid
+                    BackupJobs.Add(createVm.CreatedJob);
+>>>>>>> feature/wpf-interface
 
-				string destFile = file.Replace(job.SourcePath, job.TargetPath);
-				string destDir = Path.GetDirectoryName(destFile)!;
+                    MessageBox.Show(
+                        string.Format(Lang["JobCreatedSuccess"], createVm.CreatedJob.name),
+                        Lang["Success"],
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
+            }
+        }
 
-				// Différentiel : ne copie que si le fichier a changé
-				if (job.Type == BackupType.Differential && File.Exists(destFile))
-				{
-					var targetInfo = new FileInfo(destFile);
-					if (fileInfo.Length == targetInfo.Length && fileInfo.LastWriteTime == targetInfo.LastWriteTime)
-					{
-						// Si on skip, on considère quand même ce fichier comme "traité"
-						state.RemainingFiles -= 1;
-						state.RemainingSizeBytes -= fileInfo.Length;
+        private void RunSelectedBackups()
+        {
+            // === TEST CRYPTOSOFT ===
+            TestCryptoSoft();
+            return;
+            // === FIN TEST ===
 
-						state.Progress = state.TotalFiles > 0
-							? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
-							: 0f;
+            // Check if there are any jobs
+            if (BackupJobs.Count == 0)
+            {
+                MessageBox.Show(
+                    Lang["NoJobsMessage"],
+                    Lang["NoJobs"],
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+                return;
+            }
 
-						state.LastActionTimestamp = DateTime.Now;
-						_stateService.SaveStates(_states);
-						continue;
-					}
-				}
+            // Check if business software is running
+            if (_businessMonitor.IsBusinessSoftwareRunning())
+            {
+                var settings = AppSettings.Instance;
+                MessageBox.Show(
+                    string.Format(Lang["BackupBlockedMessage"], settings.BusinessSoftware),
+                    Lang["BackupBlocked"],
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
 
-				if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
+                Console.WriteLine($"[{DateTime.Now}] Backup blocked: Business software '{settings.BusinessSoftware}' detected");
+                return;
+            }
 
-				// Update current file (avant copie)
-				state.CurrentSourceUNC = file;
-				state.CurrentDestinationUNC = destFile;
-				state.LastActionTimestamp = DateTime.Now;
-				_stateService.SaveStates(_states);
+            // TEMPORARY: Show progress window for demo
+            var progressVM = new ProgressViewModel
+            {
+                JobName = "Backup Test",
+                TotalFiles = 150,
+                ProcessedFiles = 67,
+                ProgressPercentage = 44.7,
+                CurrentFile = @"C:\Users\Documents\Photos\Vacances2024.jpg",
+                TotalBytes = 1024L * 1024L * 750,
+                ProcessedBytes = 1024L * 1024L * 335,
+                TransferSpeed = "12.5 MB/s",
+                TimeRemaining = "2 min 15 sec"
+            };
 
-				// Timer + copie
-				var stopWatch = Stopwatch.StartNew();
-				File.Copy(file, destFile, true);
-				stopWatch.Stop();
+            var progressWindow = new ProgressWindow(progressVM);
+            progressWindow.ShowDialog();
 
-				// Log via la DLL EasyLog (1 ligne JSON par événement)
-				EasyLog.EasyLog.Instance.WriteLog(
-					DateTime.Now,
-					job.Name,
-					file,
-					destFile,
-					fileInfo.Length,
-					stopWatch.ElapsedMilliseconds
-				);
+            // TODO: When colleague finishes BackupStateObservator, replace above with:
+            // - Create ProgressViewModel
+            // - Pass it to BackupStateObservator
+            // - Start the actual backup with progress updates
+        }
 
-				// Update progress après traitement du fichier
-				state.RemainingFiles -= 1;
-				state.RemainingSizeBytes -= fileInfo.Length;
+        private void TestCryptoSoft()
+        {
+            try
+            {
+                // Create a test file
+                string testFile = Path.Combine(Path.GetTempPath(), "test_crypto.txt");
+                string encryptedFile = testFile + ".encrypted";
+                string decryptedFile = Path.Combine(Path.GetTempPath(), "test_crypto_decrypted.txt");
+                string content = "Hello World! This is a test file for CryptoSoft encryption.";
 
-				state.Progress = state.TotalFiles > 0
-					? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
-					: 0f;
+                // Write test content
+                File.WriteAllText(testFile, content);
 
-				state.LastActionTimestamp = DateTime.Now;
-				_stateService.SaveStates(_states);
-			}
+                MessageBox.Show(
+                    string.Format(Lang["OriginalFileCreated"], testFile, content),
+                    "CryptoSoft Test",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
 
-			// 4) Fin OK
-			state.Status = BackupStatus.TERMINE;
-			state.Progress = 1f;
-			state.RemainingFiles = 0;
-			state.RemainingSizeBytes = 0;
-			state.CurrentSourceUNC = "";
-			state.CurrentDestinationUNC = "";
-			state.LastActionTimestamp = DateTime.Now;
-			_stateService.SaveStates(_states);
-		}
-		catch (Exception ex)
-		{
-			// 5) Erreur
-			Console.WriteLine($"Error during backup: {ex.Message}");
+                // Encrypt
+                var encryptResult = CryptoSoftService.EncryptFile(testFile, encryptedFile, "TestKey123");
 
-			state.Status = BackupStatus.EN_ERREUR;
-			state.LastActionTimestamp = DateTime.Now;
-			_stateService.SaveStates(_states);
-		}
-	}
+                if (encryptResult.Success)
+                {
+                    string message = string.Format(Lang["EncryptionSuccess"], encryptedFile, encryptResult.TimeMs);
+                    message += "\n\n" + Lang["CheckConsole"];
+
+                    MessageBox.Show(
+                        message,
+                        Lang["Success"],
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+
+                    // Decrypt
+                    var decryptResult = CryptoSoftService.DecryptFile(encryptedFile, decryptedFile, "TestKey123");
+
+                    if (decryptResult.Success)
+                    {
+                        string decryptedContent = File.ReadAllText(decryptedFile);
+                        string decryptMessage = string.Format(Lang["DecryptionSuccess"], decryptResult.TimeMs);
+                        decryptMessage += $"\n\n{decryptedContent}";
+
+                        MessageBox.Show(
+                            decryptMessage,
+                            Lang["Success"],
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information
+                        );
+
+                        // Cleanup
+                        File.Delete(testFile);
+                        File.Delete(encryptedFile);
+                        File.Delete(decryptedFile);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show(
+                        string.Format(Lang["EncryptionFailed"], encryptResult.ErrorMessage),
+                        "Error",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error
+                    );
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(Lang["EncryptionFailed"], ex.Message),
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error
+                );
+            }
+        }
+
+        private void OpenSettings()
+        {
+            var settingsWindow = new SettingsWindow { Owner = Application.Current.MainWindow };
+            settingsWindow.ShowDialog();
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }
-*/
