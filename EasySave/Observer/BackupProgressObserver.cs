@@ -5,21 +5,22 @@ using EasySave.Models;
 namespace EasySave.Strategies
 {
     /// <summary>
-    /// Observateur ultra-simplifié pour suivre la progression des sauvegardes
-    /// Stocke SEULEMENT : nombre de fichiers, taille totale, temps
+    /// Observateur simplifié pour suivre la progression des sauvegardes
+    /// Stocke : nombre de fichiers, taille totale, temps, notifications d'erreur
     /// </summary>
     public class BackupProgressObserver
     {
-        // Lock pour thread-safety
         private readonly object _lock = new object();
 
-        // Compteurs simples
         private int _filesSaved = 0;
         private long _totalSize = 0;
         private DateTime _backupStartTime;
 
         // Événement pour notifier les changements
         public event Action<FileInfos> OnProgressChanged;
+
+        // Événement pour notifier les erreurs
+        public event Action<string> OnErrorOccurred;
 
         public BackupProgressObserver()
         {
@@ -29,24 +30,34 @@ namespace EasySave.Strategies
         /// <summary>
         /// Notifie qu'un fichier a été sauvegardé
         /// </summary>
-        public void NotifyFileSaved(long fileSize, TimeSpan backupDuration)
+        public void NotifyFileSaved(long fileSize, TimeSpan fileDuration)
         {
             lock (_lock)
             {
                 _filesSaved++;
                 _totalSize += fileSize;
 
-                // Créer les données de progression
-                var FileInfos = new FileInfos
+                var progress = new FileInfos
                 {
                     FilesSaved = _filesSaved,
                     TotalSize = _totalSize,
                     TotalBackupTime = DateTime.Now - _backupStartTime,
-                    LastFileDuration = backupDuration
+                    LastFileDuration = fileDuration
                 };
 
-                // Notifier de manière asynchrone
-                ThreadPool.QueueUserWorkItem(_ => OnProgressChanged?.Invoke(FileInfos));
+                // Notification asynchrone
+                ThreadPool.QueueUserWorkItem(_ => OnProgressChanged?.Invoke(progress));
+            }
+        }
+
+        /// <summary>
+        /// Notifie une erreur
+        /// </summary>
+        public void NotifyError(string message)
+        {
+            lock (_lock)
+            {
+                ThreadPool.QueueUserWorkItem(_ => OnErrorOccurred?.Invoke(message));
             }
         }
 
@@ -80,5 +91,4 @@ namespace EasySave.Strategies
             }
         }
     }
-
 }

@@ -119,7 +119,7 @@ namespace EasySave.View
                 {
                     Console.SetCursorPosition(0, Console.CursorTop);
                     Console.Write(
-                        $"[{jobName}] Fichiers: {filesSaved}, Taille: {totalSize / 1024} KB, Temps: {elapsed:c}    "
+                        $"[{jobName}] Fichiers: {filesSaved}, Taille: {totalSize / 1024} KB, Temps: {elapsed:c}"
                     );
                 }
             };
