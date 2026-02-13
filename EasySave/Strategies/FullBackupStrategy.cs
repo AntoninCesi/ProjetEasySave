@@ -51,6 +51,13 @@ namespace EasySave.Strategies
                 job.status.Progress = 100;
                 job.status.LastActionTimestamp = DateTime.Now;
             }
+            catch (OperationCanceledException)
+            {
+                // Logiciel métier détecté - laisser l'exception remonter
+                job.status.Status = BackupStateResum.ERROR;
+                job.status.LastActionTimestamp = DateTime.Now;
+                throw;  // Re-throw pour que BackupExecutionManager puisse la gérer
+            }
             catch (Exception ex)
             {
                 job.status.Status = BackupStateResum.ERROR;
@@ -69,8 +76,65 @@ namespace EasySave.Strategies
 
             foreach (SysFileInfo file in sourceDir.GetFiles())
             {
-                DateTime startTime = DateTime.Now;
-                string destFilePath = Path.Combine(destinationPath, file.Name);
+                // ⚠️ VÉRIFICATION DU LOGICIEL MÉTIER PENDANT L'EXÉCUTION (v2.0 requirement)
+                if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
+                {
+                    Console.WriteLine($"⚠️  Logiciel métier détecté pendant la sauvegarde de {job.name}");
+                    Console.WriteLine($"    Fin du transfert du fichier en cours puis arrêt...");
+
+                    // On TERMINE le fichier en cours pour ne pas le corrompre
+                    DateTime startTime = DateTime.Now;
+                    string destFilePath = Path.Combine(destinationPath, file.Name);
+
+                    try
+                    {
+                        bool shouldEncrypt = file.Extension.ToLower() == ".txt";
+
+                        if (shouldEncrypt)
+                        {
+                            string tempEncrypted = destFilePath + ".temp";
+                            var encryptResult = CryptoSoftService.EncryptFile(
+                                file.FullName,
+                                tempEncrypted,
+                                "DefaultEncryptionKey2025"
+                            );
+
+                            if (encryptResult.Success)
+                            {
+                                if (File.Exists(destFilePath))
+                                    File.Delete(destFilePath);
+
+                                File.Move(tempEncrypted, destFilePath);
+                            }
+                            else
+                            {
+                                file.CopyTo(destFilePath, true);
+                            }
+                        }
+                        else
+                        {
+                            file.CopyTo(destFilePath, true);
+                        }
+
+                        TimeSpan duration = DateTime.Now - startTime;
+                        job.progressObserver.NotifyFileSaved(file.Length, duration);
+                    }
+                    catch
+                    {
+                        job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                    }
+
+                    // Logger l'arrêt
+                    LogService.Instance.LogBusinessSoftwareEvent(job.name,
+                        "Backup stopped - Business software detected during execution");
+
+                    // Arrêter la sauvegarde
+                    throw new OperationCanceledException("Business software detected during backup");
+                }
+
+                // COPIE NORMALE du fichier
+                DateTime startTime2 = DateTime.Now;
+                string destFilePath2 = Path.Combine(destinationPath, file.Name);
 
                 try
                 {
@@ -79,7 +143,7 @@ namespace EasySave.Strategies
 
                     if (shouldEncrypt)
                     {
-                        string tempEncrypted = destFilePath + ".temp";
+                        string tempEncrypted = destFilePath2 + ".temp";
                         var encryptResult = CryptoSoftService.EncryptFile(
                             file.FullName,
                             tempEncrypted,
@@ -88,22 +152,22 @@ namespace EasySave.Strategies
 
                         if (encryptResult.Success)
                         {
-                            if (File.Exists(destFilePath))
-                                File.Delete(destFilePath);
+                            if (File.Exists(destFilePath2))
+                                File.Delete(destFilePath2);
 
-                            File.Move(tempEncrypted, destFilePath);
+                            File.Move(tempEncrypted, destFilePath2);
                         }
                         else
                         {
-                            file.CopyTo(destFilePath, true);
+                            file.CopyTo(destFilePath2, true);
                         }
                     }
                     else
                     {
-                        file.CopyTo(destFilePath, true);
+                        file.CopyTo(destFilePath2, true);
                     }
 
-                    TimeSpan duration = DateTime.Now - startTime;
+                    TimeSpan duration = DateTime.Now - startTime2;
                     job.progressObserver.NotifyFileSaved(file.Length, duration);
                 }
                 catch (Exception ex)

@@ -2,6 +2,7 @@ using System;
 using EasySave.Models;
 using EasySave.Strategies;
 using EasySave.StateManagement;
+using EasySave.Services;
 using Tool.Utils;
 
 namespace EasySave.ExecutionManagement
@@ -59,22 +60,41 @@ namespace EasySave.ExecutionManagement
                 return;
             }
 
+            // ⚠️ VÉRIFICATION DU LOGICIEL MÉTIER AVANT DE DÉMARRER (v2.0 requirement)
+            if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
+            {
+                Console.WriteLine($"❌ Impossible de démarrer {job.name} : logiciel métier en cours d'exécution");
+
+                // Logger l'événement
+                LogService.Instance.LogBusinessSoftwareEvent(job.name,
+                    "Backup launch blocked - Business software is running");
+
+                return;  // On n'exécute PAS le job
+            }
+
             await Task.Run(() =>
             {
                 try
                 {
-                    Console.WriteLine($"Démarrage du job {job.name}");
+                    Console.WriteLine($"▶️  Démarrage du job {job.name}");
                     BackupStrategyFactory.ExecuteBackup(job);
 
                     job.status.Status = BackupStateResum.FINISHED;
                     job.status.LastActionTimestamp = DateTime.Now;
-                    Console.WriteLine($"Job {job.name} terminé avec succès !");
+                    Console.WriteLine($"✅ Job {job.name} terminé avec succès !");
+                }
+                catch (OperationCanceledException ex)
+                {
+                    // Exception levée si logiciel métier détecté PENDANT la sauvegarde
+                    job.status.Status = BackupStateResum.ERROR;
+                    job.status.LastActionTimestamp = DateTime.Now;
+                    Console.WriteLine($"⏹️  Job {job.name} arrêté : {ex.Message}");
                 }
                 catch (Exception ex)
                 {
                     job.status.Status = BackupStateResum.ERROR;
                     job.status.LastActionTimestamp = DateTime.Now;
-                    Console.WriteLine($"Erreur dans le job {job.name} : {ex.Message}");
+                    Console.WriteLine($"❌ Erreur dans le job {job.name} : {ex.Message}");
                 }
             });
         }

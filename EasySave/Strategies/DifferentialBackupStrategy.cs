@@ -47,6 +47,13 @@ namespace EasySave.Strategies
                 job.status.Progress = 100;
                 job.status.LastActionTimestamp = DateTime.Now;
             }
+            catch (OperationCanceledException)
+            {
+                // Logiciel métier détecté - laisser l'exception remonter
+                job.status.Status = BackupStateResum.ERROR;
+                job.status.LastActionTimestamp = DateTime.Now;
+                throw;  // Re-throw pour que BackupExecutionManager puisse la gérer
+            }
             catch (Exception ex)
             {
                 job.status.Status = BackupStateResum.ERROR;
@@ -69,7 +76,64 @@ namespace EasySave.Strategies
 
                 if (NeedsBackup(file, destFilePath))
                 {
-                    DateTime startTime = DateTime.Now;
+                    // ⚠️ VÉRIFICATION DU LOGICIEL MÉTIER PENDANT L'EXÉCUTION (v2.0 requirement)
+                    if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
+                    {
+                        Console.WriteLine($"⚠️  Logiciel métier détecté pendant la sauvegarde de {job.name}");
+                        Console.WriteLine($"    Fin du transfert du fichier en cours puis arrêt...");
+
+                        // On TERMINE le fichier en cours
+                        DateTime startTime = DateTime.Now;
+
+                        try
+                        {
+                            bool shouldEncrypt = file.Extension.ToLower() == ".txt";
+
+                            if (shouldEncrypt)
+                            {
+                                string tempEncrypted = destFilePath + ".temp";
+                                var encryptResult = CryptoSoftService.EncryptFile(
+                                    file.FullName,
+                                    tempEncrypted,
+                                    "DefaultEncryptionKey2025"
+                                );
+
+                                if (encryptResult.Success)
+                                {
+                                    if (File.Exists(destFilePath))
+                                        File.Delete(destFilePath);
+
+                                    File.Move(tempEncrypted, destFilePath);
+                                }
+                                else
+                                {
+                                    file.CopyTo(destFilePath, true);
+                                }
+                            }
+                            else
+                            {
+                                file.CopyTo(destFilePath, true);
+                            }
+
+                            TimeSpan duration = DateTime.Now - startTime;
+                            job.progressObserver.NotifyFileSaved(file.Length, duration);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[ERROR] Failed to copy {file.Name}: {ex.Message}");
+                            job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                        }
+
+                        // Logger l'arrêt
+                        LogService.Instance.LogBusinessSoftwareEvent(job.name,
+                            "Backup stopped - Business software detected during execution");
+
+                        // Arrêter la sauvegarde
+                        throw new OperationCanceledException("Business software detected during backup");
+                    }
+
+                    // COPIE NORMALE du fichier
+                    DateTime startTime2 = DateTime.Now;
 
                     try
                     {
@@ -102,7 +166,7 @@ namespace EasySave.Strategies
                             file.CopyTo(destFilePath, true);
                         }
 
-                        TimeSpan duration = DateTime.Now - startTime;
+                        TimeSpan duration = DateTime.Now - startTime2;
                         job.progressObserver.NotifyFileSaved(file.Length, duration);
                     }
                     catch (Exception ex)
