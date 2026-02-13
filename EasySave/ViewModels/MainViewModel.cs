@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -17,25 +18,33 @@ using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
-    /// <summary>
-    /// Main ViewModel with full backend integration
-    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
-        // Collection of jobs that automatically notifies the UI (DataGrid) on changes
         public ObservableCollection<BackupJob> BackupJobs { get; set; }
 
         private readonly BusinessSoftwareMonitor _businessMonitor;
         private readonly BackupExecutionManager _backupManager;
 
+        private BackupJob? _selectedJob;
+
         public LanguageManager Lang => LanguageManager.Instance;
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        // Commands for UI interactions
         public ICommand ChangeLanguageCommand { get; }
         public ICommand CreateJobCommand { get; }
         public ICommand RunSelectionCommand { get; }
+        public ICommand DeleteJobCommand { get; }
         public ICommand OpenSettingsCommand { get; }
+
+        public BackupJob? SelectedJob
+        {
+            get => _selectedJob;
+            set
+            {
+                _selectedJob = value;
+                OnPropertyChanged(nameof(SelectedJob));
+            }
+        }
 
         public MainViewModel()
         {
@@ -43,10 +52,10 @@ namespace EasySave.ViewModels
             _businessMonitor = BusinessSoftwareMonitor.Instance;
             _backupManager = new BackupExecutionManager();
 
-            // Initialize commands with their respective methods
             ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
             CreateJobCommand = new RelayCommand(_ => CreateNewJob());
-            RunSelectionCommand = new RelayCommand(_ => RunSelectedBackups());
+            RunSelectionCommand = new RelayCommand(_ => RunAllJobsParallel());
+            DeleteJobCommand = new RelayCommand(_ => DeleteSelectedJob(), _ => SelectedJob != null);
             OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
         }
 
@@ -57,9 +66,6 @@ namespace EasySave.ViewModels
             OnPropertyChanged(nameof(Lang));
         }
 
-        /// <summary>
-        /// Opens dialog to create a new backup job
-        /// </summary>
         private void CreateNewJob()
         {
             var createVm = new CreateJobViewModel();
@@ -75,10 +81,8 @@ namespace EasySave.ViewModels
                 {
                     var job = createVm.CreatedJob;
 
-                    // Add to UI collection
                     BackupJobs.Add(job);
 
-                    // Add to backend manager
                     _backupManager.createBackupJob(
                         job.name,
                         job.sourcePath,
@@ -96,12 +100,30 @@ namespace EasySave.ViewModels
             }
         }
 
-        /// <summary>
-        /// Runs selected backup jobs with real backend integration
-        /// </summary>
-        private async void RunSelectedBackups()
+        private void DeleteSelectedJob()
         {
-            // Check if there are any jobs
+            if (SelectedJob == null) return;
+
+            var result = MessageBox.Show(
+                $"Delete job '{SelectedJob.name}'?",
+                "Delete Job",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
+
+            if (result == MessageBoxResult.Yes)
+            {
+                BackupJobs.Remove(SelectedJob);
+                MessageBox.Show($"Job deleted!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
+
+        /// <summary>
+        /// Runs ALL jobs in PARALLEL (simultaneously)
+        /// Each job gets its own ProgressWindow
+        /// </summary>
+        private async void RunAllJobsParallel()
+        {
             if (BackupJobs.Count == 0)
             {
                 MessageBox.Show(
@@ -113,7 +135,6 @@ namespace EasySave.ViewModels
                 return;
             }
 
-            // Check if business software is running
             if (_businessMonitor.IsBusinessSoftwareRunning())
             {
                 var settings = AppSettings.Instance;
@@ -123,96 +144,138 @@ namespace EasySave.ViewModels
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning
                 );
-
-                Console.WriteLine($"[{DateTime.Now}] Backup blocked: Business software '{settings.BusinessSoftware}' detected");
                 return;
             }
 
-            // Get the first job (or you can modify to get selected job from DataGrid)
-            var jobToRun = BackupJobs[0];
-            int jobId = 0; // Index in the manager's list
+            // Create ProgressWindow for each job
+            var progressWindows = new List<Window>();
+            var tasks = new List<Task>();
 
-            // Create ProgressViewModel
-            var progressVM = new ProgressViewModel
+            for (int jobId = 0; jobId < BackupJobs.Count; jobId++)
             {
-                JobName = jobToRun.name,
-                TotalFiles = 0,
-                ProcessedFiles = 0,
-                ProgressPercentage = 0,
-                CurrentFile = "Initializing...",
-                TransferSpeed = "0 MB/s",
-                TimeRemaining = "Calculating..."
-            };
+                var jobToRun = BackupJobs[jobId];
+                var backendJob = _backupManager.getJobById(jobId);
 
-            // Get the job from backend manager
-            var backendJob = _backupManager.getJobById(jobId);
-            if (backendJob == null)
-            {
-                MessageBox.Show("Job not found in backend!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
+                if (backendJob == null) continue;
 
-            // Subscribe to progress updates
-            backendJob.progressObserver.OnProgressChanged += (fileInfo) =>
-            {
-                Application.Current.Dispatcher.Invoke(() =>
+                // Count total files
+                int totalFiles = CountTotalFiles(jobToRun.sourcePath);
+
+                // Create ProgressViewModel for this job
+                var progressVM = new ProgressViewModel
                 {
-                    progressVM.ProcessedFiles = fileInfo.FilesSaved;
-                    progressVM.TotalBytes = fileInfo.TotalSize;
-                    progressVM.ProcessedBytes = fileInfo.TotalSize;
+                    JobName = jobToRun.name,
+                    TotalFiles = totalFiles,
+                    ProcessedFiles = 0,
+                    ProgressPercentage = 0,
+                    CurrentFile = "Starting...",
+                    TransferSpeed = "0 MB/s",
+                    TimeRemaining = "Calculating..."
+                };
 
-                    // Calculate percentage (basic - you can improve this)
-                    if (progressVM.TotalFiles > 0)
+                // Subscribe to progress updates
+                backendJob.progressObserver.OnProgressChanged += (fileInfo) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
                     {
-                        progressVM.ProgressPercentage = (fileInfo.FilesSaved / (double)progressVM.TotalFiles) * 100;
+                        progressVM.ProcessedFiles = fileInfo.FilesSaved;
+                        progressVM.TotalBytes = fileInfo.TotalSize;
+                        progressVM.ProcessedBytes = fileInfo.TotalSize;
+
+                        if (totalFiles > 0)
+                        {
+                            progressVM.ProgressPercentage = (fileInfo.FilesSaved / (double)totalFiles) * 100;
+                        }
+
+                        if (fileInfo.TotalBackupTime.TotalSeconds > 0)
+                        {
+                            double bytesPerSecond = fileInfo.TotalSize / fileInfo.TotalBackupTime.TotalSeconds;
+                            progressVM.TransferSpeed = $"{bytesPerSecond / 1024 / 1024:F2} MB/s";
+
+                            if (progressVM.ProgressPercentage > 0)
+                            {
+                                double totalTimeEstimate = fileInfo.TotalBackupTime.TotalSeconds / (progressVM.ProgressPercentage / 100);
+                                double remaining = totalTimeEstimate - fileInfo.TotalBackupTime.TotalSeconds;
+                                progressVM.TimeRemaining = TimeSpan.FromSeconds(remaining).ToString(@"mm\:ss");
+                            }
+                        }
+                    });
+                };
+
+                // Create ProgressWindow for this job
+                var progressWindow = new ProgressWindow(progressVM)
+                {
+                    // Position windows side by side
+                    Left = 100 + (jobId * 50),
+                    Top = 100 + (jobId * 50)
+                };
+
+                progressWindows.Add(progressWindow);
+
+                // Capture jobId in a local variable for the lambda
+                int currentJobId = jobId;
+
+                // Create task for this job
+                var jobTask = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _backupManager.ExecuteJob(currentJobId);
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            progressWindow.Close();
+                        });
                     }
-
-                    // Estimate speed
-                    if (fileInfo.TotalBackupTime.TotalSeconds > 0)
+                    catch (Exception ex)
                     {
-                        double bytesPerSecond = fileInfo.TotalSize / fileInfo.TotalBackupTime.TotalSeconds;
-                        progressVM.TransferSpeed = $"{bytesPerSecond / 1024 / 1024:F2} MB/s";
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(
+                                $"Backup '{jobToRun.name}' failed: {ex.Message}",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error
+                            );
+                            progressWindow.Close();
+                        });
                     }
                 });
-            };
 
-            // Show progress window
-            var progressWindow = new ProgressWindow(progressVM);
+                tasks.Add(jobTask);
 
-            // Execute backup in background
-            _ = Task.Run(async () =>
+                // Show the window (non-blocking)
+                progressWindow.Show();
+            }
+
+            // Wait for ALL jobs to complete in parallel
+            await Task.WhenAll(tasks);
+
+            MessageBox.Show(
+                "All backups completed!",
+                "Success",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+        }
+
+        private int CountTotalFiles(string path)
+        {
+            try
             {
-                try
-                {
-                    await _backupManager.ExecuteJob(jobId);
+                int count = Directory.GetFiles(path).Length;
 
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        MessageBox.Show(
-                            $"Backup '{jobToRun.name}' completed successfully!",
-                            "Backup Complete",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information
-                        );
-                        progressWindow.Close();
-                    });
-                }
-                catch (Exception ex)
+                foreach (string dir in Directory.GetDirectories(path))
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        MessageBox.Show(
-                            $"Backup failed: {ex.Message}",
-                            "Backup Error",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Error
-                        );
-                        progressWindow.Close();
-                    });
+                    count += CountTotalFiles(dir);
                 }
-            });
 
-            progressWindow.ShowDialog();
+                return count;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         private void OpenSettings()
