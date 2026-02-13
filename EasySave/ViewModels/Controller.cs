@@ -76,7 +76,15 @@ namespace EasySave.ViewModels
 
         public string[] getJobName()
         {
-            return getJobs().Select(job => job.name).ToArray();
+            var jobNames = new List<string>();
+            foreach (var job in getJobs())
+            {
+                if (job.status.Status == BackupStateResum.INACTIVE || job.status.Status == BackupStateResum.ERROR)
+                {
+                    jobNames.Add(job.name);
+                }
+            }
+            return jobNames.ToArray();
         }
 
         public void createBackupJob(string jobName, string sourcePath, string destPath, BackupTypes type)
@@ -89,7 +97,6 @@ namespace EasySave.ViewModels
             _stateManagers[jobId] = new BackupStateManager(job);
         }
 
-        // Nouvelle méthode pour exposer le state manager à la UI
         public BackupStateManager getJobStateManager(int jobId)
         {
             if (_stateManagers.ContainsKey(jobId))

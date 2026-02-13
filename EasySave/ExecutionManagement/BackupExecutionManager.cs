@@ -22,6 +22,9 @@ namespace EasySave.ExecutionManagement
                 progressObserver = new BackupProgressObserver()
             };
 
+
+            job.status.Status = BackupStateResum.INACTIVE;
+
             _listBackupJob.Add(job);
 
             // Crée un StateManager pour suivre ce job (UI / observer)
