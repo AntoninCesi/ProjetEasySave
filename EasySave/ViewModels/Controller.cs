@@ -55,7 +55,45 @@ namespace EasySave.ViewModels
                         }
                     }
                 }
+<<<<<<< Updated upstream
                 else
+=======
+            }
+        }
+
+        // Expose the job list to the View for validation purposes
+        public List<BackupJob> getJobs() => backupManager.getBackupJobList();
+
+        public void startBackupJob(int jobId)
+        {
+            if (getJobs().Count > jobId)
+            {
+                backupManager.ExecuteJob(jobId);
+            }
+            //else { displayMessage("y a pas de job"); }
+        }
+
+        public ConsoleUI createUI()
+        {
+            return new ConsoleUI(this);
+        }
+
+        public void displayMessage(string message) { Console.WriteLine(message); }
+        public void getUIMessage(string message) { }
+
+        // Placeholder for job existence check
+        public bool JobExists(string jobName)
+        {
+            return getJobs().Any(job => job.name == jobName);
+        }
+
+        public string[] getJobName()
+        {
+            var jobNames = new List<string>();
+            foreach (var job in getJobs())
+            {
+                if (job.status.Status == BackupStateResum.INACTIVE || job.status.Status == BackupStateResum.ERROR)
+>>>>>>> Stashed changes
                 {
                     this.displayMessage("Error: input must be in the form '3-2' or '4,9'.");
                 }
@@ -72,6 +110,7 @@ namespace EasySave.ViewModels
 
         private bool isBackupJobExist(int jobId)
         {
+<<<<<<< Updated upstream
             return true; // placeholder 
         }
 
@@ -79,6 +118,8 @@ namespace EasySave.ViewModels
 
         public void createBackupJob( string jobName, string sourcePath, string destPath, BackupTypes type) {
 
+=======
+>>>>>>> Stashed changes
             backupManager.createBackupJob(jobName, sourcePath, destPath, type);
         }
         private void executBackupJob(int[] jobId) { }

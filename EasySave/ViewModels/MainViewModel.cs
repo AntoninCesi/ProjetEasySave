@@ -1,5 +1,13 @@
+<<<<<<< Updated upstream
 ﻿/*
 using System.Diagnostics;
+=======
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+>>>>>>> Stashed changes
 using System.Linq;
 using EasyLog;
 using EasySave.Models;
@@ -11,6 +19,7 @@ namespace EasySave.ViewModels;
 
 public class MainViewModel
 {
+<<<<<<< Updated upstream
 	private readonly List<BackupState> _states = new();
 	private readonly List<BackupJob> _jobs = new();
 	private readonly StateService _stateService = new();
@@ -27,6 +36,11 @@ public class MainViewModel
 	public void ExecuteBackup(int jobIndex)
 	{
 		if (jobIndex < 0 || jobIndex >= _jobs.Count) return;
+=======
+    public class MainViewModel : INotifyPropertyChanged
+    {
+        public ObservableCollection<BackupJob> BackupJobs { get; set; }
+>>>>>>> Stashed changes
 
 		var job = _jobs[jobIndex];
 

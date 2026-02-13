@@ -43,6 +43,7 @@ namespace EasySave.View
 
                 switch (choice)
                 {
+<<<<<<< Updated upstream
                     case "1":
                         this.createBackupJob(BackupTypes.COMPLET);
                         break;
@@ -59,6 +60,13 @@ namespace EasySave.View
                     default:
                         displayMessage(new Message(MessageType.InvalidChoice));
                         break;
+=======
+                    case "1": createBackupJob(BackupTypes.FULL); break;
+                    case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
+                    case "3": startBackupJob(); break;
+                    case "4": quit = true; displayMessage(new Message(MessageType.Goodbye)); break;
+                    default: displayMessage(new Message(MessageType.InvalidChoice)); break;
+>>>>>>> Stashed changes
                 }
 
                 if (!quit)
@@ -69,11 +77,27 @@ namespace EasySave.View
                 }
             }
         }
+<<<<<<< Updated upstream
         private void createBackupJob(BackupTypes type)
         {
             Console.Write(messageProvider.Resolve (new Message( MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
+=======
+
+        private void createBackupJob(BackupTypes type)
+        {
+
+            Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
+            string sourcePath = Console.ReadLine() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(sourcePath) || !Directory.Exists(sourcePath))
+            {
+                Console.WriteLine("Le répertoire source n'existe pas ou est vide.");
+                return;
+            }
+
+>>>>>>> Stashed changes
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
             string destinationPath = Console.ReadLine() ?? string.Empty;
 

@@ -1,4 +1,8 @@
 using Tool.Utils;
+<<<<<<< Updated upstream
+=======
+using EasySave.Strategies;
+>>>>>>> Stashed changes
 
 namespace EasySave.Models
 {

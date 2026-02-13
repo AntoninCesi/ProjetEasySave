@@ -1,11 +1,25 @@
 using System;
+<<<<<<< Updated upstream
 using System.Threading.Tasks;
 using EasyLog;
 
 namespace EasySave
+=======
+using EasySave.Models;
+using EasySave.ViewModels;
+using Tool.Utils;
+using EasySave.View;
+using System.Windows;
+
+namespace EasySave;
+
+class Program
+>>>>>>> Stashed changes
 {
-    internal class Program
+    [STAThread]
+    static void Main(string[] args)
     {
+<<<<<<< Updated upstream
         static void Main(string[] args)
         {
             var logger = new EasyLogger();
@@ -25,3 +39,11 @@ namespace EasySave
         }
     }
 }
+=======
+        // On crée l'application et on affiche la fenêtre
+        Application app = new Application();
+        MainWindow window = new MainWindow();
+        app.Run(window);
+    }
+}
+>>>>>>> Stashed changes
