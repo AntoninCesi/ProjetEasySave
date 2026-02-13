@@ -58,17 +58,38 @@ namespace EasySave.View
 
         private void createBackupJob(BackupTypes type)
         {
+           
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
+            if (string.IsNullOrWhiteSpace(sourcePath) || !Directory.Exists(sourcePath))
+            {
+                Console.WriteLine("Le répertoire source n'existe pas ou est vide.");
+                return;
+            }
+            
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
             string destinationPath = Console.ReadLine() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(destinationPath) || !Directory.Exists(destinationPath))
+            {
+                Console.WriteLine("Le répertoire de destination n'existe pas ou est vide.");
+                return;
+            }
 
+
+            // Demande le nom du job
             Console.Write(messageProvider.Resolve(new Message(MessageType.JobName)));
             string jobName = Console.ReadLine() ?? string.Empty;
 
-            // Crée le job via le controller
+            if (string.IsNullOrWhiteSpace(jobName))
+            {
+                Console.WriteLine("Le nom du job ne peut pas être vide.");
+                return;
+            }
+
+            // Tout est ok, crée le job via le controller
             _controller.createBackupJob(jobName, sourcePath, destinationPath, type);
+            Console.WriteLine("Le job de backup a été créé avec succès !");
         }
 
         private void startBackupJob()
