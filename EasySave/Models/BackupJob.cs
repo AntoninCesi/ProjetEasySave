@@ -1,8 +1,13 @@
+<<<<<<< HEAD
 using Tool.Utils;
 <<<<<<< Updated upstream
 =======
 using EasySave.Strategies;
 >>>>>>> Stashed changes
+=======
+﻿using Tool.Utils;
+using EasySave.Strategies;
+>>>>>>> origin/dev
 
 namespace EasySave.Models
 {
@@ -13,8 +18,9 @@ namespace EasySave.Models
         public string destinationPath { get; set; } = string.Empty;
         public BackupTypes type { get; set; }
         public BackupState status { get; set; } = new BackupState();
-        public int totalFiles { get; set; }
-        public long totalSize { get; set; }
+
+        // Observateur de progression propre à ce job
+        public BackupProgressObserver progressObserver { get; set; } = new BackupProgressObserver();
 
         public override string ToString()
         {
@@ -23,9 +29,7 @@ namespace EasySave.Models
                 $"Type : {type}\n" +
                 $"Source : {sourcePath}\n" +
                 $"Destination : {destinationPath}\n" +
-                $"Status : {status}\n" +
-                $"Total files : {totalFiles}\n" +
-                $"Total size : {totalSize} bytes\n";
+                $"Status : {status.Status}\n";
         }
     }
 }

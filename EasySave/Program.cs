@@ -1,10 +1,13 @@
 using System;
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 using System.Threading.Tasks;
 using EasyLog;
 
 namespace EasySave
 =======
+=======
+>>>>>>> origin/dev
 using EasySave.Models;
 using EasySave.ViewModels;
 using Tool.Utils;
@@ -13,6 +16,7 @@ using System.Windows;
 
 namespace EasySave;
 
+<<<<<<< HEAD
 class Program
 >>>>>>> Stashed changes
 {
@@ -47,3 +51,16 @@ class Program
     }
 }
 >>>>>>> Stashed changes
+=======
+    class Program
+    {
+        [STAThread]
+        static void Main(string[] args)
+        {
+            // On crée l'application et on affiche la fenêtre
+            Application app = new Application();
+            MainWindow window = new MainWindow();
+            app.Run(window);
+        }
+    } 
+>>>>>>> origin/dev

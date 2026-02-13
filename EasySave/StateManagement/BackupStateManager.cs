@@ -4,49 +4,40 @@ using Tool.Utils;
 
 namespace EasySave.StateManagement
 {
-    // implement observer to manage JSON dump
-    public class BackupStateManager  //IBackupStateObserver
+    /// <summary>
+    /// Gère l'état d'un BackupJob et notifie la progression à la UI
+    /// </summary>
+    public class BackupStateManager
     {
-        public List<BackupJob> listBackupJob = new List<BackupJob>();
+        private readonly BackupJob _job;
 
-        public void Update(BackupState state)
-        {
-            // C'est ici que tu appelleras ta logique JSON (UpdateState)
-            //Console.WriteLine($"[JSON DUMP] Update of {state.Name} - Progression: {state.Progress}%");
-        }
-        // 1st method: Update backup status
-        public void UpdateStatus(int jobId, BackupStateResum newStatus)
-        {
-            listBackupJob[jobId].status.Status = newStatus;
-            listBackupJob[jobId].status.LastActionTimestamp = DateTime.Now;
-        }
+        // Propriétés internes
+        public int FilesSaved { get; private set; }
+        public long TotalSize { get; private set; }
+        public TimeSpan Elapsed { get; private set; }
+        public string JobName => _job.name; // Nom exposé à la UI
 
-        // 2nd method: Set total files and total size
-        public void SetTotals(int jobId, int totalFiles, long totalSize)
-        {
-            listBackupJob[jobId].status.TotalFiles = totalFiles;
-            listBackupJob[jobId].status.TotalSize = totalSize;
-        }
+        // Événement que la UI peut écouter pour afficher la progression
+        // Paramètres : FilesSaved, TotalSize, Elapsed, JobName
+        public event Action<int, long, TimeSpan, string> ProgressChanged;
 
-        // 3rd method: Update progress and remaining data
-        public void UpdateProgress(int jobId, int remainingFiles, long remainingSize, int progress)
+        public BackupStateManager(BackupJob job)
         {
-            listBackupJob[jobId].status.RemainingFiles = remainingFiles;
-            listBackupJob[jobId].status.RemainingSize = remainingSize;
-            listBackupJob[jobId].status.Progress = progress;
-            listBackupJob[jobId].status.LastActionTimestamp = DateTime.Now;
+            _job = job ?? throw new ArgumentNullException(nameof(job));
+
+            // S'abonner à l'observer du job
+            _job.progressObserver.OnProgressChanged += OnProgressChanged;
         }
 
-        // 4th method: Set source path
-        public void SetSourcePath(int jobId, string sourcePath)
+        private void OnProgressChanged(FileInfos info)
         {
-            listBackupJob[jobId].status.SourcePath = sourcePath;
-        }
+            // Mettre à jour les propriétés internes
+            FilesSaved = info.FilesSaved;
+            TotalSize = info.TotalSize;
+            Elapsed = info.TotalBackupTime;
 
-        // 5th method: Set destination path
-        public void SetDestinationPath(int jobId, string destinationPath)
-        {
-            listBackupJob[jobId].status.DestinationPath = destinationPath;
+            // Notifier la UI via un événement (sans exposer le modèle)
+            ProgressChanged?.Invoke(FilesSaved, TotalSize, Elapsed, JobName);
         }
     }
 }

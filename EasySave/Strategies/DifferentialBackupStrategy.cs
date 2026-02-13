@@ -1,53 +1,208 @@
-﻿using System;
+using System;
 using System.IO;
 using EasySave.Models;
+using EasySave.Services;
+using EasySave.Strategies;
+using Tool.Utils;
+using SysFileInfo = System.IO.FileInfo;
+using SysDirInfo = System.IO.DirectoryInfo;
 
 namespace EasySave.Strategies
 {
+    /// <summary>
+    /// Differential backup strategy with encryption
+    /// </summary>
     public class DifferentialBackupStrategy : IBackupStrategy
     {
-        public void Execute(BackupJob job, ProgressCallback callback)
+        public void Execute(BackupJob job)
         {
-            // Use System.IO.DirectoryInfo to avoid confusion with your own models
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(job.sourcePath);
+            if (job == null)
+                throw new ArgumentNullException(nameof(job));
 
-            // Explicitly use System.IO.FileInfo for the Windows file system tools
-            System.IO.FileInfo[] files = di.GetFiles();
-            int totalFiles = files.Length;
-            int count = 0;
+            if (string.IsNullOrWhiteSpace(job.sourcePath))
+                throw new ArgumentException("Le chemin source ne peut pas être vide");
 
-            foreach (System.IO.FileInfo sourceFile in files)
+            if (string.IsNullOrWhiteSpace(job.destinationPath))
+                throw new ArgumentException("Le chemin de destination ne peut pas être vide");
+
+            if (!Directory.Exists(job.sourcePath))
+                throw new DirectoryNotFoundException($"Le répertoire source n'existe pas : {job.sourcePath}");
+
+            if (!Directory.Exists(job.destinationPath))
+                Directory.CreateDirectory(job.destinationPath);
+
+            if (job.progressObserver == null)
+                job.progressObserver = new BackupProgressObserver();
+
+            job.progressObserver.Reset();
+
+            try
             {
-                string destPath = Path.Combine(job.destinationPath, sourceFile.Name);
+                job.status.Status = BackupStateResum.ACTIVE;
+                job.status.LastActionTimestamp = DateTime.Now;
 
-                // Differential logic: copy only if file doesn't exist or was modified
-                if (!File.Exists(destPath) || sourceFile.LastWriteTime > File.GetLastWriteTime(destPath))
+                CopyDirectoryDifferential(job.sourcePath, job.destinationPath, job);
+
+                job.status.Status = BackupStateResum.FINISHED;
+                job.status.Progress = 100;
+                job.status.LastActionTimestamp = DateTime.Now;
+            }
+            catch (OperationCanceledException)
+            {
+                // Logiciel métier détecté - laisser l'exception remonter
+                job.status.Status = BackupStateResum.ERROR;
+                job.status.LastActionTimestamp = DateTime.Now;
+                throw;  // Re-throw pour que BackupExecutionManager puisse la gérer
+            }
+            catch (Exception ex)
+            {
+                job.status.Status = BackupStateResum.ERROR;
+                job.status.LastActionTimestamp = DateTime.Now;
+                job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                throw new Exception($"Erreur lors de la sauvegarde différentielle : {ex.Message}", ex);
+            }
+        }
+
+        private void CopyDirectoryDifferential(string sourcePath, string destinationPath, BackupJob job)
+        {
+            SysDirInfo sourceDir = new SysDirInfo(sourcePath);
+
+            if (!Directory.Exists(destinationPath))
+                Directory.CreateDirectory(destinationPath);
+
+            foreach (SysFileInfo file in sourceDir.GetFiles())
+            {
+                string destFilePath = Path.Combine(destinationPath, file.Name);
+
+                if (NeedsBackup(file, destFilePath))
                 {
-                    // Ensure destination directory exists
-                    if (!Directory.Exists(job.destinationPath))
+                    // ⚠️ VÉRIFICATION DU LOGICIEL MÉTIER PENDANT L'EXÉCUTION (v2.0 requirement)
+                    if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
                     {
-                        Directory.CreateDirectory(job.destinationPath);
+                        Console.WriteLine($"⚠️  Logiciel métier détecté pendant la sauvegarde de {job.name}");
+                        Console.WriteLine($"    Fin du transfert du fichier en cours puis arrêt...");
+
+                        // On TERMINE le fichier en cours
+                        DateTime startTime = DateTime.Now;
+
+                        try
+                        {
+                            bool shouldEncrypt = file.Extension.ToLower() == ".txt";
+
+                            if (shouldEncrypt)
+                            {
+                                string tempEncrypted = destFilePath + ".temp";
+                                var encryptResult = CryptoSoftService.EncryptFile(
+                                    file.FullName,
+                                    tempEncrypted,
+                                    "DefaultEncryptionKey2025"
+                                );
+
+                                if (encryptResult.Success)
+                                {
+                                    if (File.Exists(destFilePath))
+                                        File.Delete(destFilePath);
+
+                                    File.Move(tempEncrypted, destFilePath);
+                                }
+                                else
+                                {
+                                    file.CopyTo(destFilePath, true);
+                                }
+                            }
+                            else
+                            {
+                                file.CopyTo(destFilePath, true);
+                            }
+
+                            TimeSpan duration = DateTime.Now - startTime;
+                            job.progressObserver.NotifyFileSaved(file.Length, duration);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"[ERROR] Failed to copy {file.Name}: {ex.Message}");
+                            job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                        }
+
+                        // Logger l'arrêt
+                        LogService.Instance.LogBusinessSoftwareEvent(job.name,
+                            "Backup stopped - Business software detected during execution");
+
+                        // Arrêter la sauvegarde
+                        throw new OperationCanceledException("Business software detected during backup");
                     }
 
-                    File.Copy(sourceFile.FullName, destPath, true);
+                    // COPIE NORMALE du fichier
+                    DateTime startTime2 = DateTime.Now;
+
+                    try
+                    {
+                        // Force encryption for .txt files
+                        bool shouldEncrypt = file.Extension.ToLower() == ".txt";
+
+                        if (shouldEncrypt)
+                        {
+                            string tempEncrypted = destFilePath + ".temp";
+                            var encryptResult = CryptoSoftService.EncryptFile(
+                                file.FullName,
+                                tempEncrypted,
+                                "DefaultEncryptionKey2025"
+                            );
+
+                            if (encryptResult.Success)
+                            {
+                                if (File.Exists(destFilePath))
+                                    File.Delete(destFilePath);
+
+                                File.Move(tempEncrypted, destFilePath);
+                            }
+                            else
+                            {
+                                file.CopyTo(destFilePath, true);
+                            }
+                        }
+                        else
+                        {
+                            file.CopyTo(destFilePath, true);
+                        }
+
+                        TimeSpan duration = DateTime.Now - startTime2;
+                        job.progressObserver.NotifyFileSaved(file.Length, duration);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[ERROR] Failed to copy {file.Name}: {ex.Message}");
+                        job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                    }
                 }
+            }
 
-                count++;
-                int remaining = totalFiles - count;
+            foreach (SysDirInfo subDir in sourceDir.GetDirectories())
+            {
+                string destSubDirPath = Path.Combine(destinationPath, subDir.Name);
+                CopyDirectoryDifferential(subDir.FullName, destSubDirPath, job);
+            }
+        }
 
-                // Create your custom FileInfo object (the DTO) to send to the Manager
-                // Note: We use the full namespace to be 100% sure there's no error
-                EasySave.Models.FileInfo fileData = new EasySave.Models.FileInfo
-                {
-                    fileName = sourceFile.Name,
-                    filePath = sourceFile.FullName,
-                    fileSize = sourceFile.Length,
-                    isDirectory = false,
-                    lastModified = sourceFile.LastWriteTime
-                };
+        private bool NeedsBackup(SysFileInfo sourceFile, string destFilePath)
+        {
+            try
+            {
+                if (!File.Exists(destFilePath))
+                    return true;
 
-                // Invoke the callback with the custom object and the number of remaining files
-                callback?.Invoke(fileData, remaining);
+                SysFileInfo destFile = new SysFileInfo(destFilePath);
+                if (Math.Abs((sourceFile.LastWriteTime - destFile.LastWriteTime).TotalSeconds) > 1)
+                    return true;
+
+                if (sourceFile.Length != destFile.Length)
+                    return true;
+
+                return false;
+            }
+            catch
+            {
+                return true;
             }
         }
     }

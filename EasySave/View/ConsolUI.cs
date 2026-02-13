@@ -1,48 +1,46 @@
 using System;
+using System.IO;
+using System.Linq;
 using EasySave.Messaging;
-using EasySave.ViewModels;
+using EasySave.Models;
+using EasySave.StateManagement;
 using Tool.Utils;
+using EasySave.ViewModels;
 
 namespace EasySave.View
 {
     public class ConsoleUI : IUserInterface
     {
         private readonly MessageProvider messageProvider;
-        private Controller _controller;
+        private readonly Controller _controller;
 
-        // Constructor asks the language once and creates the provider
-        public ConsoleUI(Controller control)
+        // Verrou pour écrire dans la console sans chevauchement
+        private readonly object _consoleLock = new object();
+
+        public ConsoleUI(Controller controller)
         {
-            _controller = control;
+            _controller = controller;
             bool isFrench = AskLanguage();
             messageProvider = new MessageProvider(isFrench);
         }
 
-        // Main menu display
         public void showMenu()
         {
             bool quit = false;
-
             while (!quit)
             {
                 Console.Clear();
-
-                // Display menu title from provider
                 displayMessage(new Message(MessageType.MenuTitle));
-
-                // Display menu options from provider
                 displayMessage(new Message(MessageType.MenuOption1));
                 displayMessage(new Message(MessageType.MenuOption2));
                 displayMessage(new Message(MessageType.MenuOption3));
                 displayMessage(new Message(MessageType.MenuOption4));
-
-                // Display prompt
                 Console.Write(messageProvider.Resolve(new Message(MessageType.MenuPrompt)));
 
                 string? choice = Console.ReadLine()?.Trim();
-
                 switch (choice)
                 {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
                     case "1":
                         this.createBackupJob(BackupTypes.COMPLET);
@@ -61,12 +59,17 @@ namespace EasySave.View
                         displayMessage(new Message(MessageType.InvalidChoice));
                         break;
 =======
+=======
+>>>>>>> origin/dev
                     case "1": createBackupJob(BackupTypes.FULL); break;
                     case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
                     case "3": startBackupJob(); break;
                     case "4": quit = true; displayMessage(new Message(MessageType.Goodbye)); break;
                     default: displayMessage(new Message(MessageType.InvalidChoice)); break;
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> origin/dev
                 }
 
                 if (!quit)
@@ -77,12 +80,18 @@ namespace EasySave.View
                 }
             }
         }
+<<<<<<< HEAD
 <<<<<<< Updated upstream
+=======
+
+>>>>>>> origin/dev
         private void createBackupJob(BackupTypes type)
         {
-            Console.Write(messageProvider.Resolve (new Message( MessageType.AskSourceDirectory)));
+           
+            Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
+<<<<<<< HEAD
 =======
 
         private void createBackupJob(BackupTypes type)
@@ -91,45 +100,103 @@ namespace EasySave.View
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
+=======
+>>>>>>> origin/dev
             if (string.IsNullOrWhiteSpace(sourcePath) || !Directory.Exists(sourcePath))
             {
                 Console.WriteLine("Le répertoire source n'existe pas ou est vide.");
                 return;
             }
+<<<<<<< HEAD
 
 >>>>>>> Stashed changes
+=======
+            
+>>>>>>> origin/dev
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
             string destinationPath = Console.ReadLine() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(destinationPath) || !Directory.Exists(destinationPath))
+            {
+                Console.WriteLine("Le répertoire de destination n'existe pas ou est vide.");
+                return;
+            }
 
+
+            // Demande le nom du job
             Console.Write(messageProvider.Resolve(new Message(MessageType.JobName)));
             string jobName = Console.ReadLine() ?? string.Empty;
 
-            _controller.createBackupJob(jobName, sourcePath, destinationPath,type);
+            if (string.IsNullOrWhiteSpace(jobName))
+            {
+                Console.WriteLine("Le nom du job ne peut pas être vide.");
+                return;
+            }
+
+            // Tout est ok, crée le job via le controller
+            _controller.createBackupJob(jobName, sourcePath, destinationPath, type);
+            Console.WriteLine("Le job de backup a été créé avec succès !");
         }
 
-        // Display a string directly
-        public void displayMessage(string message)
+        private void startBackupJob()
         {
-            Console.WriteLine(message);
+            var jobNames = _controller.getJobName()?.ToList();
+
+            if (jobNames == null || jobNames.Count == 0)
+            {
+                displayMessage(new Message(MessageType.NoJobAvailable));
+                return;
+            }
+
+            Console.WriteLine(messageProvider.Resolve(new Message(MessageType.SelectJob)));
+            for (int i = 0; i < jobNames.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {jobNames[i]}");
+            }
+
+            Console.Write("> ");
+            string? input = Console.ReadLine();
+
+            if (!int.TryParse(input, out int choice) || choice < 1 || choice > jobNames.Count)
+            {
+                displayMessage(new Message(MessageType.InvalidChoice));
+                return;
+            }
+
+            int jobId = choice - 1;
+
+            // S'abonner aux notifications de progression avant de lancer le job
+            AttachJobProgress(jobId);
+
+            // Lancer le job via le controller
+            _controller.startBackupJob(jobId);
+
+            displayMessage(new Message(MessageType.BackupStarted));
         }
 
-        // Display a Message object using MessageProvider
-        public void displayMessage(Message message)
+        // Connecte l'UI à l'observer du job pour afficher la progression
+        private void AttachJobProgress(int jobId)
         {
-            Console.WriteLine(messageProvider.Resolve(message));
+            var stateManager = _controller.getJobStateManager(jobId); // Controller renvoie un BackupStateManager
+            if (stateManager == null) return;
+
+            stateManager.ProgressChanged += (filesSaved, totalSize, elapsed, jobName) =>
+            {
+                lock (_consoleLock)
+                {
+                    Console.SetCursorPosition(0, Console.CursorTop);
+                    Console.Write(
+                        $"[{jobName}] Fichiers: {filesSaved}, Taille: {totalSize / 1024} KB, Temps: {elapsed:c}"
+                    );
+                }
+            };
         }
 
-        public void attach()
-        {
-            // Future: subscribe to progress events
-        }
 
-        public void displayProgress()
-        {
-            // Future: show progress
-        }
+        public void displayMessage(string message) => Console.WriteLine(message);
+        public void displayMessage(Message message) => Console.WriteLine(messageProvider.Resolve(message));
+        public void attach() { }
+        public void displayProgress() { }
 
-        // Ask the language once
         private bool AskLanguage()
         {
             while (true)
@@ -137,10 +204,8 @@ namespace EasySave.View
                 Console.Clear();
                 Console.Write("Choose language / Choisir la langue (FR/EN): ");
                 string? input = Console.ReadLine()?.Trim().ToUpperInvariant();
-
                 if (input == "FR") return true;
                 if (input == "EN") return false;
-
                 Console.WriteLine("Invalid input. Please enter 'FR' or 'EN'.");
                 Console.ReadKey(true);
             }

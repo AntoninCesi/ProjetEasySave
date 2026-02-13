@@ -1,24 +1,35 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 ﻿/*
 using System.Diagnostics;
 =======
+=======
+>>>>>>> origin/dev
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+>>>>>>> origin/dev
 using System.Linq;
-using EasyLog;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
+using EasySave.Commands;
+using EasySave.ExecutionManagement;
 using EasySave.Models;
+using EasySave.Resources;
 using EasySave.Services;
-using static System.Reflection.Metadata.BlobBuilder;
+using EasySave.Strategies;
+using EasySave.View;
+using Tool.Utils;
 
-namespace EasySave.ViewModels;
-
-
-public class MainViewModel
+namespace EasySave.ViewModels
 {
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 	private readonly List<BackupState> _states = new();
 	private readonly List<BackupJob> _jobs = new();
@@ -41,114 +52,147 @@ public class MainViewModel
     {
         public ObservableCollection<BackupJob> BackupJobs { get; set; }
 >>>>>>> Stashed changes
+=======
+    public class MainViewModel : INotifyPropertyChanged
+    {
+        public ObservableCollection<BackupJob> BackupJobs { get; set; }
+>>>>>>> origin/dev
 
-		var job = _jobs[jobIndex];
+        private readonly BusinessSoftwareMonitor _businessMonitor;
+        private readonly BackupExecutionManager _backupManager;
 
-		// 1) Récupérer ou créer l'état du job
-		var state = _states.FirstOrDefault(s => s.JobName == job.Name);
-		if (state == null)
-		{
-			state = new BackupState { JobName = job.Name };
-			_states.Add(state);
-		}
+        private BackupJob? _selectedJob;
 
-		state.Status = BackupStatus.ACTIF;
-		state.LastActionTimestamp = DateTime.Now;
-		state.CurrentSourceUNC = job.SourcePath;
-		state.CurrentDestinationUNC = job.TargetPath;
+        public LanguageManager Lang => LanguageManager.Instance;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-		try
-		{
-			// 2) Lister les fichiers + calculer totaux
-			var files = Directory.GetFiles(job.SourcePath, "*.*", SearchOption.AllDirectories);
+        public ICommand ChangeLanguageCommand { get; }
+        public ICommand CreateJobCommand { get; }
+        public ICommand RunSelectionCommand { get; }
+        public ICommand DeleteJobCommand { get; }
+        public ICommand OpenSettingsCommand { get; }
 
-			state.TotalFiles = files.Length;
-			state.TotalSizeBytes = files.Sum(f => new FileInfo(f).Length);
+        public BackupJob? SelectedJob
+        {
+            get => _selectedJob;
+            set
+            {
+                _selectedJob = value;
+                OnPropertyChanged(nameof(SelectedJob));
+            }
+        }
 
-			state.RemainingFiles = state.TotalFiles;
-			state.RemainingSizeBytes = state.TotalSizeBytes;
-			state.Progress = 0f;
+        public MainViewModel()
+        {
+            BackupJobs = new ObservableCollection<BackupJob>();
+            _businessMonitor = BusinessSoftwareMonitor.Instance;
+            _backupManager = new BackupExecutionManager();
 
-			_stateService.SaveStates(_states);
+            ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
+            CreateJobCommand = new RelayCommand(_ => CreateNewJob());
+            RunSelectionCommand = new RelayCommand(_ => RunAllJobsParallel());
+            DeleteJobCommand = new RelayCommand(_ => DeleteSelectedJob(), _ => SelectedJob != null);
+            OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
+        }
 
-			// 3) Copier + logs + update state temps réel
-			foreach (var file in files)
-			{
-				var fileInfo = new FileInfo(file);
+        private void ChangeLanguage(string? languageCode)
+        {
+            if (string.IsNullOrEmpty(languageCode)) return;
+            LanguageManager.Instance.ChangeLanguage(languageCode);
+            OnPropertyChanged(nameof(Lang));
+        }
 
-				string destFile = file.Replace(job.SourcePath, job.TargetPath);
-				string destDir = Path.GetDirectoryName(destFile)!;
+        private void CreateNewJob()
+        {
+            var createVm = new CreateJobViewModel();
+            var dialog = new CreateJobDialog
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = createVm
+            };
 
-				// Différentiel : ne copie que si le fichier a changé
-				if (job.Type == BackupType.Differential && File.Exists(destFile))
-				{
-					var targetInfo = new FileInfo(destFile);
-					if (fileInfo.Length == targetInfo.Length && fileInfo.LastWriteTime == targetInfo.LastWriteTime)
-					{
-						// Si on skip, on considère quand même ce fichier comme "traité"
-						state.RemainingFiles -= 1;
-						state.RemainingSizeBytes -= fileInfo.Length;
+            if (dialog.ShowDialog() == true)
+            {
+                if (createVm.CreatedJob != null)
+                {
+                    var job = createVm.CreatedJob;
 
-						state.Progress = state.TotalFiles > 0
-							? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
-							: 0f;
+                    BackupJobs.Add(job);
 
-						state.LastActionTimestamp = DateTime.Now;
-						_stateService.SaveStates(_states);
-						continue;
-					}
-				}
+                    _backupManager.createBackupJob(
+                        job.name,
+                        job.sourcePath,
+                        job.destinationPath,
+                        job.type
+                    );
 
-				if (!Directory.Exists(destDir)) Directory.CreateDirectory(destDir);
+                    MessageBox.Show(
+                        string.Format(Lang["JobCreatedSuccess"], job.name),
+                        Lang["Success"],
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
+            }
+        }
 
-				// Update current file (avant copie)
-				state.CurrentSourceUNC = file;
-				state.CurrentDestinationUNC = destFile;
-				state.LastActionTimestamp = DateTime.Now;
-				_stateService.SaveStates(_states);
+        private void DeleteSelectedJob()
+        {
+            if (SelectedJob == null) return;
 
-				// Timer + copie
-				var stopWatch = Stopwatch.StartNew();
-				File.Copy(file, destFile, true);
-				stopWatch.Stop();
+            var result = MessageBox.Show(
+                $"Delete job '{SelectedJob.name}'?",
+                "Delete Job",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question
+            );
 
-				// Log via la DLL EasyLog (1 ligne JSON par événement)
-				EasyLog.EasyLog.Instance.WriteLog(
-					DateTime.Now,
-					job.Name,
-					file,
-					destFile,
-					fileInfo.Length,
-					stopWatch.ElapsedMilliseconds
-				);
+            if (result == MessageBoxResult.Yes)
+            {
+                BackupJobs.Remove(SelectedJob);
+                MessageBox.Show($"Job deleted!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+        }
 
-				// Update progress après traitement du fichier
-				state.RemainingFiles -= 1;
-				state.RemainingSizeBytes -= fileInfo.Length;
+        /// <summary>
+        /// Runs ALL jobs in PARALLEL (simultaneously)
+        /// Each job gets its own ProgressWindow
+        /// </summary>
+        private async void RunAllJobsParallel()
+        {
+            if (BackupJobs.Count == 0)
+            {
+                MessageBox.Show(
+                    Lang["NoJobsMessage"],
+                    Lang["NoJobs"],
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information
+                );
+                return;
+            }
 
-				state.Progress = state.TotalFiles > 0
-					? (float)(state.TotalFiles - state.RemainingFiles) / state.TotalFiles
-					: 0f;
+            if (_businessMonitor.IsBusinessSoftwareRunning())
+            {
+                var settings = AppSettings.Instance;
+                MessageBox.Show(
+                    string.Format(Lang["BackupBlockedMessage"], settings.BusinessSoftware),
+                    Lang["BackupBlocked"],
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning
+                );
+                return;
+            }
 
-				state.LastActionTimestamp = DateTime.Now;
-				_stateService.SaveStates(_states);
-			}
+            // Create ProgressWindow for each job
+            var progressWindows = new List<Window>();
+            var tasks = new List<Task>();
 
-			// 4) Fin OK
-			state.Status = BackupStatus.TERMINE;
-			state.Progress = 1f;
-			state.RemainingFiles = 0;
-			state.RemainingSizeBytes = 0;
-			state.CurrentSourceUNC = "";
-			state.CurrentDestinationUNC = "";
-			state.LastActionTimestamp = DateTime.Now;
-			_stateService.SaveStates(_states);
-		}
-		catch (Exception ex)
-		{
-			// 5) Erreur
-			Console.WriteLine($"Error during backup: {ex.Message}");
+            for (int jobId = 0; jobId < BackupJobs.Count; jobId++)
+            {
+                var jobToRun = BackupJobs[jobId];
+                var backendJob = _backupManager.getJobById(jobId);
 
+<<<<<<< HEAD
 			state.Status = BackupStatus.EN_ERREUR;
 			state.LastActionTimestamp = DateTime.Now;
 			_stateService.SaveStates(_states);
@@ -156,3 +200,139 @@ public class MainViewModel
 	}
 }
 */
+=======
+                if (backendJob == null) continue;
+
+                // Count total files
+                int totalFiles = CountTotalFiles(jobToRun.sourcePath);
+
+                // Create ProgressViewModel for this job
+                var progressVM = new ProgressViewModel
+                {
+                    JobName = jobToRun.name,
+                    TotalFiles = totalFiles,
+                    ProcessedFiles = 0,
+                    ProgressPercentage = 0,
+                    CurrentFile = "Starting...",
+                    TransferSpeed = "0 MB/s",
+                    TimeRemaining = "Calculating..."
+                };
+
+                // Subscribe to progress updates
+                backendJob.progressObserver.OnProgressChanged += (fileInfo) =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        progressVM.ProcessedFiles = fileInfo.FilesSaved;
+                        progressVM.TotalBytes = fileInfo.TotalSize;
+                        progressVM.ProcessedBytes = fileInfo.TotalSize;
+
+                        if (totalFiles > 0)
+                        {
+                            progressVM.ProgressPercentage = (fileInfo.FilesSaved / (double)totalFiles) * 100;
+                        }
+
+                        if (fileInfo.TotalBackupTime.TotalSeconds > 0)
+                        {
+                            double bytesPerSecond = fileInfo.TotalSize / fileInfo.TotalBackupTime.TotalSeconds;
+                            progressVM.TransferSpeed = $"{bytesPerSecond / 1024 / 1024:F2} MB/s";
+
+                            if (progressVM.ProgressPercentage > 0)
+                            {
+                                double totalTimeEstimate = fileInfo.TotalBackupTime.TotalSeconds / (progressVM.ProgressPercentage / 100);
+                                double remaining = totalTimeEstimate - fileInfo.TotalBackupTime.TotalSeconds;
+                                progressVM.TimeRemaining = TimeSpan.FromSeconds(remaining).ToString(@"mm\:ss");
+                            }
+                        }
+                    });
+                };
+
+                // Create ProgressWindow for this job
+                var progressWindow = new ProgressWindow(progressVM)
+                {
+                    // Position windows side by side
+                    Left = 100 + (jobId * 50),
+                    Top = 100 + (jobId * 50)
+                };
+
+                progressWindows.Add(progressWindow);
+
+                // Capture jobId in a local variable for the lambda
+                int currentJobId = jobId;
+
+                // Create task for this job
+                var jobTask = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _backupManager.ExecuteJob(currentJobId);
+
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            progressWindow.Close();
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            MessageBox.Show(
+                                $"Backup '{jobToRun.name}' failed: {ex.Message}",
+                                "Error",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Error
+                            );
+                            progressWindow.Close();
+                        });
+                    }
+                });
+
+                tasks.Add(jobTask);
+
+                // Show the window (non-blocking)
+                progressWindow.Show();
+            }
+
+            // Wait for ALL jobs to complete in parallel
+            await Task.WhenAll(tasks);
+
+            MessageBox.Show(
+                "All backups completed!",
+                "Success",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information
+            );
+        }
+
+        private int CountTotalFiles(string path)
+        {
+            try
+            {
+                int count = Directory.GetFiles(path).Length;
+
+                foreach (string dir in Directory.GetDirectories(path))
+                {
+                    count += CountTotalFiles(dir);
+                }
+
+                return count;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        private void OpenSettings()
+        {
+            var settingsWindow = new SettingsWindow { Owner = Application.Current.MainWindow };
+            settingsWindow.ShowDialog();
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+}
+>>>>>>> origin/dev
