@@ -2,21 +2,31 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using EasySave.Commands;
+using EasySave.ExecutionManagement;
 using EasySave.Models;
 using EasySave.Resources;
 using EasySave.Services;
+using EasySave.Strategies;
 using EasySave.View;
+using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
+    /// <summary>
+    /// Main ViewModel with full backend integration
+    /// </summary>
     public class MainViewModel : INotifyPropertyChanged
     {
         // Collection of jobs that automatically notifies the UI (DataGrid) on changes
         public ObservableCollection<BackupJob> BackupJobs { get; set; }
+
         private readonly BusinessSoftwareMonitor _businessMonitor;
+        private readonly BackupExecutionManager _backupManager;
 
         public LanguageManager Lang => LanguageManager.Instance;
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -31,6 +41,7 @@ namespace EasySave.ViewModels
         {
             BackupJobs = new ObservableCollection<BackupJob>();
             _businessMonitor = BusinessSoftwareMonitor.Instance;
+            _backupManager = new BackupExecutionManager();
 
             // Initialize commands with their respective methods
             ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
@@ -39,54 +50,44 @@ namespace EasySave.ViewModels
             OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
         }
 
-<<<<<<< HEAD
-			state.TotalFiles = files.Length;
-			state.TotalSizeBytes = files.Sum(f => new 
-
-(f).Length);
-=======
         private void ChangeLanguage(string? languageCode)
         {
             if (string.IsNullOrEmpty(languageCode)) return;
             LanguageManager.Instance.ChangeLanguage(languageCode);
             OnPropertyChanged(nameof(Lang));
         }
->>>>>>> feature/wpf-interface
 
         /// <summary>
-        /// Logic to open the Create Job window and retrieve the result
+        /// Opens dialog to create a new backup job
         /// </summary>
         private void CreateNewJob()
         {
-            // Instantiate the ViewModel for the dialog
             var createVm = new CreateJobViewModel();
-
-            // Create the View and link it to the ViewModel via DataContext
             var dialog = new CreateJobDialog
             {
                 Owner = Application.Current.MainWindow,
                 DataContext = createVm
             };
 
-<<<<<<< HEAD
-			// 3) Copier + logs + update state temps réel
-			foreach (var file in files)
-			{
-				var 
-
-= new FileInfo(file);
-=======
-            // ShowDialog returns true only if window.DialogResult is set to true
             if (dialog.ShowDialog() == true)
             {
                 if (createVm.CreatedJob != null)
                 {
-                    // Adding to ObservableCollection automatically refreshes the DataGrid
-                    BackupJobs.Add(createVm.CreatedJob);
->>>>>>> feature/wpf-interface
+                    var job = createVm.CreatedJob;
+
+                    // Add to UI collection
+                    BackupJobs.Add(job);
+
+                    // Add to backend manager
+                    _backupManager.createBackupJob(
+                        job.name,
+                        job.sourcePath,
+                        job.destinationPath,
+                        job.type
+                    );
 
                     MessageBox.Show(
-                        string.Format(Lang["JobCreatedSuccess"], createVm.CreatedJob.name),
+                        string.Format(Lang["JobCreatedSuccess"], job.name),
                         Lang["Success"],
                         MessageBoxButton.OK,
                         MessageBoxImage.Information
@@ -95,13 +96,11 @@ namespace EasySave.ViewModels
             }
         }
 
-        private void RunSelectedBackups()
+        /// <summary>
+        /// Runs selected backup jobs with real backend integration
+        /// </summary>
+        private async void RunSelectedBackups()
         {
-            // === TEST CRYPTOSOFT ===
-            TestCryptoSoft();
-            return;
-            // === FIN TEST ===
-
             // Check if there are any jobs
             if (BackupJobs.Count == 0)
             {
@@ -129,105 +128,91 @@ namespace EasySave.ViewModels
                 return;
             }
 
-            // TEMPORARY: Show progress window for demo
+            // Get the first job (or you can modify to get selected job from DataGrid)
+            var jobToRun = BackupJobs[0];
+            int jobId = 0; // Index in the manager's list
+
+            // Create ProgressViewModel
             var progressVM = new ProgressViewModel
             {
-                JobName = "Backup Test",
-                TotalFiles = 150,
-                ProcessedFiles = 67,
-                ProgressPercentage = 44.7,
-                CurrentFile = @"C:\Users\Documents\Photos\Vacances2024.jpg",
-                TotalBytes = 1024L * 1024L * 750,
-                ProcessedBytes = 1024L * 1024L * 335,
-                TransferSpeed = "12.5 MB/s",
-                TimeRemaining = "2 min 15 sec"
+                JobName = jobToRun.name,
+                TotalFiles = 0,
+                ProcessedFiles = 0,
+                ProgressPercentage = 0,
+                CurrentFile = "Initializing...",
+                TransferSpeed = "0 MB/s",
+                TimeRemaining = "Calculating..."
             };
 
-            var progressWindow = new ProgressWindow(progressVM);
-            progressWindow.ShowDialog();
-
-            // TODO: When colleague finishes BackupStateObservator, replace above with:
-            // - Create ProgressViewModel
-            // - Pass it to BackupStateObservator
-            // - Start the actual backup with progress updates
-        }
-
-        private void TestCryptoSoft()
-        {
-            try
+            // Get the job from backend manager
+            var backendJob = _backupManager.getJobById(jobId);
+            if (backendJob == null)
             {
-                // Create a test file
-                string testFile = Path.Combine(Path.GetTempPath(), "test_crypto.txt");
-                string encryptedFile = testFile + ".encrypted";
-                string decryptedFile = Path.Combine(Path.GetTempPath(), "test_crypto_decrypted.txt");
-                string content = "Hello World! This is a test file for CryptoSoft encryption.";
+                MessageBox.Show("Job not found in backend!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
 
-                // Write test content
-                File.WriteAllText(testFile, content);
-
-                MessageBox.Show(
-                    string.Format(Lang["OriginalFileCreated"], testFile, content),
-                    "CryptoSoft Test",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
-
-                // Encrypt
-                var encryptResult = CryptoSoftService.EncryptFile(testFile, encryptedFile, "TestKey123");
-
-                if (encryptResult.Success)
+            // Subscribe to progress updates
+            backendJob.progressObserver.OnProgressChanged += (fileInfo) =>
+            {
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    string message = string.Format(Lang["EncryptionSuccess"], encryptedFile, encryptResult.TimeMs);
-                    message += "\n\n" + Lang["CheckConsole"];
+                    progressVM.ProcessedFiles = fileInfo.FilesSaved;
+                    progressVM.TotalBytes = fileInfo.TotalSize;
+                    progressVM.ProcessedBytes = fileInfo.TotalSize;
 
-                    MessageBox.Show(
-                        message,
-                        Lang["Success"],
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
-
-                    // Decrypt
-                    var decryptResult = CryptoSoftService.DecryptFile(encryptedFile, decryptedFile, "TestKey123");
-
-                    if (decryptResult.Success)
+                    // Calculate percentage (basic - you can improve this)
+                    if (progressVM.TotalFiles > 0)
                     {
-                        string decryptedContent = File.ReadAllText(decryptedFile);
-                        string decryptMessage = string.Format(Lang["DecryptionSuccess"], decryptResult.TimeMs);
-                        decryptMessage += $"\n\n{decryptedContent}";
+                        progressVM.ProgressPercentage = (fileInfo.FilesSaved / (double)progressVM.TotalFiles) * 100;
+                    }
 
+                    // Estimate speed
+                    if (fileInfo.TotalBackupTime.TotalSeconds > 0)
+                    {
+                        double bytesPerSecond = fileInfo.TotalSize / fileInfo.TotalBackupTime.TotalSeconds;
+                        progressVM.TransferSpeed = $"{bytesPerSecond / 1024 / 1024:F2} MB/s";
+                    }
+                });
+            };
+
+            // Show progress window
+            var progressWindow = new ProgressWindow(progressVM);
+
+            // Execute backup in background
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await _backupManager.ExecuteJob(jobId);
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
                         MessageBox.Show(
-                            decryptMessage,
-                            Lang["Success"],
+                            $"Backup '{jobToRun.name}' completed successfully!",
+                            "Backup Complete",
                             MessageBoxButton.OK,
                             MessageBoxImage.Information
                         );
-
-                        // Cleanup
-                        File.Delete(testFile);
-                        File.Delete(encryptedFile);
-                        File.Delete(decryptedFile);
-                    }
+                        progressWindow.Close();
+                    });
                 }
-                else
+                catch (Exception ex)
                 {
-                    MessageBox.Show(
-                        string.Format(Lang["EncryptionFailed"], encryptResult.ErrorMessage),
-                        "Error",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Error
-                    );
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show(
+                            $"Backup failed: {ex.Message}",
+                            "Backup Error",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Error
+                        );
+                        progressWindow.Close();
+                    });
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(Lang["EncryptionFailed"], ex.Message),
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error
-                );
-            }
+            });
+
+            progressWindow.ShowDialog();
         }
 
         private void OpenSettings()

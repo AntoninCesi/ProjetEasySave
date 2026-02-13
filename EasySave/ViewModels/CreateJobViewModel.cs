@@ -96,7 +96,7 @@ namespace EasySave.ViewModels
                 name = JobName,
                 sourcePath = SourcePath,
                 destinationPath = DestinationPath,
-                type = isComplete ? BackupTypes.COMPLET : BackupTypes.DIFFERENTIAL
+                type = isComplete ? BackupTypes.FULL : BackupTypes.DIFFERENTIAL
             };
 
             IsConfirmed = true;

@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using EasySave.Models;
+using EasySave.Services;
+using EasySave.Strategies;
 using Tool.Utils;
 using SysFileInfo = System.IO.FileInfo;
 using SysDirInfo = System.IO.DirectoryInfo;
@@ -8,7 +10,7 @@ using SysDirInfo = System.IO.DirectoryInfo;
 namespace EasySave.Strategies
 {
     /// <summary>
-    /// Stratégie de sauvegarde complète optimisée
+    /// Full backup strategy with encryption (no console output)
     /// </summary>
     public class FullBackupStrategy : IBackupStrategy
     {
@@ -26,9 +28,16 @@ namespace EasySave.Strategies
             if (!Directory.Exists(job.sourcePath))
                 throw new DirectoryNotFoundException($"Le répertoire source n'existe pas : {job.sourcePath}");
 
-            Directory.CreateDirectory(job.destinationPath);
+            if (!Directory.Exists(job.destinationPath))
+            {
+                Directory.CreateDirectory(job.destinationPath);
+            }
 
-            job.progressObserver ??= new BackupProgressObserver();
+            if (job.progressObserver == null)
+            {
+                job.progressObserver = new BackupProgressObserver();
+            }
+
             job.progressObserver.Reset();
 
             try
@@ -46,6 +55,7 @@ namespace EasySave.Strategies
             {
                 job.status.Status = BackupStateResum.ERROR;
                 job.status.LastActionTimestamp = DateTime.Now;
+                job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
                 throw new Exception($"Erreur lors de la sauvegarde complète : {ex.Message}", ex);
             }
         }
@@ -53,21 +63,56 @@ namespace EasySave.Strategies
         private void CopyDirectoryRecursive(string sourcePath, string destinationPath, BackupJob job)
         {
             SysDirInfo sourceDir = new SysDirInfo(sourcePath);
-            Directory.CreateDirectory(destinationPath);
 
-            // Copier les fichiers
+            if (!Directory.Exists(destinationPath))
+                Directory.CreateDirectory(destinationPath);
+
             foreach (SysFileInfo file in sourceDir.GetFiles())
             {
+                DateTime startTime = DateTime.Now;
                 string destFilePath = Path.Combine(destinationPath, file.Name);
 
-                DateTime start = DateTime.Now;
-                file.CopyTo(destFilePath, true);
-                TimeSpan duration = DateTime.Now - start;
+                try
+                {
+                    // Force encryption for .txt files
+                    bool shouldEncrypt = file.Extension.ToLower() == ".txt";
 
-                job.progressObserver.NotifyFileSaved(file.Length, duration);
+                    if (shouldEncrypt)
+                    {
+                        string tempEncrypted = destFilePath + ".temp";
+                        var encryptResult = CryptoSoftService.EncryptFile(
+                            file.FullName,
+                            tempEncrypted,
+                            "DefaultEncryptionKey2025"
+                        );
+
+                        if (encryptResult.Success)
+                        {
+                            if (File.Exists(destFilePath))
+                                File.Delete(destFilePath);
+
+                            File.Move(tempEncrypted, destFilePath);
+                        }
+                        else
+                        {
+                            file.CopyTo(destFilePath, true);
+                        }
+                    }
+                    else
+                    {
+                        file.CopyTo(destFilePath, true);
+                    }
+
+                    TimeSpan duration = DateTime.Now - startTime;
+                    job.progressObserver.NotifyFileSaved(file.Length, duration);
+                }
+                catch (Exception ex)
+                {
+                    // Silent error handling - notify observer but continue
+                    job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                }
             }
 
-            // Copier récursivement les sous-répertoires
             foreach (SysDirInfo subDir in sourceDir.GetDirectories())
             {
                 string destSubDirPath = Path.Combine(destinationPath, subDir.Name);
