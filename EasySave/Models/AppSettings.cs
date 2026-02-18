@@ -25,7 +25,7 @@ namespace EasySave.Models
         // Settings properties with default values
         public string LogFormat { get; set; } = "JSON";
         public string EncryptionExtensions { get; set; } = ".docx,.xlsx,.pptx";
-        public string BusinessSoftware { get; set; } = "calc";
+        public string BusinessSoftware { get; set; } = "CalculatorApp";
         public string Language { get; set; } = "en-US";
 
         /// <summary>

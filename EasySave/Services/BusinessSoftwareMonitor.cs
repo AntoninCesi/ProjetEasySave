@@ -11,7 +11,7 @@ namespace EasySave.Services
     public class BusinessSoftwareMonitor
     {
         private static BusinessSoftwareMonitor? _instance;
-        
+
         /// <summary>
         /// Gets the singleton instance of BusinessSoftwareMonitor
         /// </summary>
@@ -61,7 +61,33 @@ namespace EasySave.Services
         public bool IsBusinessSoftwareRunning()
         {
             var settings = Models.AppSettings.Instance;
-            return IsRunning(settings.BusinessSoftware);
+            string configuredName = settings.BusinessSoftware;
+
+            if (string.IsNullOrWhiteSpace(configuredName))
+                return false;
+
+            // Pour la calculatrice, essayer plusieurs variantes selon Windows
+            if (configuredName.ToLower().Contains("calc"))
+            {
+                // Windows 7/8: "calc"
+                // Windows 10: "Calculator" 
+                // Windows 10/11: "CalculatorApp"
+                // Anciennes versions: "win32calc"
+                string[] calculatorVariants = { "calc", "Calculator", "CalculatorApp", "win32calc" };
+
+                foreach (var variant in calculatorVariants)
+                {
+                    if (IsRunning(variant))
+                    {
+                        Console.WriteLine($"[MONITOR] Calculatrice détectée : {variant}");
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            // Pour les autres logiciels, utiliser le nom configuré
+            return IsRunning(configuredName);
         }
 
         /// <summary>
