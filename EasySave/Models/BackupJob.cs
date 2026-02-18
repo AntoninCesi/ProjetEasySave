@@ -11,7 +11,7 @@ namespace EasySave.Models
         public BackupTypes type { get; set; }
         public BackupState status { get; set; } = new BackupState();
 
-        // Observateur de progression propre à ce job
+        // Observator
         public BackupProgressObserver progressObserver { get; set; } = new BackupProgressObserver();
 
         public override string ToString()

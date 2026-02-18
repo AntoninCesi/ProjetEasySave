@@ -42,18 +42,21 @@ namespace EasySave.Strategies
 
             try
             {
-                job.status.Status = BackupStateResum.ACTIVE;
+                job.status.Status = BackupStateResum.ON;
+                job.progressObserver.UpdateStatus(BackupStateResum.ON);
                 job.status.LastActionTimestamp = DateTime.Now;
 
                 CopyDirectoryRecursive(job.sourcePath, job.destinationPath, job);
 
-                job.status.Status = BackupStateResum.FINISHED;
+                job.status.Status = BackupStateResum.END;
+                job.progressObserver.UpdateStatus(BackupStateResum.END);
                 job.status.Progress = 100;
                 job.status.LastActionTimestamp = DateTime.Now;
             }
             catch (Exception ex)
             {
                 job.status.Status = BackupStateResum.ERROR;
+                job.progressObserver.UpdateStatus(BackupStateResum.ERROR);
                 job.status.LastActionTimestamp = DateTime.Now;
                 job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
                 throw new Exception($"Erreur lors de la sauvegarde complète : {ex.Message}", ex);

@@ -79,7 +79,7 @@ namespace EasySave.ViewModels
             var jobNames = new List<string>();
             foreach (var job in getJobs())
             {
-                if (job.status.Status == BackupStateResum.INACTIVE || job.status.Status == BackupStateResum.ERROR)
+                if (job.status.Status == BackupStateResum.OFF || job.status.Status == BackupStateResum.ERROR)
                 {
                     jobNames.Add(job.name);
                 }

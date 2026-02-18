@@ -173,6 +173,23 @@ namespace EasySave.ViewModels
                     TimeRemaining = "Calculating..."
                 };
 
+
+                if (backendJob != null)
+                {
+                    // On s'abonne au changement de statut
+                    backendJob.progressObserver.OnStatusChanged += (newStatus) =>
+                    {
+                        // IMPORTANT : On doit retourner sur le thread principal (UI Thread)
+                        // pour modifier des objets liés à l'interface graphique.
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            // On met à jour la propriété qui est bindée dans le XAML
+                            // Le DataGrid détectera le changement automatiquement
+                            jobToRun.status.Status = newStatus;
+                        });
+                    };
+                }
+
                 // Subscribe to progress updates
                 backendJob.progressObserver.OnProgressChanged += (fileInfo) =>
                 {

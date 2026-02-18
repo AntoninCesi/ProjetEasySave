@@ -67,6 +67,12 @@ namespace EasySave.View
             ColSourcePath.Header = LanguageManager.Instance["SourcePath"];
             ColDestinationPath.Header = LanguageManager.Instance["DestinationPath"];
             ColType.Header = LanguageManager.Instance["Type"];
+            ColState.Header = LanguageManager.Instance["State"];
+        }
+
+        private void DataGrid_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

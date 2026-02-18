@@ -80,7 +80,7 @@
                       Background="Transparent"
                       RowHeight="35"
                       GridLinesVisibility="Horizontal"
-                      HorizontalGridLinesBrush="#F1F2F6">
+                      HorizontalGridLinesBrush="#F1F2F6" SelectionChanged="DataGrid_SelectionChanged">
 
                 <DataGrid.Columns>
                     <DataGridTextColumn x:Name="ColJobName"
@@ -99,6 +99,11 @@
                                         Header="Type"
                                         Binding="{Binding type}" 
                                         Width="100"/>
+                    <DataGridTextColumn x:Name="ColState"
+                                        Header="State"
+                                        Binding="{Binding status.Status}" 
+                                        Width="100"/>
+
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

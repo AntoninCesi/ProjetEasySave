@@ -66,7 +66,7 @@ namespace EasySave.ExecutionManagement
                     Console.WriteLine($"Démarrage du job {job.name}");
                     BackupStrategyFactory.ExecuteBackup(job);
 
-                    job.status.Status = BackupStateResum.FINISHED;
+                    job.status.Status = BackupStateResum.ON;
                     job.status.LastActionTimestamp = DateTime.Now;
                     Console.WriteLine($"Job {job.name} terminé avec succès !");
                 }
