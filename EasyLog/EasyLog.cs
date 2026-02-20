@@ -9,15 +9,15 @@ namespace EasyLog
 	/// DLL de log journalier (1 fichier par jour) pour EasySave.
 	/// Objectif : écrire des entrées en temps réel durant une sauvegarde.
 	/// </summary>
-	public sealed class EasyLog
+	public sealed class EasyLogger
 	{
-		private static readonly Lazy<EasyLog> _instance = new(() => new EasyLog());
-		public static EasyLog Instance => _instance.Value;
+        private static readonly Lazy<EasyLogger> _instance = new(() => new EasyLogger());
+        public static EasyLogger Instance => _instance.Value;
 
-		private readonly object _lock = new();
+        private readonly object _lock = new();
 		private readonly string _baseFolder;
 
-		private EasyLog()
+		private EasyLogger()
 		{
 			// Emplacement "propre" serveur/entreprise (évite C:\temp)
 			_baseFolder = Path.Combine(
