@@ -32,11 +32,7 @@ namespace EasySave.ExecutionManagement
             Console.WriteLine(_listBackupJob[jobId].ToString());
         }
 
-<<<<<<< HEAD
-        public void createBackupJob(string name, string sourcePath, string destinationPath, BackupTypes type)
-=======
         public void ExecuteJobAsyncExecuteJob(int jobId)
->>>>>>> origin/dev
         {
             BackupStrategyFactory.ExecuteBackup(getJobById(jobId));
 

@@ -1,19 +1,8 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-﻿/*
-using System.Diagnostics;
-=======
-=======
->>>>>>> origin/dev
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> origin/dev
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -29,34 +18,9 @@ using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-	private readonly List<BackupState> _states = new();
-	private readonly List<BackupJob> _jobs = new();
-	private readonly StateService _stateService = new();
-	public MainViewModel()
-	{
-		_jobs.Add(new BackupJob
-		{
-			name = "TestJob",
-			sourcePath = @"C:\Temp\SourceTest",
-			targetPath = @"C:\Temp\TargetTest",
-			Type = BackupType.Full
-		});
-	}
-	public void ExecuteBackup(int jobIndex)
-	{
-		if (jobIndex < 0 || jobIndex >= _jobs.Count) return;
-=======
     public class MainViewModel : INotifyPropertyChanged
     {
         public ObservableCollection<BackupJob> BackupJobs { get; set; }
->>>>>>> Stashed changes
-=======
-    public class MainViewModel : INotifyPropertyChanged
-    {
-        public ObservableCollection<BackupJob> BackupJobs { get; set; }
->>>>>>> origin/dev
 
         private readonly BusinessSoftwareMonitor _businessMonitor;
         private readonly BackupExecutionManager _backupManager;
@@ -192,15 +156,6 @@ namespace EasySave.ViewModels
                 var jobToRun = BackupJobs[jobId];
                 var backendJob = _backupManager.getJobById(jobId);
 
-<<<<<<< HEAD
-			state.Status = BackupStatus.EN_ERREUR;
-			state.LastActionTimestamp = DateTime.Now;
-			_stateService.SaveStates(_states);
-		}
-	}
-}
-*/
-=======
                 if (backendJob == null) continue;
 
                 // Count total files
@@ -335,4 +290,3 @@ namespace EasySave.ViewModels
         }
     }
 }
->>>>>>> origin/dev

@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-﻿/*using System.Text.Json;
-=======
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.IO;
->>>>>>> origin/dev
 
 namespace EasySave.Services;
 
@@ -53,10 +49,6 @@ public class LogService
         // Append the JSON string to the daily log file
         File.AppendAllText(filePath, jsonString + Environment.NewLine);
     }
-<<<<<<< HEAD
-}
-*/
-=======
 
     /// <summary>
     /// Logs business software events (blocking, detection during backup)
@@ -81,4 +73,3 @@ public class LogService
         File.AppendAllText(filePath, jsonString + Environment.NewLine);
     }
 }
->>>>>>> origin/dev

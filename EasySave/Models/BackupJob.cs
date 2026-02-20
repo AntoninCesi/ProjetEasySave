@@ -1,13 +1,5 @@
-<<<<<<< HEAD
 using Tool.Utils;
-<<<<<<< Updated upstream
-=======
 using EasySave.Strategies;
->>>>>>> Stashed changes
-=======
-﻿using Tool.Utils;
-using EasySave.Strategies;
->>>>>>> origin/dev
 
 namespace EasySave.Models
 {

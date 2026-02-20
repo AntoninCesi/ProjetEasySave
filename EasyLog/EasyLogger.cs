@@ -1,35 +1,47 @@
-﻿using EasyLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.IO;
 using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 
-public sealed class EasyLogger
+namespace EasyLog
 {
-    private static readonly object _globalLock = new();
-    private readonly string _baseFolder;
-    private readonly LogFormatter _formatter = new();
-
-    public EasyLogger(string? baseFolder = null)
+    public sealed class EasyLogger
     {
-        _baseFolder = string.IsNullOrWhiteSpace(baseFolder)
-            ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs")
-            : baseFolder;
+        private static readonly object _globalLock = new();
 
-        Directory.CreateDirectory(_baseFolder);
-    }
+        private readonly string _baseFolder;
+        private readonly ILogSerializer _serializer;
+        private readonly LogFormatter _formatter = new();
 
-    public void Write(LogEvent ev)
-    {
-        var entry = _formatter.Format(ev);
-        string filePath = Path.Combine(_baseFolder, $"{DateTime.Now:yyyy-MM-dd}.json");
-        string json = JsonSerializer.Serialize(entry, JsonDefaults.Options);
-
-        lock (_globalLock)
+        public EasyLogger(LogFormat format, string? baseFolder = null)
         {
-            File.AppendAllText(filePath, json + Environment.NewLine, Encoding.UTF8);
+            _baseFolder = string.IsNullOrWhiteSpace(baseFolder)
+                ? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs")
+                : baseFolder;
+
+            Directory.CreateDirectory(_baseFolder);
+
+            _serializer = format switch
+            {
+                LogFormat.Xml => new XmlLogSerializer(),
+                _ => new JsonLogSerializer()
+            };
+        }
+
+        public void Write(LogEvent ev)
+        {
+            var entry = _formatter.Format(ev);
+
+            string filePath = Path.Combine(
+                _baseFolder,
+                $"{DateTime.Now:yyyy-MM-dd}.{_serializer.FileExtension}"
+            );
+
+            string line = _serializer.Serialize(entry);
+
+            lock (_globalLock)
+            {
+                File.AppendAllText(filePath, line + Environment.NewLine, Encoding.UTF8);
+            }
         }
     }
 }

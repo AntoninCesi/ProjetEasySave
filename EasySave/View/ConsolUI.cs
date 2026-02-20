@@ -40,36 +40,11 @@ namespace EasySave.View
                 string? choice = Console.ReadLine()?.Trim();
                 switch (choice)
                 {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-                    case "1":
-                        this.createBackupJob(BackupTypes.COMPLET);
-                        break;
-                    case "2":
-                        this.createBackupJob(BackupTypes.DIFFERENTIAL);
-                        break;
-                    case "3":
-                        displayMessage(new Message(MessageType.Loading));
-                        break;
-                    case "4":
-                        quit = true;
-                        displayMessage(new Message(MessageType.Goodbye));
-                        break;
-                    default:
-                        displayMessage(new Message(MessageType.InvalidChoice));
-                        break;
-=======
-=======
->>>>>>> origin/dev
                     case "1": createBackupJob(BackupTypes.FULL); break;
                     case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
                     case "3": startBackupJob(); break;
                     case "4": quit = true; displayMessage(new Message(MessageType.Goodbye)); break;
                     default: displayMessage(new Message(MessageType.InvalidChoice)); break;
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> origin/dev
                 }
 
                 if (!quit)
@@ -80,19 +55,6 @@ namespace EasySave.View
                 }
             }
         }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-
->>>>>>> origin/dev
-        private void createBackupJob(BackupTypes type)
-        {
-           
-            Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
-            string sourcePath = Console.ReadLine() ?? string.Empty;
-
-<<<<<<< HEAD
-=======
 
         private void createBackupJob(BackupTypes type)
         {
@@ -100,19 +62,12 @@ namespace EasySave.View
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
-=======
->>>>>>> origin/dev
             if (string.IsNullOrWhiteSpace(sourcePath) || !Directory.Exists(sourcePath))
             {
                 Console.WriteLine("Le répertoire source n'existe pas ou est vide.");
                 return;
             }
-<<<<<<< HEAD
 
->>>>>>> Stashed changes
-=======
-            
->>>>>>> origin/dev
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
             string destinationPath = Console.ReadLine() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(destinationPath) || !Directory.Exists(destinationPath))

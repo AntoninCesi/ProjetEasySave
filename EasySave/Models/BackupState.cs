@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-﻿using EasySave.Models;
-=======
 using EasySave.Models;
->>>>>>> Stashed changes
-=======
-using EasySave.Models;
->>>>>>> origin/dev
 using System;
 using Tool.Utils;
 
