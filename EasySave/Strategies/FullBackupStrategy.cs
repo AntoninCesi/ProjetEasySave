@@ -10,7 +10,7 @@ using SysDirInfo = System.IO.DirectoryInfo;
 namespace EasySave.Strategies
 {
     /// <summary>
-    /// Full backup strategy with encryption (no console output)
+    /// Full backup strategy with encryption and integrated logging
     /// </summary>
     public class FullBackupStrategy : IBackupStrategy
     {
@@ -29,14 +29,10 @@ namespace EasySave.Strategies
                 throw new DirectoryNotFoundException($"Le répertoire source n'existe pas : {job.sourcePath}");
 
             if (!Directory.Exists(job.destinationPath))
-            {
                 Directory.CreateDirectory(job.destinationPath);
-            }
 
             if (job.progressObserver == null)
-            {
                 job.progressObserver = new BackupProgressObserver();
-            }
 
             job.progressObserver.Reset();
 
@@ -55,10 +51,9 @@ namespace EasySave.Strategies
             }
             catch (OperationCanceledException)
             {
-                // Logiciel métier détecté - laisser l'exception remonter
                 job.status.Status = BackupStateResum.ERROR;
                 job.status.LastActionTimestamp = DateTime.Now;
-                throw;  // Re-throw pour que BackupExecutionManager puisse la gérer
+                throw;
             }
             catch (Exception ex)
             {
@@ -73,109 +68,51 @@ namespace EasySave.Strategies
         private void CopyDirectoryRecursive(string sourcePath, string destinationPath, BackupJob job)
         {
             SysDirInfo sourceDir = new SysDirInfo(sourcePath);
-
             if (!Directory.Exists(destinationPath))
                 Directory.CreateDirectory(destinationPath);
 
             foreach (SysFileInfo file in sourceDir.GetFiles())
             {
-                // ⚠️ VÉRIFICATION DU LOGICIEL MÉTIER PENDANT L'EXÉCUTION (v2.0 requirement)
+                // Vérification du logiciel métier
                 if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
                 {
-                    Console.WriteLine($"⚠️  Logiciel métier détecté pendant la sauvegarde de {job.name}");
-                    Console.WriteLine($"    Fin du transfert du fichier en cours puis arrêt...");
-
-                    // On TERMINE le fichier en cours pour ne pas le corrompre
                     DateTime startTime = DateTime.Now;
                     string destFilePath = Path.Combine(destinationPath, file.Name);
 
                     try
                     {
-                        bool shouldEncrypt = file.Extension.ToLower() == ".txt";
-
-                        if (shouldEncrypt)
-                        {
-                            string tempEncrypted = destFilePath + ".temp";
-                            var encryptResult = CryptoSoftService.EncryptFile(
-                                file.FullName,
-                                tempEncrypted,
-                                "DefaultEncryptionKey2025"
-                            );
-
-                            if (encryptResult.Success)
-                            {
-                                if (File.Exists(destFilePath))
-                                    File.Delete(destFilePath);
-
-                                File.Move(tempEncrypted, destFilePath);
-                            }
-                            else
-                            {
-                                file.CopyTo(destFilePath, true);
-                            }
-                        }
-                        else
-                        {
-                            file.CopyTo(destFilePath, true);
-                        }
-
+                        CopyAndEncryptFile(file, destFilePath);
                         TimeSpan duration = DateTime.Now - startTime;
                         job.progressObserver.NotifyFileSaved(file.Length, duration);
+
+                        // Log événement logiciel métier
+                        LogService.Instance.LogBusinessSoftwareEvent(job.name,
+                            "Backup stopped - Business software detected during execution");
                     }
                     catch
                     {
                         job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
                     }
 
-                    // Logger l'arrêt
-                    LogService.Instance.LogBusinessSoftwareEvent(job.name,
-                        "Backup stopped - Business software detected during execution");
-
-                    // Arrêter la sauvegarde
                     throw new OperationCanceledException("Business software detected during backup");
                 }
 
-                // COPIE NORMALE du fichier
+                // Copie normale du fichier
                 DateTime startTime2 = DateTime.Now;
                 string destFilePath2 = Path.Combine(destinationPath, file.Name);
 
                 try
                 {
-                    // Force encryption for .txt files
-                    bool shouldEncrypt = file.Extension.ToLower() == ".txt";
-
-                    if (shouldEncrypt)
-                    {
-                        string tempEncrypted = destFilePath2 + ".temp";
-                        var encryptResult = CryptoSoftService.EncryptFile(
-                            file.FullName,
-                            tempEncrypted,
-                            "DefaultEncryptionKey2025"
-                        );
-
-                        if (encryptResult.Success)
-                        {
-                            if (File.Exists(destFilePath2))
-                                File.Delete(destFilePath2);
-
-                            File.Move(tempEncrypted, destFilePath2);
-                        }
-                        else
-                        {
-                            file.CopyTo(destFilePath2, true);
-                        }
-                    }
-                    else
-                    {
-                        file.CopyTo(destFilePath2, true);
-                    }
+                    CopyAndEncryptFile(file, destFilePath2);
 
                     TimeSpan duration = DateTime.Now - startTime2;
                     job.progressObserver.NotifyFileSaved(file.Length, duration);
+
+                    // Logger chaque fichier copié
+                    LogService.Instance.WriteLog(job.name, file.FullName, destFilePath2, file.Length, (long)duration.TotalMilliseconds);
                 }
-                catch (Exception ex)
+                catch
                 {
-                    // Silent error handling - notify observer but continue
                     job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
                 }
             }
@@ -184,6 +121,33 @@ namespace EasySave.Strategies
             {
                 string destSubDirPath = Path.Combine(destinationPath, subDir.Name);
                 CopyDirectoryRecursive(subDir.FullName, destSubDirPath, job);
+            }
+        }
+
+        private void CopyAndEncryptFile(SysFileInfo file, string destFilePath)
+        {
+            bool shouldEncrypt = file.Extension.ToLower() == ".txt";
+
+            if (shouldEncrypt)
+            {
+                string tempEncrypted = destFilePath + ".temp";
+                var encryptResult = CryptoSoftService.EncryptFile(file.FullName, tempEncrypted, "DefaultEncryptionKey2025");
+
+                if (encryptResult.Success)
+                {
+                    if (File.Exists(destFilePath))
+                        File.Delete(destFilePath);
+
+                    File.Move(tempEncrypted, destFilePath);
+                }
+                else
+                {
+                    file.CopyTo(destFilePath, true);
+                }
+            }
+            else
+            {
+                file.CopyTo(destFilePath, true);
             }
         }
     }

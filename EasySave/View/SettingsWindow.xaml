@@ -95,6 +95,35 @@
 
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
+					<!-- Logs Storage Setting -->
+					<TextBlock Text="Logs Storage"
+							   FontSize="15"
+							   FontWeight="Bold"
+							   Foreground="#2C3E50"
+							   Margin="0,0,0,8"/>
+
+					<TextBlock Text="Select logs storage type:"
+							   FontSize="11"
+							   Foreground="#7F8C8D"
+							   Margin="0,0,0,10"/>
+
+					<StackPanel Margin="0,0,0,20">
+
+						<RadioButton Content="Local Storage"
+									 GroupName="LogsStorageGroup"
+									 IsChecked="{Binding IsLocalStorageSelected}"
+									 FontSize="13"
+									 Margin="0,0,0,5"/>
+
+						<RadioButton Content="External Storage"
+									 GroupName="LogsStorageGroup"
+									 IsChecked="{Binding IsCloudStorageSelected}"
+									 FontSize="13"/>
+
+					</StackPanel>
+
+					<Separator Margin="0,0,0,25" Background="#ECF0F1"/>
+
                     <!-- Business Software Setting -->
                     <TextBlock Text="💼 Business Software" 
                                FontSize="15" 

@@ -21,6 +21,10 @@ public class LogService
         );
     }
 
+    // Logs a business event instead of a file transfer
+    // "N/A" is used for source since there is no file involved
+    // 0 for fileSize and -1 for transferTime indicate that this is not a transfer operation
+
     public void LogBusinessSoftwareEvent(string jobName, string eventMessage)
     {
         EasyLogger.Instance.WriteLog(
