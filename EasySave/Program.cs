@@ -12,9 +12,13 @@ namespace EasySave;
         [STAThread]
         static void Main(string[] args)
         {
-            // On crée l'application et on affiche la fenêtre
-            Application app = new Application();
-            MainWindow window = new MainWindow();
-            app.Run(window);
+        // On crée l'application et on affiche la fenêtre
+
+
+
+                Application app = new Application();
+                MainWindow window = new MainWindow();
+                app.Run(window);
+            
         }
     } 
