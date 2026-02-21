@@ -79,6 +79,24 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Veuillez entrer le dossier de destination.
+        /// </summary>
+        internal static string AskDestinationDirectory {
+            get {
+                return ResourceManager.GetString("AskDestinationDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Veuillez entrer le dossier source.
+        /// </summary>
+        internal static string AskSourceDirectory {
+            get {
+                return ResourceManager.GetString("AskSourceDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Sauvegarde bloquée.
         /// </summary>
         internal static string BackupBlocked {
@@ -102,6 +120,15 @@ namespace EasySave.Resources {
         internal static string BackupInProgress {
             get {
                 return ResourceManager.GetString("BackupInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sauvegarde &apos;{0}&apos; démarrée !.
+        /// </summary>
+        internal static string BackupStarted {
+            get {
+                return ResourceManager.GetString("BackupStarted", resourceCulture);
             }
         }
         
@@ -268,6 +295,24 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Au revoir !.
+        /// </summary>
+        internal static string Goodbye {
+            get {
+                return ResourceManager.GetString("Goodbye", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Choix invalide. Veuillez réessayer..
+        /// </summary>
+        internal static string InvalidChoice {
+            get {
+                return ResourceManager.GetString("InvalidChoice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Travail &apos;{0}&apos; créé avec succès !\n\nRemarque : Le travail sera persisté lors de l&apos;intégration avec la gestion des travaux de l&apos;équipe Console..
         /// </summary>
         internal static string JobCreatedSuccess {
@@ -300,6 +345,74 @@ namespace EasySave.Resources {
         internal static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 1 - Creer un nouveau travail de sauvegard (Complete).
+        /// </summary>
+        internal static string MenuOption1 {
+            get {
+                return ResourceManager.GetString("MenuOption1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 2 - Creer un nouveau travail de sauvegarde (Differentiel).
+        /// </summary>
+        internal static string MenuOption2 {
+            get {
+                return ResourceManager.GetString("MenuOption2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 3 - Lancer un travail de sauvegarde.
+        /// </summary>
+        internal static string MenuOption3 {
+            get {
+                return ResourceManager.GetString("MenuOption3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 4 - Quitter.
+        /// </summary>
+        internal static string MenuOption4 {
+            get {
+                return ResourceManager.GetString("MenuOption4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Votre choix &gt; .
+        /// </summary>
+        internal static string MenuPrompt {
+            get {
+                return ResourceManager.GetString("MenuPrompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ######################################################################################
+        ///#                                                                                    #
+        ///#   ########    ###      ####### ##    ##  #######    ###   ##        ##  ########   #
+        ///#   ##         ## ##    ##        ##  ##  ##         ## ##   ##      ##   ##         #
+        ///#   ######    ##   ##   ########   ####   ########  ##   ##   ##    ##    ########   #
+        ///#   ##       #########         ##   ##          ## #########   ##  ##    [le reste de la chaîne a été tronqué]&quot;;.
+        /// </summary>
+        internal static string MenuTitle {
+            get {
+                return ResourceManager.GetString("MenuTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Aucun travail de sauvegarde disponible..
+        /// </summary>
+        internal static string NoJobAvailable {
+            get {
+                return ResourceManager.GetString("NoJobAvailable", resourceCulture);
             }
         }
         
@@ -381,6 +494,15 @@ namespace EasySave.Resources {
         internal static string RunSelection {
             get {
                 return ResourceManager.GetString("RunSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sélectionnez le travail à lancer :.
+        /// </summary>
+        internal static string SelectJob {
+            get {
+                return ResourceManager.GetString("SelectJob", resourceCulture);
             }
         }
         

@@ -1,9 +1,8 @@
-﻿using System;
-
-namespace EasySave.Messaging
+﻿namespace EasySave.Messaging
 {
     public enum MessageType
     {
+        // Menu
         MenuTitle,
         MenuOption1,
         MenuOption2,
@@ -12,12 +11,7 @@ namespace EasySave.Messaging
         MenuPrompt,
         BackToMenu,
 
-        // Path selection
-        AskSourceDirectory,
-        AskDestinationDirectory,
-        InvalidDirectory,
-
-        // Job actions
+        // Actions & Feedback
         JobStarted,
         Loading,
         Goodbye,
@@ -26,16 +20,14 @@ namespace EasySave.Messaging
         NoJobAvailable,
         SelectJob,
         BackupStarted,
+        EncryptionSuccess,    
+        BackupBlockedMessage,
+        AskDestinationDirectory,
+        AskSourceDirectory,
 
-
-        // Errors
+        // Error & good
         InvalidFormat,
         JobNotFound,
-        JobNotFoundWithId,
-        JobState,
-        Error,
-
-        // Security & Validation errors
         SourceAndDestIdentical,
         SourceDoesNotExist,
         InsufficientDiskSpace,
