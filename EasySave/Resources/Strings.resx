@@ -154,7 +154,7 @@
     <value>3 - Lancer un travail de sauvegarde</value>
   </data>
   <data name="MenuOption4" xml:space="preserve">
-    <value>4 - Quitter</value>
+    <value>5 - Quitter</value>
   </data>
   <data name="MenuPrompt" xml:space="preserve">
     <value>Votre choix &gt; </value>
@@ -304,5 +304,8 @@
   </data>
   <data name="MenuOption2" xml:space="preserve">
     <value>2 - Creer un nouveau travail de sauvegarde (Differentiel)</value>
+  </data>
+  <data name="MenuOption5" xml:space="preserve">
+    <value>4 - Lancer plusieurs travaux de sauvegard</value>
   </data>
 </root>

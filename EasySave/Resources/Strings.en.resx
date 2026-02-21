@@ -154,7 +154,7 @@
     <value>3 - Run a backup job</value>
   </data>
   <data name="MenuOption4" xml:space="preserve">
-    <value>4 - Quit</value>
+    <value>5 - Quit</value>
   </data>
   <data name="MenuPrompt" xml:space="preserve">
     <value>Your choice &gt; </value>
@@ -304,5 +304,8 @@
   </data>
   <data name="MenuOption2" xml:space="preserve">
     <value>2 - Create a new backup job (Differential)</value>
+  </data>
+  <data name="MenuOption5" xml:space="preserve">
+    <value>4 - Launch several safeguarding projects</value>
   </data>
 </root>

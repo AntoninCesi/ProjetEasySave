@@ -44,6 +44,7 @@ namespace EasySave.View
                 displayMessage(new Message(MessageType.MenuOption1));
                 displayMessage(new Message(MessageType.MenuOption2));
                 displayMessage(new Message(MessageType.MenuOption3));
+                displayMessage(new Message(MessageType.MenuOption5));
                 displayMessage(new Message(MessageType.MenuOption4));
 
                 Console.Write(_messageProvider.Resolve(new Message(MessageType.MenuPrompt)));
@@ -55,6 +56,7 @@ namespace EasySave.View
                     case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
                     case "3": launchBackup(); break;
                     case "4":
+                    case "5":
                         displayMessage(new Message(MessageType.Goodbye));
                         quit = true;
                         break;
@@ -93,6 +95,7 @@ namespace EasySave.View
             _controller.createBackupJob(name, source, dest, type);
         }
 
+        
         private void launchBackup()
         {
             var jobs = _controller.getJobName();

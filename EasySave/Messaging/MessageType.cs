@@ -24,6 +24,7 @@
         BackupBlockedMessage,
         AskDestinationDirectory,
         AskSourceDirectory,
+        MenuOption5,
 
         // Error & good
         InvalidFormat,

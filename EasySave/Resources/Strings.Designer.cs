@@ -376,11 +376,20 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à 4 - Quitter.
+        ///   Recherche une chaîne localisée semblable à 5 - Quitter.
         /// </summary>
         internal static string MenuOption4 {
             get {
                 return ResourceManager.GetString("MenuOption4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 4 - Lancer plusieurs travaux de sauvegard.
+        /// </summary>
+        internal static string MenuOption5 {
+            get {
+                return ResourceManager.GetString("MenuOption5", resourceCulture);
             }
         }
         
