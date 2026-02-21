@@ -9,15 +9,15 @@ using EasySave.ViewModels;
 
 namespace EasySave.View
 {
-    public class ConsoleUI : IUserInterface
+    public class ConsoleUI 
     {
         private readonly MessageProvider messageProvider;
-        private readonly Controller _controller;
+        private readonly MainViewModel _controller;
 
         // Verrou pour écrire dans la console sans chevauchement
         private readonly object _consoleLock = new object();
 
-        public ConsoleUI(Controller controller)
+        public ConsoleUI(MainViewModel controller)
         {
             _controller = controller;
             bool isFrench = AskLanguage();

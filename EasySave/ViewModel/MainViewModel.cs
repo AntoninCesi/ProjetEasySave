@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using EasySave.ExecutionManagement;
-using EasySave.View;
 using EasySave.Models;
 using EasySave.StateManagement; // <-- ajouter pour BackupStateManager
 using Tool.Utils;
+using EasySave.View;
 
 namespace EasySave.ViewModels
 {
-    public class Controller
+    public class MainViewModel
     {
         private BackupExecutionManager backupManager = new BackupExecutionManager();
 
         // Map des jobs vers leurs BackupStateManager
         private readonly Dictionary<int, BackupStateManager> _stateManagers = new();
 
-        public Controller(string[] args)
+        public MainViewModel(string[] args)
         {
             if (args.Length == 0)
             {
