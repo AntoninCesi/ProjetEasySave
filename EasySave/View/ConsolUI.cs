@@ -1,7 +1,9 @@
-using System;
 using EasySave.Messaging;
 using EasySave.Resources;
 using EasySave.ViewModels;
+using System;
+using System.Reflection;
+using System.Windows.Documents;
 using Tool.Utils;
 
 namespace EasySave.View
@@ -54,7 +56,7 @@ namespace EasySave.View
                 {
                     case "1": createBackupJob(BackupTypes.FULL); break;
                     case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
-                    case "3": launchBackup(); break;
+                    case "3": LaunchBackups(); break;
                     case "4":
                     case "5":
                         displayMessage(new Message(MessageType.Goodbye));
@@ -76,7 +78,6 @@ namespace EasySave.View
             }
         }
 
-        // Utilisation pour les messages simples ou formatés
         public void displayMessage(MessageType type, params object[] args)
             => displayMessage(new Message(type, args));
 
@@ -95,10 +96,10 @@ namespace EasySave.View
             _controller.createBackupJob(name, source, dest, type);
         }
 
-        
-        private void launchBackup()
+        private void LaunchBackups(string choice)
         {
             var jobs = _controller.getJobName();
+
             if (jobs.Length == 0)
             {
                 displayMessage(MessageType.NoJobAvailable);
@@ -112,11 +113,47 @@ namespace EasySave.View
                 Console.WriteLine($"{i} - {jobs[i]}");
             }
 
-            if (int.TryParse(Console.ReadLine(), out int choice) && choice < jobs.Length)
+            // Cas : un seul chiffre (ex: "1")
+            if (choice.Length == 1 && int.TryParse(choice, out int singleChoice))
             {
-                _controller.startBackupJob(choice);
-                displayMessage(MessageType.BackupStarted, jobs[choice]);
+                if (singleChoice >= 0 && singleChoice < jobs.Length)
+                {
+                    _controller.startBackupJob(singleChoice);
+                    displayMessage(MessageType.BackupStarted, jobs[singleChoice]);
+                }
+            }
+
+            // Case : "x-y" or "x,y"
+            else if (choice.Length == 3)
+            {
+                char first = choice[0];
+                char middle = choice[1];
+                char last = choice[2];
+
+                if (char.IsDigit(first) && char.IsDigit(last))
+                {
+                    int fId = (int)char.GetNumericValue(first);
+                    int lId = (int)char.GetNumericValue(last);
+
+                    if (fId >= 0 && fId < jobs.Length &&
+                        lId >= 0 && lId < jobs.Length)
+                    {
+                        if (middle == '-')
+                        {
+                            for (int i = fId; i <= lId; i++)
+                            {
+                                _controller.startBackupJob(i);
+                            }
+                        }
+                        else if (middle == ',')
+                        {
+                            _controller.startBackupJob(fId);
+                            _controller.startBackupJob(lId);
+                        }
+                    }
+                }
             }
         }
+
     }
 }
