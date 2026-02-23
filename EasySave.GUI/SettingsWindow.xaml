@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="Settings - EasySave" 
-        Height="500" Width="600"
+        Height="680" Width="600"
         WindowStartupLocation="CenterScreen"
         Background="#F4F7F6"
         ResizeMode="NoResize">
@@ -38,109 +38,74 @@
                 Padding="25">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    
-                    <!-- Language Setting -->
-                    <TextBlock Text="🌍 Language" 
-                               FontSize="15" 
-                               FontWeight="Bold" 
-                               Foreground="#2C3E50"
-                               Margin="0,0,0,8"/>
-                    <TextBlock Text="Select your preferred language" 
-                               FontSize="11" 
-                               Foreground="#7F8C8D"
-                               Margin="0,0,0,10"/>
+
+                    <!-- Language -->
+                    <TextBlock Text="🌍 Language" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                    <TextBlock Text="Select your preferred language" FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10"/>
                     <ComboBox ItemsSource="{Binding Languages}"
                               SelectedItem="{Binding SelectedLanguage}"
-                              Height="40"
-                              FontSize="13"
-                              Margin="0,0,0,25"/>
+                              Height="40" FontSize="13" Margin="0,0,0,25"/>
 
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
-                    <!-- Log Format Setting -->
-                    <TextBlock Text="📝 Log Format" 
-                               FontSize="15" 
-                               FontWeight="Bold" 
-                               Foreground="#2C3E50"
-                               Margin="0,0,0,8"/>
-                    <TextBlock Text="Choose the format for log files" 
-                               FontSize="11" 
-                               Foreground="#7F8C8D"
-                               Margin="0,0,0,10"/>
+                    <!-- Log Format -->
+                    <TextBlock Text="📝 Log Format" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                    <TextBlock Text="Choose the format for log files" FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10"/>
                     <ComboBox ItemsSource="{Binding LogFormats}"
                               SelectedItem="{Binding SelectedLogFormat}"
-                              Height="40"
-                              FontSize="13"
-                              Margin="0,0,0,25"/>
+                              Height="40" FontSize="13" Margin="0,0,0,25"/>
 
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
-                    <!-- Encryption Extensions Setting -->
-                    <TextBlock Text="🔒 Encryption Extensions" 
-                               FontSize="15" 
-                               FontWeight="Bold" 
-                               Foreground="#2C3E50"
-                               Margin="0,0,0,8"/>
+                    <!-- Encryption Extensions -->
+                    <TextBlock Text="🔒 Encryption Extensions" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
                     <TextBlock Text="File extensions to encrypt (comma-separated, e.g., .docx,.xlsx,.pdf)" 
-                               FontSize="11" 
-                               Foreground="#7F8C8D"
-                               Margin="0,0,0,10"
-                               TextWrapping="Wrap"/>
+                               FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10" TextWrapping="Wrap"/>
                     <TextBox Text="{Binding EncryptionExtensions, UpdateSourceTrigger=PropertyChanged}"
-                             Height="40"
-                             FontSize="13"
-                             Padding="10,0"
-                             VerticalContentAlignment="Center"
-                             Margin="0,0,0,25"/>
+                             Height="40" FontSize="13" Padding="10,0"
+                             VerticalContentAlignment="Center" Margin="0,0,0,25"/>
 
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
-					<!-- Logs Storage Setting -->
-					<TextBlock Text="Logs Storage"
-							   FontSize="15"
-							   FontWeight="Bold"
-							   Foreground="#2C3E50"
-							   Margin="0,0,0,8"/>
+                    <!-- Logs Storage -->
+                    <TextBlock Text="Logs Storage" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                    <TextBlock Text="Select logs storage type:" FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10"/>
+                    <StackPanel Margin="0,0,0,20">
+                        <RadioButton Content="Local Storage" GroupName="LogsStorageGroup"
+                                     IsChecked="{Binding IsLocalStorageSelected}" FontSize="13" Margin="0,0,0,5"/>
+                        <RadioButton Content="External Storage" GroupName="LogsStorageGroup"
+                                     IsChecked="{Binding IsCloudStorageSelected}" FontSize="13"/>
+                    </StackPanel>
 
-					<TextBlock Text="Select logs storage type:"
-							   FontSize="11"
-							   Foreground="#7F8C8D"
-							   Margin="0,0,0,10"/>
+                    <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
-					<StackPanel Margin="0,0,0,20">
-
-						<RadioButton Content="Local Storage"
-									 GroupName="LogsStorageGroup"
-									 IsChecked="{Binding IsLocalStorageSelected}"
-									 FontSize="13"
-									 Margin="0,0,0,5"/>
-
-						<RadioButton Content="External Storage"
-									 GroupName="LogsStorageGroup"
-									 IsChecked="{Binding IsCloudStorageSelected}"
-									 FontSize="13"/>
-
-					</StackPanel>
-
-					<Separator Margin="0,0,0,25" Background="#ECF0F1"/>
-
-                    <!-- Business Software Setting -->
-                    <TextBlock Text="💼 Business Software" 
-                               FontSize="15" 
-                               FontWeight="Bold" 
-                               Foreground="#2C3E50"
-                               Margin="0,0,0,8"/>
+                    <!-- Business Software -->
+                    <TextBlock Text="💼 Business Software" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
                     <TextBlock Text="Process name to monitor (e.g., calc for Calculator)" 
-                               FontSize="11" 
-                               Foreground="#7F8C8D"
-                               Margin="0,0,0,10"
-                               TextWrapping="Wrap"/>
+                               FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10" TextWrapping="Wrap"/>
                     <TextBox Text="{Binding BusinessSoftware, UpdateSourceTrigger=PropertyChanged}"
-                             Height="40"
-                             FontSize="13"
-                             Padding="10,0"
-                             VerticalContentAlignment="Center"
-                             Margin="0,0,0,15"/>
+                             Height="40" FontSize="13" Padding="10,0"
+                             VerticalContentAlignment="Center" Margin="0,0,0,25"/>
+
+                    <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
+
+                    <!-- Priority Extensions -->
+                    <TextBlock Text="⭐ Priority Extensions" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                    <TextBlock Text="Files with these extensions are transferred first across all jobs (comma-separated, e.g., .docx,.xlsx)" 
+                               FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10" TextWrapping="Wrap"/>
+                    <TextBox Text="{Binding PriorityExtensions, UpdateSourceTrigger=PropertyChanged}"
+                             Height="40" FontSize="13" Padding="10,0"
+                             VerticalContentAlignment="Center" Margin="0,0,0,25"/>
+
+                    <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
+
+                    <!-- Max Parallel File Size -->
+                    <TextBlock Text="⚖️ Max Parallel File Size (Ko)" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
+                    <TextBlock Text="Files larger than this size cannot transfer in parallel. Use 0 to disable (e.g., 1000 = 1 Mo)" 
+                               FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10" TextWrapping="Wrap"/>
+                    <TextBox Text="{Binding MaxParallelFileSizeKo, UpdateSourceTrigger=PropertyChanged}"
+                             Height="40" FontSize="13" Padding="10,0"
+                             VerticalContentAlignment="Center" Margin="0,0,0,15"/>
 
                 </StackPanel>
             </ScrollViewer>
@@ -155,28 +120,16 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="1"
-                    Content="🔄 Reset to Defaults"
-                    Command="{Binding ResetCommand}"
-                    Width="160"
-                    Height="45"
-                    Margin="5,0"
-                    Background="#E67E22"
-                    Foreground="White"
-                    FontWeight="SemiBold"
-                    FontSize="13"
-                    BorderThickness="0"
-                    Cursor="Hand">
+            <Button Grid.Column="1" Content="🔄 Reset to Defaults" Command="{Binding ResetCommand}"
+                    Width="160" Height="45" Margin="5,0" Background="#E67E22" Foreground="White"
+                    FontWeight="SemiBold" FontSize="13" BorderThickness="0" Cursor="Hand">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" 
-                                            CornerRadius="8"
-                                            BorderThickness="0">
-                                        <ContentPresenter HorizontalAlignment="Center" 
-                                                          VerticalAlignment="Center"/>
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -190,28 +143,16 @@
                 </Button.Style>
             </Button>
 
-            <Button Grid.Column="2"
-                    Content="❌ Cancel"
-                    Command="{Binding CancelCommand}"
-                    Width="110"
-                    Height="45"
-                    Margin="5,0"
-                    Background="#95A5A6"
-                    Foreground="White"
-                    FontWeight="SemiBold"
-                    FontSize="13"
-                    BorderThickness="0"
-                    Cursor="Hand">
+            <Button Grid.Column="2" Content="❌ Cancel" Command="{Binding CancelCommand}"
+                    Width="110" Height="45" Margin="5,0" Background="#95A5A6" Foreground="White"
+                    FontWeight="SemiBold" FontSize="13" BorderThickness="0" Cursor="Hand">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" 
-                                            CornerRadius="8"
-                                            BorderThickness="0">
-                                        <ContentPresenter HorizontalAlignment="Center" 
-                                                          VerticalAlignment="Center"/>
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>
@@ -225,28 +166,16 @@
                 </Button.Style>
             </Button>
 
-            <Button Grid.Column="3"
-                    Content="✅ Save"
-                    Command="{Binding SaveCommand}"
-                    Width="110"
-                    Height="45"
-                    Margin="5,0"
-                    Background="#27AE60"
-                    Foreground="White"
-                    FontWeight="Bold"
-                    FontSize="13"
-                    BorderThickness="0"
-                    Cursor="Hand">
+            <Button Grid.Column="3" Content="✅ Save" Command="{Binding SaveCommand}"
+                    Width="110" Height="45" Margin="5,0" Background="#27AE60" Foreground="White"
+                    FontWeight="Bold" FontSize="13" BorderThickness="0" Cursor="Hand">
                 <Button.Style>
                     <Style TargetType="Button">
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}" 
-                                            CornerRadius="8"
-                                            BorderThickness="0">
-                                        <ContentPresenter HorizontalAlignment="Center" 
-                                                          VerticalAlignment="Center"/>
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                                     </Border>
                                 </ControlTemplate>
                             </Setter.Value>

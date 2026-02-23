@@ -29,14 +29,39 @@ namespace EasySave.Models
         public string Language { get; set; } = "en-US";
 
         /// <summary>
+        /// Extensions de fichiers considérées comme prioritaires lors des sauvegardes.
+        /// Les fichiers avec ces extensions seront copiés en premier.
+        /// Format : ".ext1,.ext2,.ext3"
+        /// </summary>
+        public string PriorityExtensions { get; set; } = "";
+
+        /// <summary>
+        /// Taille maximale en Ko au-delà de laquelle un fichier est considéré "gros".
+        /// Un seul fichier "gros" peut être transféré à la fois en parallèle.
+        /// 0 = pas de limite (comportement par défaut).
+        /// </summary>
+        public long MaxParallelFileSizeKo { get; set; } = 0;
+
+        /// <summary>
         /// Private constructor to enforce Singleton pattern
         /// </summary>
         private AppSettings() { }
 
         /// <summary>
+        /// Retourne la liste des extensions prioritaires sous forme de tableau.
+        /// </summary>
+        public string[] GetPriorityExtensionsArray()
+        {
+            if (string.IsNullOrWhiteSpace(PriorityExtensions))
+                return Array.Empty<string>();
+
+            return PriorityExtensions
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        }
+
+        /// <summary>
         /// Loads settings from JSON file or creates default if file doesn't exist
         /// </summary>
-        /// <returns>AppSettings instance with loaded or default values</returns>
         private static AppSettings Load()
         {
             try
@@ -49,7 +74,6 @@ namespace EasySave.Models
             }
             catch (Exception ex)
             {
-                // Log error but continue with default settings
                 Console.WriteLine($"Error loading settings: {ex.Message}");
             }
 
@@ -63,14 +87,10 @@ namespace EasySave.Models
         {
             try
             {
-                // Ensure directory exists
                 string? directory = Path.GetDirectoryName(SettingsFilePath);
                 if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                {
                     Directory.CreateDirectory(directory);
-                }
 
-                // Serialize and save with indentation for readability
                 var options = new JsonSerializerOptions { WriteIndented = true };
                 string json = JsonSerializer.Serialize(this, options);
                 File.WriteAllText(SettingsFilePath, json);
@@ -91,6 +111,8 @@ namespace EasySave.Models
             EncryptionExtensions = ".docx,.xlsx,.pptx";
             BusinessSoftware = "calc";
             Language = "en-US";
+            PriorityExtensions = "";
+            MaxParallelFileSizeKo = 0;
         }
     }
 }
