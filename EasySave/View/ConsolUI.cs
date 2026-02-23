@@ -3,10 +3,11 @@ using EasySave.Resources;
 using EasySave.ViewModels;
 using System;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Windows.Documents;
 using Tool.Utils;
 
-namespace EasySave.View
+namespace EasySave.ViewModel
 {
     public class ConsoleUI
     {
@@ -14,13 +15,26 @@ namespace EasySave.View
         private readonly MainViewModel _controller;
         private readonly object _consoleLock = new object();
 
-        public ConsoleUI(MainViewModel controller)
+        public ConsoleUI(string[] arg)
         {
-            _controller = controller;
-            _messageProvider = new MessageProvider(); // Plus besoin de passer isFrench
+            if (arg.Length == 0)
+            {
+                _controller = new MainViewModel(arg);
+                _messageProvider = new MessageProvider(); // message structures
 
-            // Initialisation de la langue au démarrage
-            SetupLanguage();
+                _controller.OnMessageReceived += (sender, msg) =>
+                {
+                    displayMessage(msg);
+                }; //for the viewmodel
+
+                // Initialize language
+                SetupLanguage();
+            }
+            else
+            {
+                _controller = new MainViewModel(arg);
+            }
+
         }
 
         private void SetupLanguage()
@@ -31,11 +45,12 @@ namespace EasySave.View
             Console.Write("> ");
 
             string choice = Console.ReadLine() ?? "2";
-            // On utilise le Singleton pour définir la langue globalement
+            // singleton
             LanguageManager.Instance.ChangeLanguage(choice == "1" ? "fr-FR" : "en-US");
+            showMenu();
         }
 
-        public void showMenu()
+        private void showMenu()
         {
             bool quit = false;
             while (!quit)
@@ -56,8 +71,8 @@ namespace EasySave.View
                 {
                     case "1": createBackupJob(BackupTypes.FULL); break;
                     case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
-                    case "3": LaunchBackups(); break;
-                    case "4":
+                    case "3": LaunchBackup(); break;
+                    case "4": LaunchBackup(); break;
                     case "5":
                         displayMessage(new Message(MessageType.Goodbye));
                         quit = true;
@@ -69,6 +84,30 @@ namespace EasySave.View
                 }
             }
         }
+
+        private void LaunchBackup()
+        {
+            Console.Clear();
+
+            if (_controller.thereJobs())
+            {
+                for (int i = 0; i < _controller.getJobName().Length; i++)
+                {
+                    Console.WriteLine($"{i} - {_controller.getJobName()[i]}");
+                }
+                Console.Write(_messageProvider.Resolve(new Message(MessageType.MenuPrompt)));
+                string choice = Console.ReadLine();
+
+                _controller.HandleCommandLineArgs(choice);
+                Console.ReadKey(); 
+            }
+            else
+            {
+                displayMessage(new Message(MessageType.NoJobAvailable));
+                Console.ReadKey(); 
+            }
+        }
+
 
         public void displayMessage(Message message)
         {
@@ -96,64 +135,7 @@ namespace EasySave.View
             _controller.createBackupJob(name, source, dest, type);
         }
 
-        private void LaunchBackups(string choice)
-        {
-            var jobs = _controller.getJobName();
-
-            if (jobs.Length == 0)
-            {
-                displayMessage(MessageType.NoJobAvailable);
-                Console.ReadKey();
-                return;
-            }
-
-            displayMessage(MessageType.SelectJob);
-            for (int i = 0; i < jobs.Length; i++)
-            {
-                Console.WriteLine($"{i} - {jobs[i]}");
-            }
-
-            // Cas : un seul chiffre (ex: "1")
-            if (choice.Length == 1 && int.TryParse(choice, out int singleChoice))
-            {
-                if (singleChoice >= 0 && singleChoice < jobs.Length)
-                {
-                    _controller.startBackupJob(singleChoice);
-                    displayMessage(MessageType.BackupStarted, jobs[singleChoice]);
-                }
-            }
-
-            // Case : "x-y" or "x,y"
-            else if (choice.Length == 3)
-            {
-                char first = choice[0];
-                char middle = choice[1];
-                char last = choice[2];
-
-                if (char.IsDigit(first) && char.IsDigit(last))
-                {
-                    int fId = (int)char.GetNumericValue(first);
-                    int lId = (int)char.GetNumericValue(last);
-
-                    if (fId >= 0 && fId < jobs.Length &&
-                        lId >= 0 && lId < jobs.Length)
-                    {
-                        if (middle == '-')
-                        {
-                            for (int i = fId; i <= lId; i++)
-                            {
-                                _controller.startBackupJob(i);
-                            }
-                        }
-                        else if (middle == ',')
-                        {
-                            _controller.startBackupJob(fId);
-                            _controller.startBackupJob(lId);
-                        }
-                    }
-                }
-            }
-        }
+        
 
     }
 }

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EasySave.ExecutionManagement;
+﻿using EasySave.ExecutionManagement;
+using EasySave.Messaging;
 using EasySave.Models;
 using EasySave.StateManagement; // <-- ajouter pour BackupStateManager
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Tool.Utils;
-using EasySave.View;
 
 namespace EasySave.ViewModels
 {
@@ -16,57 +16,72 @@ namespace EasySave.ViewModels
         // Map des jobs vers leurs BackupStateManager
         private readonly Dictionary<int, BackupStateManager> _stateManagers = new();
 
+        public event EventHandler<Message> OnMessageReceived;
+
         public MainViewModel(string[] args)
         {
-            if (args.Length == 0)
+            if (args.Length > 0)
             {
-                this.createUI().showMenu();
+                HandleCommandLineArgs(args[0]);
             }
-            else if (args[0].Length == 3)
-            {
-                char first = args[0][0];
-                char middle = args[0][1];
-                char last = args[0][2];
+        }
 
-                if (char.IsDigit(first) && char.IsDigit(last))
+        public void HandleCommandLineArgs(string arg)
+        {
+
+
+                if (arg.Length == 3)
                 {
-                    int fId = (int)char.GetNumericValue(first);
-                    int lId = (int)char.GetNumericValue(last);
+                    int fId = (int)char.GetNumericValue(arg[0]);
+                    char middle = arg[1];
+                    int lId = (int)char.GetNumericValue(arg[2]);
 
-                    if (getJobs().Count >= fId && getJobs().Count >= lId)
+                    if (middle == '-')
                     {
-                        if (middle == '-')
-                        {
-                            //lancer la sauvegarde de fId et lId
-                        }
-                        else if (middle == ',')
-                        {
-                            // faire un for qui lance les sauvegard de fId et lId
-                        }
+                        for (int i = fId; i <= lId; i++) startBackupJob(i);
+                    }
+                    else if (middle == ',')
+                    {
+                        startBackupJob(fId);
+                        startBackupJob(lId);
                     }
                 }
-            }
+                else if (int.TryParse(arg, out int id))
+                {
+                    startBackupJob(id);
+                }
+            
+        }
+            
+
+        private void NotifyView(MessageType type, params object[] args)
+        {
+            OnMessageReceived?.Invoke(this, new Message(type, args));
         }
 
         // Expose the job list to the View for validation purposes
         public List<BackupJob> getJobs() => backupManager.getBackupJobList();
 
-        public void startBackupJob(int jobId)
+        private void startBackupJob(int jobId)
         {
-            if (getJobs().Count > jobId)
+            var jobs = getJobs();
+            if (jobId >= 0 && jobId < jobs.Count)
             {
+                // Notify the View that the process has started
+                NotifyView(MessageType.BackupStarted, jobs[jobId].name);
+
+                // Execute the business logic
                 backupManager.ExecuteJob(jobId);
+
+                // You can add a success notification here if needed
+                // NotifyView(MessageType.BackupFinished);
             }
-            //else { displayMessage("y a pas de job"); }
+            else
+            {
+                NotifyView(MessageType.NoJobAvailable);
+            }
         }
 
-        public ConsoleUI createUI()
-        {
-            return new ConsoleUI(this);
-        }
-
-        public void displayMessage(string message) { Console.WriteLine(message); }
-        public void getUIMessage(string message) { }
 
         // Placeholder for job existence check
         public bool JobExists(string jobName)
@@ -79,10 +94,8 @@ namespace EasySave.ViewModels
             var jobNames = new List<string>();
             foreach (var job in getJobs())
             {
-                if (job.status.Status == BackupStateResum.OFF || job.status.Status == BackupStateResum.ERROR)
-                {
-                    jobNames.Add(job.name);
-                }
+
+                jobNames.Add(job.name);
             }
             return jobNames.ToArray();
         }
@@ -97,6 +110,10 @@ namespace EasySave.ViewModels
             _stateManagers[jobId] = new BackupStateManager(job);
         }
 
+        public bool thereJobs()
+        {
+            return getJobs().Count > 0;
+        }
         public BackupStateManager getJobStateManager(int jobId)
         {
             if (_stateManagers.ContainsKey(jobId))

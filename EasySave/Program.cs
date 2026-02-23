@@ -1,6 +1,7 @@
-using System;
 using EasySave.Models;
+using EasySave.ViewModel;
 using EasySave.ViewModels;
+using System;
 using Tool.Utils;
 
 namespace EasySave
@@ -9,7 +10,8 @@ namespace EasySave
     {
         static void Main(string[] args)
         {
-            MainViewModel controller = new MainViewModel(args);
+            ConsoleUI console = new ConsoleUI(args);
+
         }
     }
 }
