@@ -1,5 +1,9 @@
 <Solution>
   <Project Path="EasyLog/EasyLog.csproj" />
   <Project Path="EasySave/EasySave.csproj" />
+<<<<<<< HEAD
 <Project Path="EasySave.GUI/EasySave.GUI.csproj" />
+=======
+  <Project Path="EasySave.GUI/EasySave.GUI.csproj" />
+>>>>>>> feature/commandeline
 </Solution>
