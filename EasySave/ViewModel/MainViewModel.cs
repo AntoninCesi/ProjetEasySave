@@ -1,7 +1,7 @@
 ﻿using EasySave.ExecutionManagement;
 using EasySave.Messaging;
 using EasySave.Models;
-using EasySave.StateManagement; // <-- ajouter pour BackupStateManager
+using EasySave.StateManagement; 
 using System;
 using System.Collections.Generic;
 using System.Linq;

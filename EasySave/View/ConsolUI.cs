@@ -61,7 +61,6 @@ namespace EasySave.ViewModel
                 displayMessage(new Message(MessageType.MenuOption1));
                 displayMessage(new Message(MessageType.MenuOption2));
                 displayMessage(new Message(MessageType.MenuOption3));
-                displayMessage(new Message(MessageType.MenuOption5));
                 displayMessage(new Message(MessageType.MenuOption4));
 
                 Console.Write(_messageProvider.Resolve(new Message(MessageType.MenuPrompt)));
@@ -72,8 +71,7 @@ namespace EasySave.ViewModel
                     case "1": createBackupJob(BackupTypes.FULL); break;
                     case "2": createBackupJob(BackupTypes.DIFFERENTIAL); break;
                     case "3": LaunchBackup(); break;
-                    case "4": LaunchBackup(); break;
-                    case "5":
+                    case "4":
                         displayMessage(new Message(MessageType.Goodbye));
                         quit = true;
                         break;
@@ -107,7 +105,6 @@ namespace EasySave.ViewModel
                 Console.ReadKey(); 
             }
         }
-
 
         public void displayMessage(Message message)
         {
