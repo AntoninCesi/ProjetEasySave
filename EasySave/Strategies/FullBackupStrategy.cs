@@ -73,6 +73,16 @@ namespace EasySave.Strategies
 
             foreach (SysFileInfo file in sourceDir.GetFiles())
             {
+                // VÉRIFIER SI ANNULATION DEMANDÉE (STOP)
+                if (job.CancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    Console.WriteLine($"⏹️  Arrêt demandé pour {job.name}");
+                    throw new OperationCanceledException("Backup stopped by user");
+                }
+
+                //  VÉRIFIER SI PAUSE DEMANDÉE (PAUSE)
+                job.PauseEvent.Wait(job.CancellationTokenSource.Token);
+
                 // Vérification du logiciel métier
                 if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
                 {
@@ -81,7 +91,7 @@ namespace EasySave.Strategies
 
                     try
                     {
-                        CopyAndEncryptFile(file, destFilePath);
+                        CopyAndEncryptFile(file, destFilePath, job);
                         TimeSpan duration = DateTime.Now - startTime;
                         job.progressObserver.NotifyFileSaved(file.Length, duration);
 
@@ -103,8 +113,7 @@ namespace EasySave.Strategies
 
                 try
                 {
-                    CopyAndEncryptFile(file, destFilePath2);
-
+                    CopyAndEncryptFile(file, destFilePath2, job);
                     TimeSpan duration = DateTime.Now - startTime2;
                     job.progressObserver.NotifyFileSaved(file.Length, duration);
 
@@ -124,7 +133,7 @@ namespace EasySave.Strategies
             }
         }
 
-        private void CopyAndEncryptFile(SysFileInfo file, string destFilePath)
+        private void CopyAndEncryptFile(SysFileInfo file, string destFilePath, BackupJob job)
         {
             bool shouldEncrypt = file.Extension.ToLower() == ".txt";
 
@@ -142,12 +151,37 @@ namespace EasySave.Strategies
                 }
                 else
                 {
-                    file.CopyTo(destFilePath, true);
+                    CopyFileInterruptible(file.FullName, destFilePath, job);
                 }
             }
             else
             {
-                file.CopyTo(destFilePath, true);
+                CopyFileInterruptible(file.FullName, destFilePath, job);
+            }
+        }
+
+        
+        /// Nouvelle classe pour Copier un fichier de manière interruptible (pause/stop)
+        
+        private void CopyFileInterruptible(string sourcePath, string destPath, BackupJob job)
+        {
+            const int bufferSize = 81920; // 80 KB buffer
+            byte[] buffer = new byte[bufferSize];
+
+            using (FileStream sourceStream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan))
+            using (FileStream destStream = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, FileOptions.SequentialScan))
+            {
+                int bytesRead;
+                while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                {
+                    //  Vérifier annulation à chaque bloc
+                    job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                    // Vérifier pause à chaque bloc
+                    job.PauseEvent.Wait(job.CancellationTokenSource.Token);
+
+                    destStream.Write(buffer, 0, bytesRead);
+                }
             }
         }
     }

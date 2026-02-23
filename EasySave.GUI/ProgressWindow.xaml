@@ -161,7 +161,7 @@
             </StackPanel>
         </Border>
 
-        <!-- Action Buttons (disabled for now, will be enabled in V3.0) -->
+        <!-- Action Buttons -->
         <StackPanel Grid.Row="2" 
                     Orientation="Horizontal" 
                     HorizontalAlignment="Right" 
@@ -175,12 +175,21 @@
                     Foreground="White"
                     FontWeight="SemiBold"
                     BorderThickness="0"
-                    Cursor="Hand"
-                    IsEnabled="False"
-                    Opacity="0.5"/>
-            
-            <Button Content="❌ Cancel"
-                    Command="{Binding CancelCommand}"
+                    Cursor="Hand"/>
+
+            <Button Content="▶️ Resume"
+                    Command="{Binding ResumeCommand}"
+                    Width="110"
+                    Height="40"
+                    Margin="5,0"
+                    Background="#27AE60"
+                    Foreground="White"
+                    FontWeight="SemiBold"
+                    BorderThickness="0"
+                    Cursor="Hand"/>
+
+            <Button Content="⏹️ Stop"
+                    Command="{Binding StopCommand}"
                     Width="110"
                     Height="40"
                     Margin="5,0"
@@ -188,9 +197,7 @@
                     Foreground="White"
                     FontWeight="SemiBold"
                     BorderThickness="0"
-                    Cursor="Hand"
-                    IsEnabled="False"
-                    Opacity="0.5"/>
+                    Cursor="Hand"/>
         </StackPanel>
     </Grid>
 </Window>

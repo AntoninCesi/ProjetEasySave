@@ -3,16 +3,21 @@ using System.ComponentModel;
 using System.Windows.Input;
 using EasySave.Commands;
 using EasySave.Resources;
+using EasySave.Models;
+using EasySave.ExecutionManagement;
+using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
-    /// <summary>
+
     /// ViewModel for the Progress window following MVVM pattern.
-    /// This prepares the UI data structure; actual progress values will come 
-    /// from BackupStateObservator (handled by the backend team).
-    /// </summary>
+    /// This prepares the UI data structure; actual progress values will come from BackupStateObservator (handled by the backend team).
+
     public class ProgressViewModel : INotifyPropertyChanged
     {
+        private readonly BackupJob _job;
+        private readonly BackupExecutionManager _backupManager;
+        private readonly int _jobId;
         private string _jobName;
         private int _totalFiles;
         private int _processedFiles;
@@ -42,9 +47,9 @@ namespace EasySave.ViewModels
             }
         }
 
-        /// <summary>
+        
         /// Total number of files to backup
-        /// </summary>
+       
         public int TotalFiles
         {
             get => _totalFiles;
@@ -79,7 +84,7 @@ namespace EasySave.ViewModels
             get => _progressPercentage;
             set
             {
-                _progressPercentage = value;
+                _progressPercentage = Math.Min(100, Math.Max(0, value)); // Clamp entre 0 et 100
                 OnPropertyChanged(nameof(ProgressPercentage));
             }
         }
@@ -169,16 +174,21 @@ namespace EasySave.ViewModels
         public string TotalSizeFormatted => FormatBytes(TotalBytes);
         public string ProcessedSizeFormatted => FormatBytes(ProcessedBytes);
 
-        // Commands (for future pause/cancel functionality)
+        // Commands
         public ICommand PauseCommand { get; }
-        public ICommand CancelCommand { get; }
+        public ICommand ResumeCommand { get; }
+        public ICommand StopCommand { get; }
 
-        /// <summary>
+        
         /// Initializes a new instance of ProgressViewModel
-        /// </summary>
-        public ProgressViewModel()
+       
+        public ProgressViewModel(BackupJob job, BackupExecutionManager backupManager, int jobId)
         {
-            _jobName = "Backup Job";
+            _job = job ?? throw new ArgumentNullException(nameof(job));
+            _backupManager = backupManager ?? throw new ArgumentNullException(nameof(backupManager));
+            _jobId = jobId;
+
+            _jobName = job.name;
             _totalFiles = 0;
             _processedFiles = 0;
             _progressPercentage = 0;
@@ -189,26 +199,37 @@ namespace EasySave.ViewModels
             _timeRemaining = "Calculating...";
             _status = "Starting backup...";
 
-            // Initialize commands (will be implemented in Version 3.0)
-            PauseCommand = new RelayCommand(_ => PauseBackup(), _ => false);
-            CancelCommand = new RelayCommand(_ => CancelBackup(), _ => false);
+            // Initialize commands
+            PauseCommand = new RelayCommand(_ => PauseBackup(), _ => CanPause());
+            ResumeCommand = new RelayCommand(_ => ResumeBackup(), _ => CanResume());
+            StopCommand = new RelayCommand(_ => StopBackup(), _ => CanStop());
         }
 
-        /// <summary>
-        /// Pauses the backup (placeholder for V3.0)
-        /// </summary>
+        /// Pauses the backup
         private void PauseBackup()
         {
-            // TODO: Implement pause functionality in Version 3.0
+            _backupManager.PauseJob(_jobId);
+            Status = "⏸️ Backup paused";
         }
 
-        /// <summary>
-        /// Cancels the backup (placeholder for V3.0)
-        /// </summary>
-        private void CancelBackup()
+        /// Resumes the backup
+        private void ResumeBackup()
         {
-            // TODO: Implement cancel functionality in Version 3.0
+            _backupManager.ResumeJob(_jobId);
+            Status = "▶️ Backup resumed";
         }
+
+        /// Stops the backup
+        private void StopBackup()
+        {
+            _backupManager.StopJob(_jobId);
+            Status = "⏹️ Backup stopped";
+        }
+
+        private bool CanPause() => _job?.status.Status == BackupStateResum.ON;
+        private bool CanResume() => _job?.status.Status == BackupStateResum.PAUSED;
+        private bool CanStop() => _job?.status.Status == BackupStateResum.ON ||
+                                  _job?.status.Status == BackupStateResum.PAUSED;
 
         /// <summary>
         /// Formats bytes to human-readable size
