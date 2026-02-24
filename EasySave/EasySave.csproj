@@ -6,12 +6,15 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\EasyLog\EasyLog.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Commands\" />
   </ItemGroup>
+
   <ItemGroup>
     <Compile Update="Resources\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
@@ -19,6 +22,7 @@
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+
   <ItemGroup>
     <EmbeddedResource Update="Resources\Strings.en.resx">
       <Generator>ResXFileCodeGenerator</Generator>

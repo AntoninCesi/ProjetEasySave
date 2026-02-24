@@ -1,84 +1,86 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using EasySave.Models;
-using EasySave.Strategies;
-using EasySave.StateManagement;
 using EasySave.Services;
+using EasySave.StateManagement;
+using EasySave.Strategies;
 using Tool.Utils;
 
 namespace EasySave.ExecutionManagement
 {
-    public class BackupExecutionManager
-    {
-        // La liste des jobs reste ici
-        private readonly List<BackupJob> _listBackupJob = new();
+	public class BackupExecutionManager
+	{
+		private readonly List<BackupJob> _listBackupJob = new();
 
-        public void createBackupJob(string name, string sourcePath, string destinationPath, BackupTypes type)
-        {
-            var job = new BackupJob
-            {
-                name = name,
-                sourcePath = sourcePath,
-                destinationPath = destinationPath,
-                type = type,
-                progressObserver = new BackupProgressObserver()
-            };
+		// IMPORTANT : on conserve les state managers pour éviter qu’ils soient GC collectés
+		private readonly List<BackupStateManager> _stateManagers = new();
 
-            _listBackupJob.Add(job);
+		public void createBackupJob(string name, string sourcePath, string destinationPath, BackupTypes type)
+		{
+			var job = new BackupJob
+			{
+				name = name,
+				sourcePath = sourcePath,
+				destinationPath = destinationPath,
+				type = type,
+				progressObserver = new BackupProgressObserver()
+			};
 
-            // Crée un StateManager pour suivre ce job (UI / observer)
-            var stateManager = new BackupStateManager(job);
+			_listBackupJob.Add(job);
 
-            int jobId = _listBackupJob.Count - 1;
-            Console.WriteLine(_listBackupJob[jobId].ToString());
-        }
+			// Crée et conserve un StateManager pour suivre ce job (UI / observer)
+			_stateManagers.Add(new BackupStateManager(job));
 
-        public void ExecuteJobAsyncExecuteJob(int jobId)
-        {
-            BackupStrategyFactory.ExecuteBackup(getJobById(jobId));
+			int jobId = _listBackupJob.Count - 1;
+			Console.WriteLine(_listBackupJob[jobId].ToString());
+		}
 
-        }
+		// (Je conserve ta méthode, mais sécurisée)
+		public void ExecuteJobAsyncExecuteJob(int jobId)
+		{
+			var job = getJobById(jobId);
+			if (job == null) return;
 
-        public List<BackupJob> getBackupJobList()
-        {
-            return _listBackupJob;
-        }
+			BackupStrategyFactory.ExecuteBackup(job);
+		}
 
-        public BackupJob getJobById(int jobId)
-        {
-            if (jobId < 0 || jobId >= _listBackupJob.Count)
-                return null;
+		public List<BackupJob> getBackupJobList()
+		{
+			return _listBackupJob;
+		}
 
-            return _listBackupJob[jobId];
-        }
+		public BackupJob getJobById(int jobId)
+		{
+			if (jobId < 0 || jobId >= _listBackupJob.Count)
+				return null;
 
-        public async Task ExecuteJob(int jobId)
-        {
-            var job = getJobById(jobId);
-            if (job == null)
-            {
-                Console.WriteLine($"Job {jobId} introuvable !");
-                return;
-            }
+			return _listBackupJob[jobId];
+		}
 
-            // ⚠️ VÉRIFICATION DU LOGICIEL MÉTIER AVANT DE DÉMARRER (v2.0 requirement)
-            if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
-            {
-                Console.WriteLine($"❌ Impossible de démarrer {job.name} : logiciel métier en cours d'exécution");
+		public async Task ExecuteJob(int jobId)
+		{
+			var job = getJobById(jobId);
+			if (job == null)
+			{
+				Console.WriteLine($"Job {jobId} introuvable !");
+				return;
+			}
 
-                // Logger l'événement
-                LogService.Instance.LogBusinessSoftwareEvent(job.name,
-                    "Backup launch blocked - Business software is running");
+			// ⚠️ Vérification logiciel métier AVANT démarrage
+			if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
+			{
+				Console.WriteLine($"❌ Impossible de démarrer {job.name} : logiciel métier en cours d'exécution");
 
-                return;  // On n'exécute PAS le job
-            }
+				LogService.Instance.LogBusinessSoftwareEvent(
+					job.name,
+					"Backup launch blocked - Business software is running"
+				);
 
-            await Task.Run(() =>
-            {
-                try
-                {
-                    Console.WriteLine($"▶️  Démarrage du job {job.name}");
-                    BackupStrategyFactory.ExecuteBackup(job);
+				return;
+			}
 
+<<<<<<< HEAD
                     job.status.Status = BackupStateResum.ON;
                     job.status.LastActionTimestamp = DateTime.Now;
                     Console.WriteLine($"✅ Job {job.name} terminé avec succès !");
@@ -98,15 +100,62 @@ namespace EasySave.ExecutionManagement
                 }
             });
         }
+=======
+			await Task.Run(() =>
+			{
+				try
+				{
+					Console.WriteLine($"▶️  Démarrage du job {job.name}");
+>>>>>>> feature/dlltype2
 
-        public async Task ExecuteAllJob()
-        {
-            var tasks = new List<Task>();
+					// ✅ LOG: job started
+					LogService.Instance.JobStarted(job.name);
 
-            for (int i = 0; i < _listBackupJob.Count; i++)
-                tasks.Add(ExecuteJob(i));
+					BackupStrategyFactory.ExecuteBackup(job);
 
-            await Task.WhenAll(tasks);
-        }
-    }
+					job.status.Status = BackupStateResum.FINISHED;
+					job.status.LastActionTimestamp = DateTime.Now;
+
+					// ✅ LOG: job completed
+					LogService.Instance.JobCompleted(job.name);
+
+					Console.WriteLine($"✅ Job {job.name} terminé avec succès !");
+				}
+				catch (OperationCanceledException ex)
+				{
+					job.status.Status = BackupStateResum.ERROR;
+					job.status.LastActionTimestamp = DateTime.Now;
+
+					LogService.Instance.LogBusinessSoftwareEvent(
+						job.name,
+						$"Backup canceled: {ex.Message}"
+					);
+
+					Console.WriteLine($"⏹️  Job {job.name} arrêté : {ex.Message}");
+				}
+				catch (Exception ex)
+				{
+					job.status.Status = BackupStateResum.ERROR;
+					job.status.LastActionTimestamp = DateTime.Now;
+
+					LogService.Instance.LogBusinessSoftwareEvent(
+						job.name,
+						$"Backup error: {ex.Message}"
+					);
+
+					Console.WriteLine($"❌ Erreur dans le job {job.name} : {ex.Message}");
+				}
+			});
+		}
+
+		public async Task ExecuteAllJob()
+		{
+			var tasks = new List<Task>();
+
+			for (int i = 0; i < _listBackupJob.Count; i++)
+				tasks.Add(ExecuteJob(i));
+
+			await Task.WhenAll(tasks);
+		}
+	}
 }

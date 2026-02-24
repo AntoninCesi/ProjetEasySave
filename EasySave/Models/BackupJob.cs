@@ -1,4 +1,4 @@
-﻿using Tool.Utils;
+using Tool.Utils;
 using EasySave.Strategies;
 
 namespace EasySave.Models

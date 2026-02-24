@@ -58,7 +58,7 @@ namespace EasySave.View
 
         private void createBackupJob(BackupTypes type)
         {
-           
+
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
@@ -67,7 +67,7 @@ namespace EasySave.View
                 Console.WriteLine("Le répertoire source n'existe pas ou est vide.");
                 return;
             }
-            
+
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
             string destinationPath = Console.ReadLine() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(destinationPath) || !Directory.Exists(destinationPath))

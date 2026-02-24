@@ -1,96 +1,117 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EasySave.Models
 {
-    /// <summary>
-    /// Application settings model using Singleton pattern.
-    /// Handles loading and saving application configuration to JSON file.
-    /// </summary>
-    public class AppSettings
-    {
-        private static AppSettings? _instance;
-        private static readonly string SettingsFilePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "EasySave",
-            "settings.json"
-        );
+	public class AppSettings
+	{
+		private static AppSettings? _instance;
+		private static readonly string SettingsFilePath = Path.Combine(
+			Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+			"EasySave",
+			"settings.json"
+		);
 
-        /// <summary>
-        /// Gets the singleton instance of AppSettings
-        /// </summary>
-        public static AppSettings Instance => _instance ??= Load();
+		public static AppSettings Instance => _instance ??= Load();
 
-        // Settings properties with default values
-        public string LogFormat { get; set; } = "JSON";
-        public string EncryptionExtensions { get; set; } = ".docx,.xlsx,.pptx";
-        public string BusinessSoftware { get; set; } = "CalculatorApp";
-        public string Language { get; set; } = "en-US";
+		public string LogFormat { get; set; } = "JSON";
+		public string EncryptionExtensions { get; set; } = ".docx,.xlsx,.pptx";
+		public string BusinessSoftware { get; set; } = "CalculatorApp";
+		public string Language { get; set; } = "en-US";
 
-        /// <summary>
-        /// Private constructor to enforce Singleton pattern
-        /// </summary>
-        private AppSettings() { }
+		// ✅ Back-end : liste d'extensions prioritaires
+		// (sert aux règles de priorité)
+		public List<string> PriorityExtensions { get; set; } = new();
 
-        /// <summary>
-        /// Loads settings from JSON file or creates default if file doesn't exist
-        /// </summary>
-        /// <returns>AppSettings instance with loaded or default values</returns>
-        private static AppSettings Load()
-        {
-            try
-            {
-                if (File.Exists(SettingsFilePath))
-                {
-                    string json = File.ReadAllText(SettingsFilePath);
-                    return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
-                }
-            }
-            catch (Exception ex)
-            {
-                // Log error but continue with default settings
-                Console.WriteLine($"Error loading settings: {ex.Message}");
-            }
+		// ✅ Back-end : seuil (Ko) utilisé pour limiter le parallélisme
+		// On met long pour éviter ton erreur: "long -> int"
+		public long MaxParallelFileSizeKo { get; set; } = 0;
 
-            return new AppSettings();
-        }
+		// -------------------------
+		// PROPRIÉTÉS "BRIDGE" UI
+		// -------------------------
+		// UI aime souvent binder une textbox sur un string => on expose une version CSV.
+		// JsonIgnore pour éviter de doubler les champs dans settings.json
+		[JsonIgnore]
+		public string PriorityExtensionsCsv
+		{
+			get => string.Join(",", PriorityExtensions ?? new List<string>());
+			set => PriorityExtensions = SplitExtensions(value);
+		}
 
-        /// <summary>
-        /// Saves current settings to JSON file
-        /// </summary>
-        public void Save()
-        {
-            try
-            {
-                // Ensure directory exists
-                string? directory = Path.GetDirectoryName(SettingsFilePath);
-                if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-                {
-                    Directory.CreateDirectory(directory);
-                }
+		// Si certains ViewModels attendent un int, on expose un int (sans casser le stockage long)
+		[JsonIgnore]
+		public int MaxParallelFileSizeKoInt
+		{
+			get => (MaxParallelFileSizeKo > int.MaxValue) ? int.MaxValue : (int)MaxParallelFileSizeKo;
+			set => MaxParallelFileSizeKo = value;
+		}
 
-                // Serialize and save with indentation for readability
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string json = JsonSerializer.Serialize(this, options);
-                File.WriteAllText(SettingsFilePath, json);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error saving settings: {ex.Message}");
-                throw;
-            }
-        }
+		private AppSettings() { }
 
-        /// <summary>
-        /// Resets all settings to default values
-        /// </summary>
-        public void ResetToDefaults()
-        {
-            LogFormat = "JSON";
-            EncryptionExtensions = ".docx,.xlsx,.pptx";
-            BusinessSoftware = "calc";
-            Language = "en-US";
-        }
-    }
+		private static AppSettings Load()
+		{
+			try
+			{
+				if (File.Exists(SettingsFilePath))
+				{
+					string json = File.ReadAllText(SettingsFilePath);
+					return JsonSerializer.Deserialize<AppSettings>(json) ?? new AppSettings();
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error loading settings: {ex.Message}");
+			}
+
+			return new AppSettings();
+		}
+
+		public void Save()
+		{
+			try
+			{
+				string? directory = Path.GetDirectoryName(SettingsFilePath);
+				if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+				{
+					Directory.CreateDirectory(directory);
+				}
+
+				var options = new JsonSerializerOptions { WriteIndented = true };
+				string json = JsonSerializer.Serialize(this, options);
+				File.WriteAllText(SettingsFilePath, json);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error saving settings: {ex.Message}");
+				throw;
+			}
+		}
+
+		public void ResetToDefaults()
+		{
+			LogFormat = "JSON";
+			EncryptionExtensions = ".docx,.xlsx,.pptx";
+			BusinessSoftware = "calc";
+			Language = "en-US";
+
+			PriorityExtensions = new List<string>();
+			MaxParallelFileSizeKo = 0;
+		}
+
+		private static List<string> SplitExtensions(string? csv)
+		{
+			if (string.IsNullOrWhiteSpace(csv)) return new List<string>();
+
+			return csv
+				.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+				.Select(x => x.StartsWith(".") ? x : "." + x) // optionnel: force le point
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+		}
+	}
 }
