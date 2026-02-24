@@ -61,6 +61,33 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏸️ Tous les travaux actifs mis en pause.
+        /// </summary>
+        internal static string AllJobsPaused {
+            get {
+                return ResourceManager.GetString("AllJobsPaused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ▶️ Tous les travaux repris.
+        /// </summary>
+        internal static string AllJobsResumed {
+            get {
+                return ResourceManager.GetString("AllJobsResumed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏹️ Tous les travaux arrêtés.
+        /// </summary>
+        internal static string AllJobsStopped {
+            get {
+                return ResourceManager.GetString("AllJobsStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Gérez et surveillez vos travaux de sauvegarde.
         /// </summary>
         internal static string AppSubtitle {
@@ -295,6 +322,33 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏸️ Travail mis en pause.
+        /// </summary>
+        internal static string JobPaused {
+            get {
+                return ResourceManager.GetString("JobPaused", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ▶️ Travail repris.
+        /// </summary>
+        internal static string JobResumed {
+            get {
+                return ResourceManager.GetString("JobResumed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏹️ Travail arrêté.
+        /// </summary>
+        internal static string JobStopped {
+            get {
+                return ResourceManager.GetString("JobStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Langue :.
         /// </summary>
         internal static string Language {
@@ -340,6 +394,24 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏸️ Tout mettre en pause.
+        /// </summary>
+        internal static string PauseAll {
+            get {
+                return ResourceManager.GetString("PauseAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ▶️ Lecture.
+        /// </summary>
+        internal static string Play {
+            get {
+                return ResourceManager.GetString("Play", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Veuillez entrer un nom de travail..
         /// </summary>
         internal static string PleaseEnterJobName {
@@ -372,6 +444,24 @@ namespace EasySave.Resources {
         internal static string Remaining {
             get {
                 return ResourceManager.GetString("Remaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ▶️ Reprendre.
+        /// </summary>
+        internal static string Resume {
+            get {
+                return ResourceManager.GetString("Resume", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ▶️ Tout reprendre.
+        /// </summary>
+        internal static string ResumeAll {
+            get {
+                return ResourceManager.GetString("ResumeAll", resourceCulture);
             }
         }
         
@@ -444,6 +534,24 @@ namespace EasySave.Resources {
         internal static string State {
             get {
                 return ResourceManager.GetString("State", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏹️ Arrêt.
+        /// </summary>
+        internal static string Stop {
+            get {
+                return ResourceManager.GetString("Stop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏹️ Tout arrêter.
+        /// </summary>
+        internal static string StopAll {
+            get {
+                return ResourceManager.GetString("StopAll", resourceCulture);
             }
         }
         

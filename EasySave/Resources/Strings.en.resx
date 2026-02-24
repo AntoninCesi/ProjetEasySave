@@ -205,7 +205,7 @@
     <value>Success</value>
   </data>
   <data name="JobCreatedSuccess" xml:space="preserve">
-    <value>Job '{0}' created successfully!\n\nNote: Job will be persisted when integrated with Console team's job management.</value>
+    <value>Job '{0}' created successfully !  Note: Job will be persisted when integrated with Console team's job management.</value>
   </data>
   <data name="BackupInProgress" xml:space="preserve">
     <value>⚡ BACKUP IN PROGRESS</value>
@@ -229,10 +229,10 @@
     <value>⏸️ Pause</value>
   </data>
   <data name="EncryptionSuccess" xml:space="preserve">
-    <value>✅ Encryption successful!\n\nEncrypted file: {0}\n\n⏱️ Time: {1} ms</value>
+    <value>✅ Encryption successful! Encrypted file: {0}\n\n⏱️ Time: {1} ms</value>
   </data>
   <data name="EncryptionFailed" xml:space="preserve">
-    <value>❌ Encryption failed!\n\nError: {0}</value>
+    <value>❌ Encryption failed! Error: {0}</value>
   </data>
   <data name="DecryptionSuccess" xml:space="preserve">
     <value>✅ Decryption successful!\n\n⏱️ Time: {0} ms</value>
@@ -247,7 +247,7 @@
     <value>No Jobs</value>
   </data>
   <data name="NoJobsMessage" xml:space="preserve">
-    <value>No backup jobs to run.\n\nPlease create a job first by clicking 'Create New Job'.</value>
+    <value>No backup jobs to run. Please create a job first by clicking 'Create New Job'.</value>
   </data>
   <data name="BackupBlocked" xml:space="preserve">
     <value>Backup Blocked</value>
@@ -255,7 +255,43 @@
   <data name="BackupBlockedMessage" xml:space="preserve">
     <value>Cannot start backup: Business software '{0}' is running.\n\nPlease close the business software and try again.</value>
   </data>
-  <data name="State" xml:space="preserve">
-    <value>State</value>
+	<data name="State" xml:space="preserve">
+    <value>Status</value>
+  </data>
+	<data name="Play" xml:space="preserve">
+    <value>▶️ Play</value>
+  </data>
+	<data name="Resume" xml:space="preserve">
+    <value>▶️ Resume</value>
+  </data>
+	<data name="Stop" xml:space="preserve">
+    <value>⏹️ Stop</value>
+  </data>
+	<data name="PauseAll" xml:space="preserve">
+    <value>⏸️ Pause All</value>
+  </data>
+	<data name="ResumeAll" xml:space="preserve">
+    <value>▶️ Resume All</value>
+  </data>
+	<data name="StopAll" xml:space="preserve">
+    <value>⏹️ Stop All</value>
+  </data>
+	<data name="JobPaused" xml:space="preserve">
+    <value>⏸️ Job paused</value>
+  </data>
+	<data name="JobResumed" xml:space="preserve">
+    <value>▶️ Job resumed</value>
+  </data>
+	<data name="JobStopped" xml:space="preserve">
+    <value>⏹️ Job stopped</value>
+  </data>
+	<data name="AllJobsPaused" xml:space="preserve">
+    <value>⏸️ All active jobs paused</value>
+  </data>
+	<data name="AllJobsResumed" xml:space="preserve">
+    <value>▶️ All jobs resumed</value>
+  </data>
+	<data name="AllJobsStopped" xml:space="preserve">
+    <value>⏹️ All jobs stopped</value>
   </data>
 </root>

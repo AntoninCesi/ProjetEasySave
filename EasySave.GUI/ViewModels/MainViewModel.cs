@@ -48,24 +48,25 @@ namespace EasySave.ViewModels
 
         public MainViewModel()
         {
-            BackupJobs = new ObservableCollection<BackupJob>();
-            _businessMonitor = BusinessSoftwareMonitor.Instance;
             _backupManager = new BackupExecutionManager();
+            _businessMonitor = BusinessSoftwareMonitor.Instance;
 
+            // Synchroniser avec la liste du backend
+            BackupJobs = new ObservableCollection<BackupJob>(_backupManager.getBackupJobList());
+
+            // INITIALISER LES COMMANDES 
             ChangeLanguageCommand = new RelayCommand<string>(ChangeLanguage);
             CreateJobCommand = new RelayCommand(_ => CreateNewJob());
             RunSelectionCommand = new RelayCommand(_ => RunAllJobsParallel());
             DeleteJobCommand = new RelayCommand(_ => DeleteSelectedJob(), _ => SelectedJob != null);
             OpenSettingsCommand = new RelayCommand(_ => OpenSettings());
         }
-
         private void ChangeLanguage(string? languageCode)
         {
             if (string.IsNullOrEmpty(languageCode)) return;
             LanguageManager.Instance.ChangeLanguage(languageCode);
             OnPropertyChanged(nameof(Lang));
         }
-
         private void CreateNewJob()
         {
             var createVm = new CreateJobViewModel();
@@ -81,14 +82,20 @@ namespace EasySave.ViewModels
                 {
                     var job = createVm.CreatedJob;
 
-                    BackupJobs.Add(job);
-
+                    // Créer dans le backend PUIS récupérer la référence
                     _backupManager.createBackupJob(
                         job.name,
                         job.sourcePath,
                         job.destinationPath,
                         job.type
                     );
+
+                    // Ajouter le job créé par le backend (pas celui du dialog)
+                    var backendJob = _backupManager.getJobById(_backupManager.getJobCount() - 1);
+                    if (backendJob != null)
+                    {
+                        BackupJobs.Add(backendJob);
+                    }
 
                     MessageBox.Show(
                         string.Format(Lang["JobCreatedSuccess"], job.name),
@@ -113,15 +120,24 @@ namespace EasySave.ViewModels
 
             if (result == MessageBoxResult.Yes)
             {
+                // Trouver l'index du job dans la liste
+                int jobIndex = BackupJobs.IndexOf(SelectedJob);
+
+                // Supprimer du backend
+                if (jobIndex >= 0)
+                {
+                    _backupManager.deleteBackupJob(jobIndex);
+                }
+
+                // Supprimer de la GUI
                 BackupJobs.Remove(SelectedJob);
+
                 MessageBox.Show($"Job deleted!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
-        /// <summary>
         /// Runs ALL jobs in PARALLEL (simultaneously)
         /// Each job gets its own ProgressWindow
-        /// </summary>
         private async void RunAllJobsParallel()
         {
             if (BackupJobs.Count == 0)
@@ -161,10 +177,10 @@ namespace EasySave.ViewModels
                 // Count total files
                 int totalFiles = CountTotalFiles(jobToRun.sourcePath);
 
-                // Create ProgressViewModel for this job
-                var progressVM = new ProgressViewModel
+                // Create ProgressViewModel for this job WITH job and manager
+
+                var progressVM = new ProgressViewModel(backendJob, _backupManager, jobId)
                 {
-                    JobName = jobToRun.name,
                     TotalFiles = totalFiles,
                     ProcessedFiles = 0,
                     ProgressPercentage = 0,
