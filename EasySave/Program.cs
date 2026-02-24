@@ -1,20 +1,23 @@
-using System;
-using EasySave.Models;
-using EasySave.ViewModels;
-using Tool.Utils;
-using EasySave.View;
+ï»¿using System;
 using System.Windows;
+using EasySave.Services;
+using EasySave.Models;
+using EasySave.View;
 
-namespace EasySave;
-
-class Program
+namespace EasySave
 {
-    [STAThread]
-    static void Main(string[] args)
-    {
-        // On crée l'application et on affiche la fenêtre
-        Application app = new Application();
-        MainWindow window = new MainWindow();
-        app.Run(window);
-    }
+	class Program
+	{
+		[STAThread]
+		static void Main(string[] args)
+		{
+			// ðŸ”¹ Recharge le logger selon les settings actuels
+			LogService.Instance.ReloadFromSettings();
+
+			// ðŸ”¹ Lancement UI
+			Application app = new Application();
+			MainWindow window = new MainWindow();
+			app.Run(window);
+		}
+	}
 }

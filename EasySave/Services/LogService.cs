@@ -1,75 +1,72 @@
-using System.Text.Json;
+using System;
 using System.IO;
+using EasyLog;
 
-namespace EasySave.Services;
-
-public class LogService
+namespace EasySave.Services
 {
-    private static LogService? _instance;
-    private readonly string _logFolderPath;
+	public sealed class LogService
+	{
+		private static LogService? _instance;
+		public static LogService Instance => _instance ??= new LogService();
 
-    /// <summary>
-    /// Singleton instance
-    /// </summary>
-    public static LogService Instance => _instance ??= new LogService();
+		private EasyLogger _logger;
 
-    private LogService()
-    {
-        // Logs are stored in a "Logs" folder inside the app directory
-        _logFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+		private LogService()
+		{
+			_logger = CreateLoggerFromSettings();
+		}
 
-        // Create the directory if it doesn't exist yet
-        if (!Directory.Exists(_logFolderPath))
-        {
-            Directory.CreateDirectory(_logFolderPath);
-        }
-    }
+		/// <summary>
+		/// Recrée le logger en relisant AppSettings (appelé quand on Save les Settings).
+		/// </summary>
+		public void ReloadFromSettings()
+		{
+			_logger = CreateLoggerFromSettings();
+		}
 
-    public void WriteLog(string jobName, string source, string target, long fileSize, long transferTime)
-    {
-        // Prepare the data for the log entry
-        var logEntry = new
-        {
-            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-            BackupName = jobName,
-            SourceFile = source,
-            TargetFile = target,
-            FileSize = fileSize,
-            DurationMs = transferTime
-        };
+		private static EasyLogger CreateLoggerFromSettings()
+		{
+			// Dossier logs : reste cohérent avec ce que tu avais (bin/.../Logs)
+			string baseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+			Directory.CreateDirectory(baseFolder);
 
-        // One log file per day (e.g., 2026-01-30.json)
-        string fileName = DateTime.Now.ToString("yyyy-MM-dd") + ".json";
-        string filePath = Path.Combine(_logFolderPath, fileName);
+			// On lit le format depuis les settings (string "JSON"/"XML")
+			string fmt = Models.AppSettings.Instance.LogFormat ?? "JSON";
 
-        // Format JSON with indentation so it's readable in Notepad
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        string jsonString = JsonSerializer.Serialize(logEntry, options);
+			LogFormat format = fmt.Equals("XML", StringComparison.OrdinalIgnoreCase)
+				? LogFormat.Xml
+				: LogFormat.Json;
 
-        // Append the JSON string to the daily log file
-        File.AppendAllText(filePath, jsonString + Environment.NewLine);
-    }
+			return new EasyLogger(format, baseFolder);
+		}
 
-    /// <summary>
-    /// Logs business software events (blocking, detection during backup)
-    /// </summary>
-    public void LogBusinessSoftwareEvent(string jobName, string eventMessage)
-    {
-        var logEntry = new
-        {
-            Timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-            BackupName = jobName,
-            Event = eventMessage,
-            FileSize = 0,
-            DurationMs = -1  // -1 indicates this is an event, not a file transfer
-        };
+		/// <summary>
+		/// Log d'un fichier copié (signature conservée pour compatibilité avec ton code existant)
+		/// </summary>
+		public void WriteLog(string jobName, string source, string target, long fileSize, long transferTime)
+		{
+			_logger.Write(LogEvent.FileCopied(
+				jobName ?? "",
+				source ?? "",
+				target ?? "",
+				fileSize,
+				transferTime
+			));
+		}
 
-        string fileName = DateTime.Now.ToString("yyyy-MM-dd") + ".json";
-        string filePath = Path.Combine(_logFolderPath, fileName);
+		/// <summary>
+		/// Log d'événement "business software"
+		/// </summary>
+		public void LogBusinessSoftwareEvent(string jobName, string eventMessage)
+		{
+			_logger.Write(LogEvent.Error(
+				jobName ?? "",
+				eventMessage ?? ""
+			));
+		}
 
-        var options = new JsonSerializerOptions { WriteIndented = true };
-        string jsonString = JsonSerializer.Serialize(logEntry, options);
-
-        File.AppendAllText(filePath, jsonString + Environment.NewLine);
-    }
+		// Optionnel : logs "début/fin job" (pratique si tu veux les ajouter vite)
+		public void JobStarted(string jobName) => _logger.Write(LogEvent.JobStarted(jobName ?? ""));
+		public void JobCompleted(string jobName) => _logger.Write(LogEvent.JobCompleted(jobName ?? ""));
+	}
 }

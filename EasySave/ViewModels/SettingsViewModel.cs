@@ -135,9 +135,9 @@ namespace EasySave.ViewModels
 
                 // Save to file
                 _settings.Save();
-
-                // Apply language change immediately
-                LanguageManager.Instance.ChangeLanguage(SelectedLanguage);
+				EasySave.Services.LogService.Instance.ReloadFromSettings();
+				// Apply language change immediately
+				LanguageManager.Instance.ChangeLanguage(SelectedLanguage);
 
                 // Close window
                 CloseWindow();
