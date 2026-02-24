@@ -12,7 +12,7 @@ namespace EasySave.Strategies
     public class BackupProgressObserver
     {
         private readonly object _lock = new object();
-        //public BackupStateResum status { get; set; } = BackupStateResum.OFF;
+        public BackupStateResum status { get; set; } = BackupStateResum.OFF;
         private int _filesSaved;
         private long _totalSize;
         private DateTime _backupStartTime;
@@ -28,11 +28,8 @@ namespace EasySave.Strategies
             _backupStartTime = DateTime.Now;
         }
 
-        // 1. Définition de l'événement (Action qui transporte le nouvel état)
+        // Définition de l'événement (Action qui transporte le nouvel état)
         public event Action<BackupStateResum> OnStatusChanged;
-
-        // 2. Variable pour stocker l'état actuel en interne (optionnel mais recommandé)
-        private BackupStateResum _currentStatus = BackupStateResum.OFF;
 
         /// <summary>
         /// Met à jour le statut du job et notifie les abonnés (comme le MainViewModel)
@@ -51,7 +48,6 @@ namespace EasySave.Strategies
             });
         }
 
-
         public void NotifyFileSaved(long fileSize, TimeSpan fileDuration)
         {
             FileInfos progress;
@@ -66,7 +62,7 @@ namespace EasySave.Strategies
                     FilesSaved = _filesSaved,
                     TotalSize = _totalSize,
                     TotalBackupTime = DateTime.Now - _backupStartTime,
-                    LastFileDuration = fileDuration
+                    LastFileDuration = fileDuration,
                 };
             }
 

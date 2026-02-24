@@ -25,6 +25,7 @@
         AskDestinationDirectory,
         AskSourceDirectory,
         MenuOption5,
+        BackupEnd,
 
         // Error & good
         InvalidFormat,

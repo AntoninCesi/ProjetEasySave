@@ -41,7 +41,7 @@ namespace EasySave.Services
             
             try
             {
-                Console.WriteLine($"[CryptoSoft] Starting encryption: {Path.GetFileName(sourceFile)}");
+                /*Console.WriteLine($"[CryptoSoft] Starting encryption: {Path.GetFileName(sourceFile)}");
 
                 // Validate input
                 if (!File.Exists(sourceFile))
@@ -64,7 +64,7 @@ namespace EasySave.Services
                         TimeMs = 0,
                         ErrorMessage = "Encryption key cannot be empty"
                     };
-                }
+                }*/
 
                 // Read entire file into memory
                 byte[] fileData = File.ReadAllBytes(sourceFile);
@@ -75,7 +75,7 @@ namespace EasySave.Services
                 int chunkSize = Math.Max(CHUNK_SIZE, fileData.Length / processorCount);
                 int chunkCount = (int)Math.Ceiling((double)fileData.Length / chunkSize);
 
-                Console.WriteLine($"[CryptoSoft] Using {processorCount} threads, {chunkCount} chunks");
+                //Console.WriteLine($"[CryptoSoft] Using {processorCount} threads, {chunkCount} chunks");
 
                 // Create array to hold encrypted data
                 byte[] encryptedData = new byte[fileData.Length];
@@ -100,7 +100,7 @@ namespace EasySave.Services
                     // Thread-safe logging
                     lock (_lockObject)
                     {
-                        Console.WriteLine($"[CryptoSoft] Thread {Thread.CurrentThread.ManagedThreadId}: Processed chunk {chunkIndex + 1}/{chunkCount}");
+                        //Console.WriteLine($"[CryptoSoft] Thread {Thread.CurrentThread.ManagedThreadId}: Processed chunk {chunkIndex + 1}/{chunkCount}");
                     }
                 });
 
@@ -116,7 +116,7 @@ namespace EasySave.Services
 
                 stopwatch.Stop();
                 
-                Console.WriteLine($"[CryptoSoft] Encryption completed: {Path.GetFileName(destinationFile)} in {stopwatch.ElapsedMilliseconds}ms");
+                //Console.WriteLine($"[CryptoSoft] Encryption completed: {Path.GetFileName(destinationFile)} in {stopwatch.ElapsedMilliseconds}ms");
                 
                 return new EncryptionResult 
                 { 
@@ -127,7 +127,7 @@ namespace EasySave.Services
             catch (Exception ex)
             {
                 stopwatch.Stop();
-                Console.WriteLine($"[CryptoSoft] ERROR during encryption: {ex.Message}");
+                //Console.WriteLine($"[CryptoSoft] ERROR during encryption: {ex.Message}");
                 
                 return new EncryptionResult 
                 { 

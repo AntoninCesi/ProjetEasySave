@@ -115,6 +115,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sauveagrde terminé.
+        /// </summary>
+        internal static string BackupEnd {
+            get {
+                return ResourceManager.GetString("BackupEnd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ⚡ SAUVEGARDE EN COURS.
         /// </summary>
         internal static string BackupInProgress {

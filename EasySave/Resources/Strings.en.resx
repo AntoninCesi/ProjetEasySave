@@ -308,4 +308,7 @@
   <data name="MenuOption5" xml:space="preserve">
     <value>4 - Launch several safeguarding projects</value>
   </data>
+  <data name="BackupEnd" xml:space="preserve">
+    <value>Backup complete</value>
+  </data>
 </root>
