@@ -9,10 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-<<<<<<< HEAD
-=======
-    <ProjectReference Include="..\EasyLog\EasyLog.csproj" />
->>>>>>> feature/dlltype2
     <ProjectReference Include="..\EasySave\EasySave.csproj" />
   </ItemGroup>
 

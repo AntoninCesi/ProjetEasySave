@@ -2,9 +2,4 @@
   <Project Path="EasyLog/EasyLog.csproj" />
   <Project Path="EasySave/EasySave.csproj" />
   <Project Path="EasySave.GUI/EasySave.GUI.csproj" />
-<<<<<<< HEAD
 </Solution>
-=======
-</Solution>
-
->>>>>>> 29742782d5f8c515a37c523f4200e5c09c305aa9
