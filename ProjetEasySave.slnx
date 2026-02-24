@@ -1,9 +1,6 @@
 <Solution>
   <Project Path="EasyLog/EasyLog.csproj" />
   <Project Path="EasySave/EasySave.csproj" />
-<Project Path="EasySave.GUI/EasySave.GUI.csproj" />
-<<<<<<< HEAD
+  <Project Path="EasySave.GUI/EasySave.GUI.csproj" />
 </Solution>
-=======
-</Solution>
->>>>>>> BackupStateManager
+

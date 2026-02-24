@@ -10,16 +10,13 @@ using SysDirInfo = System.IO.DirectoryInfo;
 
 namespace EasySave.Strategies
 {
-<<<<<<< HEAD
     /// <summary>
     /// Full backup strategy.
     /// When running in parallel, respects two rules:
     /// 1. Priority files across all jobs must complete before non-priority files transfer.
     /// 2. Only one large file (> MaxParallelFileSizeKo) can transfer at a time.
+    /// ✨ 3. Supports Pause/Play/Stop controls (interruptible copy by 80KB blocks)
     /// </summary>
-=======
-    /// Full backup strategy with encryption and integrated logging
->>>>>>> BackupStateManager
     public class FullBackupStrategy : IBackupStrategy
     {
         private readonly SemaphoreSlim? _largeFileSemaphore;
@@ -115,7 +112,17 @@ namespace EasySave.Strategies
 
             foreach (SysFileInfo file in files)
             {
-<<<<<<< HEAD
+                // ✨ VÉRIFIER SI ANNULATION DEMANDÉE (STOP)
+                if (job.CancellationTokenSource.Token.IsCancellationRequested)
+                {
+                    Console.WriteLine($"⏹️  Arrêt demandé pour {job.name}");
+                    throw new OperationCanceledException("Backup stopped by user");
+                }
+
+                // ✨ VÉRIFIER SI PAUSE DEMANDÉE (PAUSE)
+                job.PauseEvent.Wait(job.CancellationTokenSource.Token);
+
+                // Vérification du logiciel métier
                 if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
                 {
                     CopyFileWithControls(file, Path.Combine(destinationPath, file.Name), job);
@@ -125,59 +132,6 @@ namespace EasySave.Strategies
                 }
 
                 CopyFileWithControls(file, Path.Combine(destinationPath, file.Name), job);
-=======
-                // VÉRIFIER SI ANNULATION DEMANDÉE (STOP)
-                if (job.CancellationTokenSource.Token.IsCancellationRequested)
-                {
-                    Console.WriteLine($"⏹️  Arrêt demandé pour {job.name}");
-                    throw new OperationCanceledException("Backup stopped by user");
-                }
-
-                //  VÉRIFIER SI PAUSE DEMANDÉE (PAUSE)
-                job.PauseEvent.Wait(job.CancellationTokenSource.Token);
-
-                // Vérification du logiciel métier
-                if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
-                {
-                    DateTime startTime = DateTime.Now;
-                    string destFilePath = Path.Combine(destinationPath, file.Name);
-
-                    try
-                    {
-                        CopyAndEncryptFile(file, destFilePath, job);
-                        TimeSpan duration = DateTime.Now - startTime;
-                        job.progressObserver.NotifyFileSaved(file.Length, duration);
-
-                        // Log événement logiciel métier
-                        LogService.Instance.LogBusinessSoftwareEvent(job.name,
-                            "Backup stopped - Business software detected during execution");
-                    }
-                    catch
-                    {
-                        job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
-                    }
-
-                    throw new OperationCanceledException("Business software detected during backup");
-                }
-
-                // Copie normale du fichier
-                DateTime startTime2 = DateTime.Now;
-                string destFilePath2 = Path.Combine(destinationPath, file.Name);
-
-                try
-                {
-                    CopyAndEncryptFile(file, destFilePath2, job);
-                    TimeSpan duration = DateTime.Now - startTime2;
-                    job.progressObserver.NotifyFileSaved(file.Length, duration);
-
-                    // Logger chaque fichier copié
-                    LogService.Instance.WriteLog(job.name, file.FullName, destFilePath2, file.Length, (long)duration.TotalMilliseconds);
-                }
-                catch
-                {
-                    job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
-                }
->>>>>>> BackupStateManager
             }
 
             foreach (SysDirInfo subDir in sourceDir.GetDirectories())
@@ -188,6 +142,7 @@ namespace EasySave.Strategies
         /// Copies one file while enforcing the two parallel rules:
         /// - Non-priority files wait until _pendingPriorityFiles == 0
         /// - Large files acquire the semaphore before transferring
+        /// ✨ - Supports interruptible copy (Pause/Stop)
         /// </summary>
         private void CopyFileWithControls(SysFileInfo file, string destFilePath, BackupJob job)
         {
@@ -200,6 +155,10 @@ namespace EasySave.Strategies
             {
                 while (Volatile.Read(ref _pendingPriorityFiles) > 0)
                 {
+                    // ✨ Vérifier annulation pendant l'attente
+                    job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+                    job.PauseEvent.Wait(job.CancellationTokenSource.Token);
+                    
                     Console.WriteLine($"[WAIT] {file.Name} waiting for priority files...");
                     Thread.Sleep(100);
                 }
@@ -213,16 +172,25 @@ namespace EasySave.Strategies
                 if (_parallelMode && isLargeFile && _largeFileSemaphore != null)
                 {
                     Console.WriteLine($"[WAIT] {file.Name} ({file.Length / 1024} Ko) waiting for large file slot...");
-                    _largeFileSemaphore.Wait();
+                    
+                    // ✨ Attente interruptible du sémaphore
+                    _largeFileSemaphore.Wait(job.CancellationTokenSource.Token);
                     semaphoreAcquired = true;
                     Console.WriteLine($"[LOCK] Large file slot acquired for: {file.Name}");
                 }
 
-                CopyAndEncryptFile(file, destFilePath);
+                // ✨ Copie interruptible (par blocs de 80KB)
+                CopyAndEncryptFile(file, destFilePath, job);
 
                 TimeSpan duration = DateTime.Now - startTime;
                 job.progressObserver.NotifyFileSaved(file.Length, duration);
                 LogService.Instance.WriteLog(job.name, file.FullName, destFilePath, file.Length, (long)duration.TotalMilliseconds);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine($"[CANCELLED] {file.Name} - backup stopped");
+                job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                throw;
             }
             catch (Exception ex)
             {
@@ -255,6 +223,9 @@ namespace EasySave.Strategies
             return maxKo > 0 && (sizeBytes / 1024) >= maxKo;
         }
 
+        /// <summary>
+        /// ✨ Copie avec cryptage + support Pause/Stop interruptible
+        /// </summary>
         private void CopyAndEncryptFile(SysFileInfo file, string destFilePath, BackupJob job)
         {
             bool shouldEncrypt = AppSettings.Instance
@@ -269,23 +240,27 @@ namespace EasySave.Strategies
 
                 if (encryptResult.Success)
                 {
-                    if (File.Exists(destFilePath)) File.Delete(destFilePath);
+                    if (File.Exists(destFilePath)) 
+                        File.Delete(destFilePath);
                     File.Move(tempEncrypted, destFilePath);
                 }
                 else
                 {
+                    // ✨ Copie interruptible si cryptage échoue
                     CopyFileInterruptible(file.FullName, destFilePath, job);
                 }
             }
             else
             {
+                // ✨ Copie interruptible pour fichiers non-cryptés
                 CopyFileInterruptible(file.FullName, destFilePath, job);
             }
         }
 
-
-        /// Nouvelle classe pour Copier un fichier de manière interruptible (pause/stop)
-
+        /// <summary>
+        /// ✨ Copie un fichier de manière interruptible (pause/stop)
+        /// Vérification à chaque bloc de 80KB
+        /// </summary>
         private void CopyFileInterruptible(string sourcePath, string destPath, BackupJob job)
         {
             const int bufferSize = 81920; // 80 KB buffer
@@ -299,10 +274,10 @@ namespace EasySave.Strategies
                     int bytesRead;
                     while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        //  Vérifier annulation à chaque bloc
+                        // ✨ Vérifier annulation à chaque bloc de 80KB
                         job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                        // Vérifier pause à chaque bloc
+                        // ✨ Vérifier pause à chaque bloc
                         job.PauseEvent.Wait(job.CancellationTokenSource.Token);
 
                         destStream.Write(buffer, 0, bytesRead);
@@ -311,17 +286,18 @@ namespace EasySave.Strategies
             }
             catch (OperationCanceledException)
             {
-                //  Nettoyer le fichier incomplet en cas d'annulation
+                // ✨ Nettoyer le fichier incomplet en cas d'annulation
                 try
                 {
                     if (File.Exists(destPath))
                     {
                         File.Delete(destPath);
+                        Console.WriteLine($"[CLEANUP] Deleted incomplete file: {Path.GetFileName(destPath)}");
                     }
                 }
                 catch
                 {
-                    // Si on ne peut pas supprimer, au moins on a essayé
+                    // Si suppression échoue, on continue quand même
                 }
 
                 // Relancer l'exception pour que le job sache qu'il a été annulé

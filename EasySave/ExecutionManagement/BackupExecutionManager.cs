@@ -44,9 +44,8 @@ namespace EasySave.ExecutionManagement
             Console.WriteLine(_listBackupJob[jobId].ToString());
         }
 
-<<<<<<< HEAD
         public List<BackupJob> getBackupJobList() => _listBackupJob;
-=======
+
         /// Supprime un job de la liste
        
         public void deleteBackupJob(int jobId)
@@ -177,12 +176,6 @@ namespace EasySave.ExecutionManagement
 
         }
 
-        public List<BackupJob> getBackupJobList()
-        {
-            return _listBackupJob;
-        }
->>>>>>> BackupStateManager
-
         public BackupJob getJobById(int jobId)
         {
             if (jobId < 0 || jobId >= _listBackupJob.Count)
@@ -200,11 +193,6 @@ namespace EasySave.ExecutionManagement
                 return;
             }
 
-<<<<<<< HEAD
-            if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
-            {
-                Console.WriteLine($"Cannot start {job.name}: business software is running");
-=======
             // Réinitialiser les contrôles pour une nouvelle exécution
             job.CancellationTokenSource = new CancellationTokenSource();
             job.CancellationTokenSource = new CancellationTokenSource();
@@ -216,7 +204,7 @@ namespace EasySave.ExecutionManagement
                 Console.WriteLine($"Impossible de démarrer {job.name} : logiciel métier en cours d'exécution");
 
                 // Logger l'événement
->>>>>>> BackupStateManager
+
                 LogService.Instance.LogBusinessSoftwareEvent(job.name,
                     "Backup launch blocked - Business software is running");
                 return;
@@ -237,11 +225,11 @@ namespace EasySave.ExecutionManagement
 
                     strategy.Execute(job);
 
-<<<<<<< HEAD
+
                     job.status.Status = BackupStateResum.ON;
                     job.status.LastActionTimestamp = DateTime.Now;
                     Console.WriteLine($"Job {job.name} completed successfully!");
-=======
+
                     // Si on arrive ici sans annulation, c'est un succès
                     if (!job.IsCancelled)
                     {
@@ -249,30 +237,30 @@ namespace EasySave.ExecutionManagement
                         job.status.LastActionTimestamp = DateTime.Now;
                         Console.WriteLine($"✅ Job {job.name} terminé avec succès !");
                     }
->>>>>>> BackupStateManager
+
                 }
-                catch (OperationCanceledException)
+                catch (OperationCanceledException ex)
                 {
-<<<<<<< HEAD
+
                     job.status.Status = BackupStateResum.ERROR;
                     job.status.LastActionTimestamp = DateTime.Now;
                     Console.WriteLine($"Job {job.name} stopped: {ex.Message}");
-=======
+
                     // Annulation par Stop ou par logiciel métier
                     job.status.Status = BackupStateResum.ERROR;
                     job.status.LastActionTimestamp = DateTime.Now;
                     Console.WriteLine($"⏹️  Job {job.name} annulé");
->>>>>>> BackupStateManager
+
                 }
                 catch (Exception ex)
                 {
                     job.status.Status = BackupStateResum.ERROR;
                     job.status.LastActionTimestamp = DateTime.Now;
-<<<<<<< HEAD
+
                     Console.WriteLine($"Error in job {job.name}: {ex.Message}");
-=======
+
                     Console.WriteLine($"Erreur dans le job {job.name} : {ex.Message}");
->>>>>>> BackupStateManager
+
                 }
             }, job.CancellationTokenSource.Token);
         }
