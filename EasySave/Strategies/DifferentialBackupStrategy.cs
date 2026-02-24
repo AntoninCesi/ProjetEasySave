@@ -219,28 +219,50 @@ namespace EasySave.Strategies
                 return true;
             }
         }
-       
+
         /// nouvelle classe pour la copie de fichier de manière interruptible (pause/stop)
-       
+
         private void CopyFileInterruptible(string sourcePath, string destPath, BackupJob job)
         {
             const int bufferSize = 81920; // 80 KB buffer
             byte[] buffer = new byte[bufferSize];
 
-            using (FileStream sourceStream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan))
-            using (FileStream destStream = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, FileOptions.SequentialScan))
+            try
             {
-                int bytesRead;
-                while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
-                
-                    //  Vérifier annulation à chaque bloc
-                    job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+                using (FileStream sourceStream = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan))
+                using (FileStream destStream = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, FileOptions.SequentialScan))
+                {
+                    int bytesRead;
+                    while ((bytesRead = sourceStream.Read(buffer, 0, buffer.Length)) > 0)
+                    {
+                        //  Vérifier annulation à chaque bloc
+                        job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-                    //  Vérifier pause à chaque bloc
-                    job.PauseEvent.Wait(job.CancellationTokenSource.Token);
+                        // Vérifier pause à chaque bloc
+                        job.PauseEvent.Wait(job.CancellationTokenSource.Token);
 
-                    destStream.Write(buffer, 0, bytesRead);
+                        destStream.Write(buffer, 0, bytesRead);
+                    }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                //  Nettoyer le fichier incomplet en cas d'annulation
+                try
+                {
+                    if (File.Exists(destPath))
+                    {
+                        File.Delete(destPath);
+                    }
+                }
+                catch
+                {
+                    // Si on ne peut pas supprimer, au moins on a essayé
+                }
+
+                // Relancer l'exception pour que le job sache qu'il a été annulé
+                throw;
+            }
         }
+    }
     }
