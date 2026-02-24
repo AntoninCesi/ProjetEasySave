@@ -16,7 +16,7 @@
 
         <!-- Header -->
         <StackPanel Grid.Row="0" Margin="0,0,0,25">
-            <TextBlock FontSize="24" FontWeight="ExtraBold" Foreground="#2C3E50">
+            <TextBlock FontSize="24" FontWeight="ExtraBold" Foreground="DarkGreen">
                 <Run Text="⚡ BACKUP IN PROGRESS"/>
             </TextBlock>
             <TextBlock Text="{Binding JobName, Mode=OneWay}" 
