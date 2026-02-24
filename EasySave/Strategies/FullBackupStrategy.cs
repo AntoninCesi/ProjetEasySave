@@ -9,9 +9,7 @@ using SysDirInfo = System.IO.DirectoryInfo;
 
 namespace EasySave.Strategies
 {
-    /// <summary>
     /// Full backup strategy with encryption and integrated logging
-    /// </summary>
     public class FullBackupStrategy : IBackupStrategy
     {
         public void Execute(BackupJob job)

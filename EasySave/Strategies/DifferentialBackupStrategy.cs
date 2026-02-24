@@ -94,7 +94,7 @@ namespace EasySave.Strategies
                     if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
                     {
                         Console.WriteLine($"⚠️  Logiciel métier détecté pendant la sauvegarde de {job.name}");
-                        Console.WriteLine($"    Fin du transfert du fichier en cours puis arrêt...");
+                        Console.WriteLine($"Fin du transfert du fichier en cours puis arrêt...");
 
                         // On TERMINE le fichier en cours
                         DateTime startTime = DateTime.Now;

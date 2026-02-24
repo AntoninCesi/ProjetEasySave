@@ -205,7 +205,7 @@
     <value>Success</value>
   </data>
   <data name="JobCreatedSuccess" xml:space="preserve">
-    <value>Job '{0}' created successfully!\n\nNote: Job will be persisted when integrated with Console team's job management.</value>
+    <value>Job '{0}' created successfully !  Note: Job will be persisted when integrated with Console team's job management.</value>
   </data>
   <data name="BackupInProgress" xml:space="preserve">
     <value>⚡ BACKUP IN PROGRESS</value>
@@ -229,10 +229,10 @@
     <value>⏸️ Pause</value>
   </data>
   <data name="EncryptionSuccess" xml:space="preserve">
-    <value>✅ Encryption successful!\n\nEncrypted file: {0}\n\n⏱️ Time: {1} ms</value>
+    <value>✅ Encryption successful! Encrypted file: {0}\n\n⏱️ Time: {1} ms</value>
   </data>
   <data name="EncryptionFailed" xml:space="preserve">
-    <value>❌ Encryption failed!\n\nError: {0}</value>
+    <value>❌ Encryption failed! Error: {0}</value>
   </data>
   <data name="DecryptionSuccess" xml:space="preserve">
     <value>✅ Decryption successful!\n\n⏱️ Time: {0} ms</value>
@@ -247,7 +247,7 @@
     <value>No Jobs</value>
   </data>
   <data name="NoJobsMessage" xml:space="preserve">
-    <value>No backup jobs to run.\n\nPlease create a job first by clicking 'Create New Job'.</value>
+    <value>No backup jobs to run. Please create a job first by clicking 'Create New Job'.</value>
   </data>
   <data name="BackupBlocked" xml:space="preserve">
     <value>Backup Blocked</value>

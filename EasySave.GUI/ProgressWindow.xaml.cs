@@ -17,5 +17,10 @@ namespace EasySave.GUI
             InitializeComponent();
             DataContext = viewModel;
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
