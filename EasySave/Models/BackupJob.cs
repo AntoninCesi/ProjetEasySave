@@ -1,5 +1,6 @@
 ﻿using Tool.Utils;
 using EasySave.Strategies;
+using System.Threading;
 
 namespace EasySave.Models
 {
@@ -14,6 +15,13 @@ namespace EasySave.Models
         // Observator
         public BackupProgressObserver progressObserver { get; set; } = new BackupProgressObserver();
 
+
+        //Ajout de Pause et Cancel
+        public CancellationTokenSource CancellationTokenSource { get; set; } = new CancellationTokenSource();
+        public ManualResetEventSlim PauseEvent { get; set; } = new ManualResetEventSlim(true); // true = pas en pause au départ
+        public bool IsCancelled => CancellationTokenSource?.IsCancellationRequested ?? false;
+        public bool IsPaused => !(PauseEvent?.IsSet ?? true);
+
         public override string ToString()
         {
             return
@@ -22,6 +30,13 @@ namespace EasySave.Models
                 $"Source : {sourcePath}\n" +
                 $"Destination : {destinationPath}\n" +
                 $"Status : {status.Status}\n";
+        }
+
+        // Méthode de nettoyage pour libérer les ressources
+        public void Dispose()
+        {
+            CancellationTokenSource?.Dispose();
+            PauseEvent?.Dispose();
         }
     }
 }
