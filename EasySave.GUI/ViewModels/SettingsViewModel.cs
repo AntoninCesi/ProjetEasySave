@@ -64,6 +64,7 @@ namespace EasySave.ViewModels
         private string _maxParallelFileSizeKo;
 
         public event PropertyChangedEventHandler? PropertyChanged;
+		public LanguageManager Lang => LanguageManager.Instance;
 
         public ObservableCollection<string> LogFormats { get; }
         public ObservableCollection<string> Languages { get; }
@@ -156,9 +157,7 @@ namespace EasySave.ViewModels
             {
                 if (!long.TryParse(MaxParallelFileSizeKo, out long maxSizeKo) || maxSizeKo < 0)
                 {
-                    MessageBox.Show(
-                        "Max parallel file size must be a positive number (in Ko). Use 0 to disable the limit.",
-                        "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(Lang["MaxSizeError"], Lang["ValidationError"], MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -175,21 +174,17 @@ namespace EasySave.ViewModels
 
                 CloseWindow();
 
-                MessageBox.Show("Settings saved successfully!", "Success",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(Lang["SettingsSaved"], Lang["Success"], MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving settings: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"{Lang["ErrorTitle"]}: {ex.Message}", Lang["ErrorTitle"], MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ResetToDefaults()
         {
-            var result = MessageBox.Show(
-                "Are you sure you want to reset all settings to default values?",
-                "Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var result = MessageBox.Show(Lang["ConfirmResetMessage"], Lang["ConfirmReset"], MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {

@@ -107,8 +107,8 @@ namespace EasySave.ViewModels
             if (SelectedJob == null) return;
 
             var result = MessageBox.Show(
-                $"Delete job '{SelectedJob.name}'?",
-                "Delete Job",
+                string.Format(Lang["DeleteJobConfirmMessage"], SelectedJob.name),
+                Lang["DeleteJob"],
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question
             );
@@ -260,8 +260,8 @@ namespace EasySave.ViewModels
                         Application.Current.Dispatcher.Invoke(() =>
                         {
                             MessageBox.Show(
-                                $"Backup '{jobToRun.name}' failed: {ex.Message}",
-                                "Error",
+                                string.Format(Lang["BackupFailedMessage"], jobToRun.name, ex.Message),
+                                Lang["ErrorTitle"],
                                 MessageBoxButton.OK,
                                 MessageBoxImage.Error
                             );
@@ -280,8 +280,8 @@ namespace EasySave.ViewModels
             await Task.WhenAll(tasks);
 
             MessageBox.Show(
-                "All backups completed!",
-                "Success",
+                Lang["AllBackupsCompleted"],
+                Lang["Success"],
                 MessageBoxButton.OK,
                 MessageBoxImage.Information
             );

@@ -61,6 +61,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Toutes les sauvegardes sont terminées !.
+        /// </summary>
+        internal static string AllBackupsCompleted {
+            get {
+                return ResourceManager.GetString("AllBackupsCompleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ⏸️ Tous les travaux actifs mis en pause.
         /// </summary>
         internal static string AllJobsPaused {
@@ -124,7 +133,16 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à ⚡ SAUVEGARDE EN COURS.
+        ///   Recherche une chaîne localisée semblable à La sauvegarde &apos;{0}&apos; a échoué : {1}.
+        /// </summary>
+        internal static string BackupFailedMessage {
+            get {
+                return ResourceManager.GetString("BackupFailedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à SAUVEGARDE EN COURS ⚡.
         /// </summary>
         internal static string BackupInProgress {
             get {
@@ -133,7 +151,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à ⚡ SAUVEGARDE EN COURS.
+        ///   Recherche une chaîne localisée semblable à SAUVEGARDE EN COURS ⚡.
         /// </summary>
         internal static string BackupInProgressTitle {
             get {
@@ -187,7 +205,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Annuler.
+        ///   Recherche une chaîne localisée semblable à ❌ Annuler.
         /// </summary>
         internal static string Cancel {
             get {
@@ -214,6 +232,24 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Confirmer la réinitialisation.
+        /// </summary>
+        internal static string ConfirmReset {
+            get {
+                return ResourceManager.GetString("ConfirmReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Voulez-vous vraiment réinitialiser tous les paramètres ?.
+        /// </summary>
+        internal static string ConfirmResetMessage {
+            get {
+                return ResourceManager.GetString("ConfirmResetMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Créer le travail.
         /// </summary>
         internal static string CreateJob {
@@ -232,7 +268,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à 📋 CRÉER UN NOUVEAU TRAVAIL.
+        ///   Recherche une chaîne localisée semblable à CRÉER UN NOUVEAU TRAVAIL 📋.
         /// </summary>
         internal static string CreateJobTitle {
             get {
@@ -304,6 +340,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Supprimer le job &apos;{0}&apos; ?.
+        /// </summary>
+        internal static string DeleteJobConfirmMessage {
+            get {
+                return ResourceManager.GetString("DeleteJobConfirmMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à 💾 Dossier de destination.
         /// </summary>
         internal static string DestinationFolderLabel {
@@ -363,6 +408,15 @@ namespace EasySave.Resources {
         internal static string EncryptionSuccess {
             get {
                 return ResourceManager.GetString("EncryptionSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Erreur.
+        /// </summary>
+        internal static string ErrorTitle {
+            get {
+                return ResourceManager.GetString("ErrorTitle", resourceCulture);
             }
         }
         
@@ -538,6 +592,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à La taille max doit être un nombre positif (en Ko). Utilisez 0 pour désactiver..
+        /// </summary>
+        internal static string MaxSizeError {
+            get {
+                return ResourceManager.GetString("MaxSizeError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Aucun travail.
         /// </summary>
         internal static string NoJobs {
@@ -709,6 +772,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Paramètres sauvegardés avec succès !.
+        /// </summary>
+        internal static string SettingsSaved {
+            get {
+                return ResourceManager.GetString("SettingsSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Configurer les préférences de l&apos;application.
         /// </summary>
         internal static string SettingsSubtitle {
@@ -718,7 +790,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à ⚙️ PARAMÈTRES.
+        ///   Recherche une chaîne localisée semblable à PARAMÈTRES ⚙️.
         /// </summary>
         internal static string SettingsTitle {
             get {
