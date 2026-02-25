@@ -294,4 +294,85 @@
 	<data name="AllJobsStopped" xml:space="preserve">
     <value>⏹️ All jobs stopped</value>
   </data>
+  <data name="DeleteJob" xml:space="preserve">
+    <value>🗑️ Delete Job</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>⚙️ SETTINGS</value>
+  </data>
+  <data name="SettingsSubtitle" xml:space="preserve">
+    <value>Configure application preferences</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>🌍 Language</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Select your preferred language</value>
+  </data>
+  <data name="LogFormatLabel" xml:space="preserve">
+    <value>📝 Log Format</value>
+  </data>
+  <data name="LogFormatHint" xml:space="preserve">
+    <value>Choose the format for log files</value>
+  </data>
+  <data name="EncryptionLabel" xml:space="preserve">
+    <value>🔒 Encryption Extensions</value>
+  </data>
+  <data name="EncryptionHint" xml:space="preserve">
+    <value>Comma-separated extensions to encrypt (e.g., .docx,.xlsx,.pdf)</value>
+  </data>
+  <data name="LogsStorageLabel" xml:space="preserve">
+    <value>Logs Storage</value>
+  </data>
+  <data name="LogsStorageHint" xml:space="preserve">
+    <value>Select logs storage type:</value>
+  </data>
+  <data name="LocalStorage" xml:space="preserve">
+    <value>Local Storage</value>
+  </data>
+  <data name="ExternalStorage" xml:space="preserve">
+    <value>External Storage</value>
+  </data>
+  <data name="BusinessSoftwareLabel" xml:space="preserve">
+    <value>💼 Business Software</value>
+  </data>
+  <data name="BusinessSoftwareHint" xml:space="preserve">
+    <value>Process name to monitor (e.g., calc for Calculator)</value>
+  </data>
+  <data name="PriorityExtensionsLabel" xml:space="preserve">
+    <value>⭐ Priority Extensions</value>
+  </data>
+  <data name="PriorityExtensionsHint" xml:space="preserve">
+    <value>Files transferred first across all jobs (e.g., .docx,.xlsx)</value>
+  </data>
+  <data name="MaxFileSizeLabel" xml:space="preserve">
+    <value>⚖️ Max Parallel File Size (Ko)</value>
+  </data>
+  <data name="MaxFileSizeHint" xml:space="preserve">
+    <value>Files larger than this cannot transfer in parallel. 0 = disabled</value>
+  </data>
+  <data name="ResetToDefaults" xml:space="preserve">
+    <value>🔄 Reset to Defaults</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>✅ Save</value>
+  </data>
+  <data name="BackupInProgressTitle" xml:space="preserve">
+    <value>⚡ BACKUP IN PROGRESS</value>
+  </data>
+  <data name="FilesLabel" xml:space="preserve">
+    <value>📁 Files:</value>
+  </data>
+  <data name="DataLabel" xml:space="preserve">
+    <value>💾 Data:</value>
+  </data>
+  <data name="SpeedLabel" xml:space="preserve">
+    <value>⚡ Speed:</value>
+  </data>
+  <data name="RemainingLabel" xml:space="preserve">
+    <value>⏱️ Remaining:</value>
+  </data>
+  <data name="CurrentFileLabel" xml:space="preserve">
+    <value>📄 Current file:</value>
+  </data>
 </root>

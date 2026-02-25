@@ -294,4 +294,85 @@
 	<data name="AllJobsStopped" xml:space="preserve">
     <value>⏹️ Tous les travaux arrêtés</value>
   </data>
+  <data name="DeleteJob" xml:space="preserve">
+    <value>🗑️ Supprimer</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>⚙️ PARAMÈTRES</value>
+  </data>
+  <data name="SettingsSubtitle" xml:space="preserve">
+    <value>Configurer les préférences de l'application</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>🌍 Langue</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Sélectionnez votre langue préférée</value>
+  </data>
+  <data name="LogFormatLabel" xml:space="preserve">
+    <value>📝 Format des logs</value>
+  </data>
+  <data name="LogFormatHint" xml:space="preserve">
+    <value>Choisissez le format des fichiers log</value>
+  </data>
+  <data name="EncryptionLabel" xml:space="preserve">
+    <value>🔒 Extensions à chiffrer</value>
+  </data>
+  <data name="EncryptionHint" xml:space="preserve">
+    <value>Extensions séparées par virgules (ex: .docx,.xlsx,.pdf)</value>
+  </data>
+  <data name="LogsStorageLabel" xml:space="preserve">
+    <value>Stockage des logs</value>
+  </data>
+  <data name="LogsStorageHint" xml:space="preserve">
+    <value>Sélectionnez le type de stockage :</value>
+  </data>
+  <data name="LocalStorage" xml:space="preserve">
+    <value>Stockage local</value>
+  </data>
+  <data name="ExternalStorage" xml:space="preserve">
+    <value>Stockage externe</value>
+  </data>
+  <data name="BusinessSoftwareLabel" xml:space="preserve">
+    <value>💼 Logiciel métier</value>
+  </data>
+  <data name="BusinessSoftwareHint" xml:space="preserve">
+    <value>Nom du processus à surveiller (ex: calc)</value>
+  </data>
+  <data name="PriorityExtensionsLabel" xml:space="preserve">
+    <value>⭐ Extensions prioritaires</value>
+  </data>
+  <data name="PriorityExtensionsHint" xml:space="preserve">
+    <value>Ces fichiers seront transférés en premier (ex: .docx,.xlsx)</value>
+  </data>
+  <data name="MaxFileSizeLabel" xml:space="preserve">
+    <value>⚖️ Taille max parallèle (Ko)</value>
+  </data>
+  <data name="MaxFileSizeHint" xml:space="preserve">
+    <value>Fichiers plus grands non transférés en parallèle. 0 = désactivé</value>
+  </data>
+  <data name="ResetToDefaults" xml:space="preserve">
+    <value>🔄 Réinitialiser</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>✅ Sauvegarder</value>
+  </data>
+  <data name="BackupInProgressTitle" xml:space="preserve">
+    <value>⚡ SAUVEGARDE EN COURS</value>
+  </data>
+  <data name="FilesLabel" xml:space="preserve">
+    <value>📁 Fichiers :</value>
+  </data>
+  <data name="DataLabel" xml:space="preserve">
+    <value>💾 Données :</value>
+  </data>
+  <data name="SpeedLabel" xml:space="preserve">
+    <value>⚡ Vitesse :</value>
+  </data>
+  <data name="RemainingLabel" xml:space="preserve">
+    <value>⏱️ Restant :</value>
+  </data>
+  <data name="CurrentFileLabel" xml:space="preserve">
+    <value>📄 Fichier en cours :</value>
+  </data>
 </root>

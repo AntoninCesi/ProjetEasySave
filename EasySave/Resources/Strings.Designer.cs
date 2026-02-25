@@ -133,6 +133,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⚡ SAUVEGARDE EN COURS.
+        /// </summary>
+        internal static string BackupInProgressTitle {
+            get {
+                return ResourceManager.GetString("BackupInProgressTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ⚙️ Type de sauvegarde.
         /// </summary>
         internal static string BackupTypeLabel {
@@ -147,6 +156,24 @@ namespace EasySave.Resources {
         internal static string Browse {
             get {
                 return ResourceManager.GetString("Browse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Nom du processus à surveiller (ex: calc).
+        /// </summary>
+        internal static string BusinessSoftwareHint {
+            get {
+                return ResourceManager.GetString("BusinessSoftwareHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 💼 Logiciel métier.
+        /// </summary>
+        internal static string BusinessSoftwareLabel {
+            get {
+                return ResourceManager.GetString("BusinessSoftwareLabel", resourceCulture);
             }
         }
         
@@ -223,6 +250,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à 📄 Fichier en cours :.
+        /// </summary>
+        internal static string CurrentFileLabel {
+            get {
+                return ResourceManager.GetString("CurrentFileLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à 💾 Données :.
         /// </summary>
         internal static string Data {
@@ -232,11 +268,29 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à 💾 Données :.
+        /// </summary>
+        internal static string DataLabel {
+            get {
+                return ResourceManager.GetString("DataLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ✅ Décryptage réussi !\n\n⏱️ Temps : {0} ms.
         /// </summary>
         internal static string DecryptionSuccess {
             get {
                 return ResourceManager.GetString("DecryptionSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 🗑️ Supprimer.
+        /// </summary>
+        internal static string DeleteJob {
+            get {
+                return ResourceManager.GetString("DeleteJob", resourceCulture);
             }
         }
         
@@ -277,6 +331,24 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Extensions séparées par virgules (ex: .docx,.xlsx,.pdf).
+        /// </summary>
+        internal static string EncryptionHint {
+            get {
+                return ResourceManager.GetString("EncryptionHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 🔒 Extensions à chiffrer.
+        /// </summary>
+        internal static string EncryptionLabel {
+            get {
+                return ResourceManager.GetString("EncryptionLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ✅ Cryptage réussi !\n\nFichier crypté : {0}\n\n⏱️ Temps : {1} ms.
         /// </summary>
         internal static string EncryptionSuccess {
@@ -286,11 +358,29 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Stockage externe.
+        /// </summary>
+        internal static string ExternalStorage {
+            get {
+                return ResourceManager.GetString("ExternalStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à 📁 Fichiers :.
         /// </summary>
         internal static string Files {
             get {
                 return ResourceManager.GetString("Files", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 📁 Fichiers :.
+        /// </summary>
+        internal static string FilesLabel {
+            get {
+                return ResourceManager.GetString("FilesLabel", resourceCulture);
             }
         }
         
@@ -354,6 +444,87 @@ namespace EasySave.Resources {
         internal static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sélectionnez votre langue préférée.
+        /// </summary>
+        internal static string LanguageHint {
+            get {
+                return ResourceManager.GetString("LanguageHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 🌍 Langue.
+        /// </summary>
+        internal static string LanguageLabel {
+            get {
+                return ResourceManager.GetString("LanguageLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Stockage local.
+        /// </summary>
+        internal static string LocalStorage {
+            get {
+                return ResourceManager.GetString("LocalStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Choisissez le format des fichiers log.
+        /// </summary>
+        internal static string LogFormatHint {
+            get {
+                return ResourceManager.GetString("LogFormatHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 📝 Format des logs.
+        /// </summary>
+        internal static string LogFormatLabel {
+            get {
+                return ResourceManager.GetString("LogFormatLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sélectionnez le type de stockage :.
+        /// </summary>
+        internal static string LogsStorageHint {
+            get {
+                return ResourceManager.GetString("LogsStorageHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Stockage des logs.
+        /// </summary>
+        internal static string LogsStorageLabel {
+            get {
+                return ResourceManager.GetString("LogsStorageLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Fichiers plus grands non transférés en parallèle. 0 = désactivé.
+        /// </summary>
+        internal static string MaxFileSizeHint {
+            get {
+                return ResourceManager.GetString("MaxFileSizeHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⚖️ Taille max parallèle (Ko).
+        /// </summary>
+        internal static string MaxFileSizeLabel {
+            get {
+                return ResourceManager.GetString("MaxFileSizeLabel", resourceCulture);
             }
         }
         
@@ -439,11 +610,47 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Ces fichiers seront transférés en premier (ex: .docx,.xlsx).
+        /// </summary>
+        internal static string PriorityExtensionsHint {
+            get {
+                return ResourceManager.GetString("PriorityExtensionsHint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⭐ Extensions prioritaires.
+        /// </summary>
+        internal static string PriorityExtensionsLabel {
+            get {
+                return ResourceManager.GetString("PriorityExtensionsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à ⏱️ Restant :.
         /// </summary>
         internal static string Remaining {
             get {
                 return ResourceManager.GetString("Remaining", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⏱️ Restant :.
+        /// </summary>
+        internal static string RemainingLabel {
+            get {
+                return ResourceManager.GetString("RemainingLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à 🔄 Réinitialiser.
+        /// </summary>
+        internal static string ResetToDefaults {
+            get {
+                return ResourceManager.GetString("ResetToDefaults", resourceCulture);
             }
         }
         
@@ -475,11 +682,38 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à ✅ Sauvegarder.
+        /// </summary>
+        internal static string Save {
+            get {
+                return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Paramètres.
         /// </summary>
         internal static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Configurer les préférences de l&apos;application.
+        /// </summary>
+        internal static string SettingsSubtitle {
+            get {
+                return ResourceManager.GetString("SettingsSubtitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⚙️ PARAMÈTRES.
+        /// </summary>
+        internal static string SettingsTitle {
+            get {
+                return ResourceManager.GetString("SettingsTitle", resourceCulture);
             }
         }
         
@@ -525,6 +759,15 @@ namespace EasySave.Resources {
         internal static string Speed {
             get {
                 return ResourceManager.GetString("Speed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ⚡ Vitesse :.
+        /// </summary>
+        internal static string SpeedLabel {
+            get {
+                return ResourceManager.GetString("SpeedLabel", resourceCulture);
             }
         }
         
