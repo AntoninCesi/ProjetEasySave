@@ -343,7 +343,7 @@
     <value>⭐ Extensions prioritaires</value>
   </data>
   <data name="PriorityExtensionsHint" xml:space="preserve">
-    <value>Ces fichiers seront transférés en premier (ex: .docx,.xlsx)</value>
+    <value>Ces fichiers seront transférés en premier</value>
   </data>
   <data name="MaxFileSizeLabel" xml:space="preserve">
     <value>⚖️ Taille max parallèle (Ko)</value>

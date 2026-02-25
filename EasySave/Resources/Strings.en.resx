@@ -346,7 +346,7 @@
     <value>⭐ Priority Extensions</value>
   </data>
   <data name="PriorityExtensionsHint" xml:space="preserve">
-    <value>Files transferred first across all jobs (e.g., .docx,.xlsx)</value>
+    <value>Files transferred first across all jobs</value>
   </data>
   <data name="MaxFileSizeLabel" xml:space="preserve">
     <value>⚖️ Max Parallel File Size (Ko)</value>

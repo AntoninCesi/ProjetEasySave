@@ -17,7 +17,6 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
         <StackPanel Grid.Row="0" Margin="0,0,0,25">
             <TextBlock x:Name="TxtSettingsTitle" FontSize="26" FontWeight="ExtraBold" Foreground="#2C3E50"/>
             <TextBlock x:Name="TxtSettingsSubtitle" FontSize="13" Foreground="#95A5A6" Margin="0,5,0,0"/>
@@ -42,10 +41,9 @@
                               Height="40" FontSize="13" Margin="0,0,0,25"/>
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
-                    <!-- Encryption Extensions — checkboxes -->
+                    <!-- Encryption Extensions -->
                     <TextBlock x:Name="TxtEncryptionLabel" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
                     <TextBlock x:Name="TxtEncryptionHint" FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,12" TextWrapping="Wrap"/>
-
                     <ItemsControl ItemsSource="{Binding EncryptionExtensionItems}" Margin="0,0,0,25">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
@@ -54,8 +52,7 @@
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="4" CornerRadius="6" BorderThickness="1.5" Cursor="Hand"
-                                        Padding="10,6">
+                                <Border Margin="4" CornerRadius="6" BorderThickness="1.5" Cursor="Hand" Padding="10,6">
                                     <Border.Style>
                                         <Style TargetType="Border">
                                             <Setter Property="Background" Value="White"/>
@@ -69,8 +66,7 @@
                                         </Style>
                                     </Border.Style>
                                     <StackPanel Orientation="Horizontal">
-                                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}"
-                                                  VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,6,0"/>
                                         <TextBlock Text="{Binding Extension}" FontSize="13" VerticalAlignment="Center">
                                             <TextBlock.Style>
                                                 <Style TargetType="TextBlock">
@@ -90,7 +86,6 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
                     <!-- Logs Storage -->
@@ -115,9 +110,49 @@
 
                     <!-- Priority Extensions -->
                     <TextBlock x:Name="TxtPriorityLabel" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,8"/>
-                    <TextBlock x:Name="TxtPriorityHint" FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,10" TextWrapping="Wrap"/>
-                    <TextBox Text="{Binding PriorityExtensions, UpdateSourceTrigger=PropertyChanged}"
-                             Height="40" FontSize="13" Padding="10,0" VerticalContentAlignment="Center" Margin="0,0,0,25"/>
+                    <TextBlock x:Name="TxtPriorityHint" FontSize="11" Foreground="#7F8C8D" Margin="0,0,0,12" TextWrapping="Wrap"/>
+                    <ItemsControl ItemsSource="{Binding PriorityExtensionItems}" Margin="0,0,0,25">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="4" CornerRadius="6" BorderThickness="1.5" Cursor="Hand" Padding="10,6">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="White"/>
+                                            <Setter Property="BorderBrush" Value="#DCDDE1"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                    <Setter Property="Background" Value="#EAFAF1"/>
+                                                    <Setter Property="BorderBrush" Value="#27AE60"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel Orientation="Horizontal">
+                                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                        <TextBlock Text="{Binding Extension}" FontSize="13" VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#7F8C8D"/>
+                                                    <Setter Property="FontWeight" Value="Normal"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsChecked}" Value="True">
+                                                            <Setter Property="Foreground" Value="#27AE60"/>
+                                                            <Setter Property="FontWeight" Value="SemiBold"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 
                     <!-- Max Parallel File Size -->
