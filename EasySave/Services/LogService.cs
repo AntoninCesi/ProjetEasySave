@@ -1,48 +1,9 @@
-<<<<<<< HEAD
-﻿using EasyLog;
-=======
 using System;
 using System.IO;
 using EasyLog;
->>>>>>> feature/dlltype2
 
 namespace EasySave.Services
 {
-<<<<<<< HEAD
-    private static LogService? _instance;
-    public static LogService Instance => _instance ??= new LogService();
-
-    private LogService() { }
-
-    public void WriteLog(string jobName, string source, string target, long fileSize, long transferTime)
-    {
-        EasyLogger.Instance.WriteLog(
-            DateTime.Now,
-            jobName,
-            source,
-            target,
-            fileSize,
-            transferTime
-        );
-    }
-
-    // Logs a business event instead of a file transfer
-    // "N/A" is used for source since there is no file involved
-    // 0 for fileSize and -1 for transferTime indicate that this is not a transfer operation
-
-    public void LogBusinessSoftwareEvent(string jobName, string eventMessage)
-    {
-        EasyLogger.Instance.WriteLog(
-            DateTime.Now,
-            jobName,
-            "N/A",
-            eventMessage,
-            0,
-            -1
-        );
-    }
-}
-=======
 	public sealed class LogService
 	{
 		private static LogService? _instance;
@@ -65,11 +26,11 @@ namespace EasySave.Services
 
 		private static EasyLogger CreateLoggerFromSettings()
 		{
-			// Dossier logs : reste cohérent avec ce que tu avais (bin/.../Logs)
+			// Dossier logs : bin/.../Logs
 			string baseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 			Directory.CreateDirectory(baseFolder);
 
-			// On lit le format depuis les settings (string "JSON"/"XML")
+			// Format depuis les settings (ex: "JSON" / "XML")
 			string fmt = Models.AppSettings.Instance.LogFormat ?? "JSON";
 
 			LogFormat format = fmt.Equals("XML", StringComparison.OrdinalIgnoreCase)
@@ -80,7 +41,7 @@ namespace EasySave.Services
 		}
 
 		/// <summary>
-		/// Log d'un fichier copié (signature conservée pour compatibilité avec ton code existant)
+		/// Log d'un fichier copié (signature conservée)
 		/// </summary>
 		public void WriteLog(string jobName, string source, string target, long fileSize, long transferTime)
 		{
@@ -94,19 +55,20 @@ namespace EasySave.Services
 		}
 
 		/// <summary>
-		/// Log d'événement "business software"
+		/// Log d'événement "business software" (sans transfert de fichier)
 		/// </summary>
 		public void LogBusinessSoftwareEvent(string jobName, string eventMessage)
 		{
+			// Si tu veux un type dédié "BusinessEvent", crée-le dans EasyLog.
+			// En attendant, on loggue comme Error/Info selon ton modèle.
 			_logger.Write(LogEvent.Error(
 				jobName ?? "",
 				eventMessage ?? ""
 			));
 		}
 
-		// Optionnel : logs "début/fin job" (pratique si tu veux les ajouter vite)
+		// Optionnel : logs "début/fin job"
 		public void JobStarted(string jobName) => _logger.Write(LogEvent.JobStarted(jobName ?? ""));
 		public void JobCompleted(string jobName) => _logger.Write(LogEvent.JobCompleted(jobName ?? ""));
 	}
 }
->>>>>>> feature/dlltype2

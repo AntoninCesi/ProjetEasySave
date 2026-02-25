@@ -2,15 +2,25 @@
 
 namespace Tool.Utils
 {
-    public enum BackupTypes { FULL, DIFFERENTIAL } // COMPLET matches diagram's 'COMPLET'
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public enum BackupStateResum { OFF, ON, ERROR, END } // Matches diagram states
-=======
-    public enum BackupStateResum { OFF, ON, PAUSED, ERROR, END }
->>>>>>> 29742782d5f8c515a37c523f4200e5c09c305aa9
+	public enum BackupTypes { FULL, DIFFERENTIAL }
+
+	/// <summary>
+	/// Backup states (compatibilité maximale entre anciennes et nouvelles branches).
+	/// OFF/ON/END = legacy
+	/// ACTIVE/FINISHED/INACTIVE = aliases pour le nouveau code
+	/// </summary>
+	public enum BackupStateResum
+	{
+		// Legacy
+		OFF = 0,
+		ON = 1,
+		PAUSED = 2,
+		ERROR = 3,
+		END = 4,
+
+		// Aliases (nouveau code / autres branches)
+		INACTIVE = OFF,
+		ACTIVE = ON,
+		FINISHED = END
+	}
 }
-=======
-    public enum BackupStateResum { INACTIVE, ACTIVE, ERROR, FINISHED } // Matches diagram states
-}
->>>>>>> feature/dlltype2
