@@ -28,6 +28,7 @@ namespace EasySave.GUI
             TxtLogsStorageLabel.Text = lang["LogsStorageLabel"];
             TxtLogsStorageHint.Text  = lang["LogsStorageHint"];
             RadioLocal.Content       = lang["LocalStorage"];
+            RadioBoth.Content        = lang["BothStorage"];
             RadioExternal.Content    = lang["ExternalStorage"];
             TxtBizLabel.Text         = lang["BusinessSoftwareLabel"];
             TxtBizHint.Text          = lang["BusinessSoftwareHint"];

@@ -52,6 +52,8 @@
                                      IsChecked="{Binding IsLocalStorageSelected}" FontSize="13" Margin="0,0,0,5"/>
                         <RadioButton x:Name="RadioExternal" GroupName="LogsStorageGroup"
                                      IsChecked="{Binding IsCloudStorageSelected}" FontSize="13"/>
+                        <RadioButton x:Name="RadioBoth" GroupName="LogsStorageGroup"
+                                     IsChecked="{Binding IsBothStorageSelected}" FontSize="13"/>
                     </StackPanel>
                     <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
 

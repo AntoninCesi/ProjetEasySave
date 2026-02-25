@@ -255,43 +255,43 @@
   <data name="BackupBlockedMessage" xml:space="preserve">
     <value>Impossible de démarrer la sauvegarde : Le logiciel métier '{0}' est en cours d'exécution.\n\nVeuillez fermer le logiciel métier et réessayer.</value>
   </data>
-	<data name="State" xml:space="preserve">
+  <data name="State" xml:space="preserve">
     <value>Status</value>
   </data>
-	<data name="Play" xml:space="preserve">
+  <data name="Play" xml:space="preserve">
     <value>▶️ Lecture</value>
   </data>
-	<data name="Resume" xml:space="preserve">
+  <data name="Resume" xml:space="preserve">
     <value>▶️ Reprendre</value>
   </data>
-	<data name="Stop" xml:space="preserve">
+  <data name="Stop" xml:space="preserve">
     <value>⏹️ Arrêt</value>
   </data>
-	<data name="PauseAll" xml:space="preserve">
+  <data name="PauseAll" xml:space="preserve">
     <value>⏸️ Tout mettre en pause</value>
   </data>
-	<data name="ResumeAll" xml:space="preserve">
+  <data name="ResumeAll" xml:space="preserve">
     <value>▶️ Tout reprendre</value>
   </data>
-	<data name="StopAll" xml:space="preserve">
+  <data name="StopAll" xml:space="preserve">
     <value>⏹️ Tout arrêter</value>
   </data>
-	<data name="JobPaused" xml:space="preserve">
+  <data name="JobPaused" xml:space="preserve">
     <value>⏸️ Travail mis en pause</value>
   </data>
-	<data name="JobResumed" xml:space="preserve">
+  <data name="JobResumed" xml:space="preserve">
     <value>▶️ Travail repris</value>
   </data>
-	<data name="JobStopped" xml:space="preserve">
+  <data name="JobStopped" xml:space="preserve">
     <value>⏹️ Travail arrêté</value>
   </data>
-	<data name="AllJobsPaused" xml:space="preserve">
+  <data name="AllJobsPaused" xml:space="preserve">
     <value>⏸️ Tous les travaux actifs mis en pause</value>
   </data>
-	<data name="AllJobsResumed" xml:space="preserve">
+  <data name="AllJobsResumed" xml:space="preserve">
     <value>▶️ Tous les travaux repris</value>
   </data>
-	<data name="AllJobsStopped" xml:space="preserve">
+  <data name="AllJobsStopped" xml:space="preserve">
     <value>⏹️ Tous les travaux arrêtés</value>
   </data>
   <data name="DeleteJob" xml:space="preserve">
@@ -374,5 +374,8 @@
   </data>
   <data name="CurrentFileLabel" xml:space="preserve">
     <value>📄 Fichier en cours :</value>
+  </data>
+  <data name="BothStorage" xml:space="preserve">
+    <value>Les deux</value>
   </data>
 </root>

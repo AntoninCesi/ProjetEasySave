@@ -151,6 +151,15 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Les deux.
+        /// </summary>
+        internal static string BothStorage {
+            get {
+                return ResourceManager.GetString("BothStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Parcourir....
         /// </summary>
         internal static string Browse {

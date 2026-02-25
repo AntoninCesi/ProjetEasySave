@@ -330,6 +330,9 @@
   <data name="LocalStorage" xml:space="preserve">
     <value>Local Storage</value>
   </data>
+	<data name="BothStorage" xml:space="preserve">
+    <value>Both</value>
+  </data>
   <data name="ExternalStorage" xml:space="preserve">
     <value>External Storage</value>
   </data>
