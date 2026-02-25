@@ -319,7 +319,7 @@
     <value>🔒 Extensions à chiffrer</value>
   </data>
   <data name="EncryptionHint" xml:space="preserve">
-    <value>Extensions séparées par virgules (ex: .docx,.xlsx,.pdf)</value>
+    <value>Sélectionnez les extensions a crypter</value>
   </data>
   <data name="LogsStorageLabel" xml:space="preserve">
     <value>Stockage des logs</value>
