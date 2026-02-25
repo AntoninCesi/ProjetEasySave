@@ -139,13 +139,13 @@
     <value>Type</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>⚙️ Settings</value>
   </data>
   <data name="CreateNewJob" xml:space="preserve">
-    <value>Create New Job</value>
+    <value>➕ Create Job</value>
   </data>
   <data name="RunSelection" xml:space="preserve">
-    <value>Run Selection</value>
+    <value>▶️ Run All Jobs</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Language:</value>
@@ -322,7 +322,7 @@
     <value>Select the extensions to encrypt</value>
   </data>
   <data name="LogsStorageLabel" xml:space="preserve">
-    <value>Logs Storage</value>
+    <value>🗂️ Logs Storage</value>
   </data>
   <data name="LogsStorageHint" xml:space="preserve">
     <value>Select logs storage type:</value>

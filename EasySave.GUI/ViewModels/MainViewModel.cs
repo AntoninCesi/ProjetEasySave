@@ -97,12 +97,7 @@ namespace EasySave.ViewModels
                         BackupJobs.Add(backendJob);
                     }
 
-                    MessageBox.Show(
-                        string.Format(Lang["JobCreatedSuccess"], job.name),
-                        Lang["Success"],
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Information
-                    );
+
                 }
             }
         }
@@ -132,7 +127,7 @@ namespace EasySave.ViewModels
                 // Supprimer de la GUI
                 BackupJobs.Remove(SelectedJob);
 
-                MessageBox.Show($"Job deleted!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
             }
         }
 

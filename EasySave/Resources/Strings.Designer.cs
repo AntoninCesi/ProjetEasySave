@@ -241,7 +241,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Créer un travail.
+        ///   Recherche une chaîne localisée semblable à ➕ Créer un job.
         /// </summary>
         internal static string CreateNewJob {
             get {
@@ -340,7 +340,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Extensions séparées par virgules (ex: .docx,.xlsx,.pdf).
+        ///   Recherche une chaîne localisée semblable à Sélectionnez les extensions a crypter.
         /// </summary>
         internal static string EncryptionHint {
             get {
@@ -511,7 +511,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Stockage des logs.
+        ///   Recherche une chaîne localisée semblable à 🗂️ Stockage des logs.
         /// </summary>
         internal static string LogsStorageLabel {
             get {
@@ -619,7 +619,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Ces fichiers seront transférés en premier (ex: .docx,.xlsx).
+        ///   Recherche une chaîne localisée semblable à Ces fichiers seront transférés en premier.
         /// </summary>
         internal static string PriorityExtensionsHint {
             get {
@@ -682,7 +682,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Lancer la sélection.
+        ///   Recherche une chaîne localisée semblable à ▶️ Lancer tous les jobs.
         /// </summary>
         internal static string RunSelection {
             get {
@@ -700,7 +700,7 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à Paramètres.
+        ///   Recherche une chaîne localisée semblable à ⚙️ Paramètres.
         /// </summary>
         internal static string Settings {
             get {

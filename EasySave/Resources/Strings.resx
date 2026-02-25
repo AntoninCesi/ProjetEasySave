@@ -139,13 +139,13 @@
     <value>Type</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Paramètres</value>
+    <value>⚙️ Paramètres</value>
   </data>
   <data name="CreateNewJob" xml:space="preserve">
-    <value>Créer un travail</value>
+    <value>➕ Créer un job</value>
   </data>
   <data name="RunSelection" xml:space="preserve">
-    <value>Lancer la sélection</value>
+    <value>▶️ Lancer tous les jobs</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Langue :</value>
@@ -322,7 +322,7 @@
     <value>Sélectionnez les extensions a crypter</value>
   </data>
   <data name="LogsStorageLabel" xml:space="preserve">
-    <value>Stockage des logs</value>
+    <value>🗂️ Stockage des logs</value>
   </data>
   <data name="LogsStorageHint" xml:space="preserve">
     <value>Sélectionnez le type de stockage :</value>
