@@ -1,13 +1,14 @@
+using EasySave.Commands;
+using EasySave.Models;
+using EasySave.Resources;
+using EasySave.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using EasySave.Commands;
-using EasySave.Models;
-using EasySave.Resources;
-using EasySave.Services;
+using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
@@ -15,6 +16,12 @@ namespace EasySave.ViewModels
     {
         private bool _isChecked;
         public string Extension { get; }
+
+
+
+
+
+
 
         public bool IsChecked
         {
@@ -53,6 +60,58 @@ namespace EasySave.ViewModels
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
         public ICommand ResetCommand { get; }
+
+        private bool _isLocalStorageSelected;
+        private bool _isExternalStorageSelected;
+        private bool _isBothStorageSelected;
+
+        public bool IsLocalStorageSelected
+        {
+            get => _isLocalStorageSelected;
+            set
+            {
+                if (_isLocalStorageSelected != value)
+                {
+                    _isLocalStorageSelected = value;
+                    OnPropertyChanged(nameof(IsLocalStorageSelected));
+                    if (value) ShowStoragePopup("Local Storage");
+                }
+            }
+        }
+
+        public bool IsExternalStorageSelected
+        {
+            get => _isExternalStorageSelected;
+            set
+            {
+                if (_isExternalStorageSelected != value)
+                {
+                    _isExternalStorageSelected = value;
+                    OnPropertyChanged(nameof(IsExternalStorageSelected));
+                    if (value) ShowStoragePopup("External Storage");
+                }
+            }
+        }
+
+        public bool IsBothStorageSelected
+        {
+            get => _isBothStorageSelected;
+            set
+            {
+                if (_isBothStorageSelected != value)
+                {
+                    _isBothStorageSelected = value;
+                    OnPropertyChanged(nameof(IsBothStorageSelected));
+                    if (value) ShowStoragePopup("Both Storage");
+                }
+            }
+        }
+
+        private void ShowStoragePopup(string storageType)
+        {
+            MessageBox.Show($"You selected: {storageType}", "Storage Selection",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+        }
 
         public string SelectedLogFormat
         {

@@ -35,11 +35,6 @@ namespace EasySave.Models
 		/// </summary>
 		public long MaxParallelFileSizeKo { get; set; } = 0;
 
-		// -------------------------
-		// PROPRIÉTÉS "BRIDGE" UI
-		// -------------------------
-		// UI aime souvent binder une textbox sur un string => on expose une version CSV.
-		// JsonIgnore pour éviter de doubler les champs dans settings.json
 		[JsonIgnore]
 		public string PriorityExtensionsCsv
 		{
