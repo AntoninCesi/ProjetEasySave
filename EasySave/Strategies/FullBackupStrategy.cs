@@ -106,10 +106,20 @@ namespace EasySave.Strategies
 		/// </summary>
 		private void RegisterPendingPriorityFiles(string sourcePath)
 		{
+			int count = 0;
 			foreach (var file in Directory.EnumerateFiles(sourcePath, "*", SearchOption.AllDirectories))
 			{
 				if (IsPriorityFile(Path.GetExtension(file)))
+				{
 					Interlocked.Increment(ref _pendingPriorityFiles);
+					count++;
+				}
+			}
+			if (count > 0)
+			{
+				Console.ForegroundColor = ConsoleColor.Cyan;
+				Console.WriteLine($"[PRIORITY] {count} priority file(s) registered from: {Path.GetFileName(sourcePath)}");
+				Console.ResetColor();
 			}
 		}
 
@@ -167,12 +177,25 @@ namespace EasySave.Strategies
 			// RULE 1: non-priority files wait for all priority files to complete
 			if (_parallelMode && !isPriority)
 			{
+				if (Volatile.Read(ref _pendingPriorityFiles) > 0)
+				{
+					Console.ForegroundColor = ConsoleColor.Yellow;
+					Console.WriteLine($"[WAIT-PRIORITY] {file.Name} waiting — {Volatile.Read(ref _pendingPriorityFiles)} priority file(s) still pending...");
+					Console.ResetColor();
+				}
 				while (Volatile.Read(ref _pendingPriorityFiles) > 0)
 				{
 					job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 					job.PauseEvent.Wait(job.CancellationTokenSource.Token);
 					Thread.Sleep(100);
 				}
+			}
+
+			if (_parallelMode && isPriority)
+			{
+				Console.ForegroundColor = ConsoleColor.Green;
+				Console.WriteLine($"[PRIORITY] Transferring priority file: {file.Name}");
+				Console.ResetColor();
 			}
 
 			DateTime startTime = DateTime.Now;
@@ -182,8 +205,16 @@ namespace EasySave.Strategies
 				// RULE 2: large files acquire the semaphore (one at a time)
 				if (_parallelMode && isLargeFile && _largeFileSemaphore != null)
 				{
+					Console.ForegroundColor = ConsoleColor.Yellow;
+					Console.WriteLine($"[WAIT-SIZE] {file.Name} ({file.Length / 1024} Ko) waiting for large file slot...");
+					Console.ResetColor();
+
 					_largeFileSemaphore.Wait(job.CancellationTokenSource.Token);
 					semaphoreAcquired = true;
+
+					Console.ForegroundColor = ConsoleColor.Magenta;
+					Console.WriteLine($"[LOCK] Large file slot acquired for: {file.Name}");
+					Console.ResetColor();
 				}
 
 				// Copy/Encrypt interruptible
@@ -213,11 +244,21 @@ namespace EasySave.Strategies
 			finally
 			{
 				if (semaphoreAcquired && _largeFileSemaphore != null)
+				{
 					_largeFileSemaphore.Release();
+					Console.ForegroundColor = ConsoleColor.Magenta;
+					Console.WriteLine($"[UNLOCK] Large file slot released after: {file.Name}");
+					Console.ResetColor();
+				}
 
 				// Decrement global counter once a priority file is done
 				if (_parallelMode && isPriority)
-					Interlocked.Decrement(ref _pendingPriorityFiles);
+				{
+					int remaining = Interlocked.Decrement(ref _pendingPriorityFiles);
+					Console.ForegroundColor = ConsoleColor.Green;
+					Console.WriteLine($"[PRIORITY-DONE] {file.Name} done — {remaining} priority file(s) remaining");
+					Console.ResetColor();
+				}
 			}
 		}
 
