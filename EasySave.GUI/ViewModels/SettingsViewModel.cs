@@ -11,201 +11,215 @@ using EasySave.Services;
 
 namespace EasySave.ViewModels
 {
-	/// <summary>
-	/// ViewModel for the Settings window following MVVM pattern.
-	/// Manages application settings and provides commands for user interactions.
-	/// </summary>
-	public class SettingsViewModel : INotifyPropertyChanged
-	{
-		private readonly AppSettings _settings;
-		private string _selectedLogFormat;
-		private string _encryptionExtensions;
-		private string _businessSoftware;
-		private string _selectedLanguage;
-		private string _priorityExtensions;        // CSV string for TextBox
-		private string _maxParallelFileSizeKo;     // string for TextBox binding
+    public class EncryptionExtensionItem : INotifyPropertyChanged
+    {
+        private bool _isChecked;
+        public string Extension { get; }
 
-		public event PropertyChangedEventHandler? PropertyChanged;
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set { _isChecked = value; OnPropertyChanged(nameof(IsChecked)); }
+        }
 
-		public ObservableCollection<string> LogFormats { get; }
-		public ObservableCollection<string> Languages { get; }
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string name) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-		public ICommand SaveCommand { get; }
-		public ICommand CancelCommand { get; }
-		public ICommand ResetCommand { get; }
+        public EncryptionExtensionItem(string extension, bool isChecked)
+        {
+            Extension = extension;
+            _isChecked = isChecked;
+        }
+    }
 
-		public string SelectedLogFormat
-		{
-			get => _selectedLogFormat;
-			set { _selectedLogFormat = value; OnPropertyChanged(nameof(SelectedLogFormat)); }
-		}
+    public class SettingsViewModel : INotifyPropertyChanged
+    {
+        private readonly AppSettings _settings;
+        private string _selectedLogFormat;
+        private string _businessSoftware;
+        private string _selectedLanguage;
+        private string _priorityExtensions;
+        private string _maxParallelFileSizeKo;
 
-		public string EncryptionExtensions
-		{
-			get => _encryptionExtensions;
-			set { _encryptionExtensions = value; OnPropertyChanged(nameof(EncryptionExtensions)); }
-		}
+        public event PropertyChangedEventHandler? PropertyChanged;
 
-		public string BusinessSoftware
-		{
-			get => _businessSoftware;
-			set { _businessSoftware = value; OnPropertyChanged(nameof(BusinessSoftware)); }
-		}
+        public ObservableCollection<string> LogFormats { get; }
+        public ObservableCollection<string> Languages { get; }
 
-		public string SelectedLanguage
-		{
-			get => _selectedLanguage;
-			set { _selectedLanguage = value; OnPropertyChanged(nameof(SelectedLanguage)); }
-		}
+        // Liste des extensions prédéfinies avec checkboxes
+        public ObservableCollection<EncryptionExtensionItem> EncryptionExtensionItems { get; }
 
-		/// <summary>
-		/// Comma-separated list of priority file extensions (e.g. .docx,.xlsx).
-		/// Files with these extensions are transferred before all others.
-		/// </summary>
-		public string PriorityExtensions
-		{
-			get => _priorityExtensions;
-			set { _priorityExtensions = value; OnPropertyChanged(nameof(PriorityExtensions)); }
-		}
+        public ICommand SaveCommand { get; }
+        public ICommand CancelCommand { get; }
+        public ICommand ResetCommand { get; }
 
-		/// <summary>
-		/// Max file size in Ko above which only one parallel transfer is allowed at a time.
-		/// Stored as string for TextBox binding, validated on save.
-		/// </summary>
-		public string MaxParallelFileSizeKo
-		{
-			get => _maxParallelFileSizeKo;
-			set { _maxParallelFileSizeKo = value; OnPropertyChanged(nameof(MaxParallelFileSizeKo)); }
-		}
+        public string SelectedLogFormat
+        {
+            get => _selectedLogFormat;
+            set { _selectedLogFormat = value; OnPropertyChanged(nameof(SelectedLogFormat)); }
+        }
 
-		public SettingsViewModel()
-		{
-			_settings = AppSettings.Instance;
+        public string BusinessSoftware
+        {
+            get => _businessSoftware;
+            set { _businessSoftware = value; OnPropertyChanged(nameof(BusinessSoftware)); }
+        }
 
-			LogFormats = new ObservableCollection<string> { "JSON", "XML" };
-			Languages = new ObservableCollection<string> { "en-US", "fr-FR" };
+        public string SelectedLanguage
+        {
+            get => _selectedLanguage;
+            set { _selectedLanguage = value; OnPropertyChanged(nameof(SelectedLanguage)); }
+        }
 
-			// Load current settings
-			_selectedLogFormat = _settings.LogFormat;
-			_encryptionExtensions = _settings.EncryptionExtensions;
-			_businessSoftware = _settings.BusinessSoftware;
-			_selectedLanguage = _settings.Language;
+        public string PriorityExtensions
+        {
+            get => _priorityExtensions;
+            set { _priorityExtensions = value; OnPropertyChanged(nameof(PriorityExtensions)); }
+        }
 
-			// IMPORTANT: AppSettings.PriorityExtensions est une List<string> -> on passe par le bridge CSV
-			_priorityExtensions = _settings.PriorityExtensionsCsv;
+        public string MaxParallelFileSizeKo
+        {
+            get => _maxParallelFileSizeKo;
+            set { _maxParallelFileSizeKo = value; OnPropertyChanged(nameof(MaxParallelFileSizeKo)); }
+        }
 
-			_maxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
+        // Extensions disponibles dans les checkboxes
+        private static readonly string[] AvailableExtensions = new[]
+        {
+            ".txt", ".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt",
+            ".pdf", ".csv", ".xml", ".json", ".zip", ".rar", ".7z",
+            ".jpg", ".png", ".mp4", ".mp3"
+        };
 
-			SaveCommand = new RelayCommand(_ => SaveSettings());
-			CancelCommand = new RelayCommand(_ => CloseWindow());
-			ResetCommand = new RelayCommand(_ => ResetToDefaults());
-		}
+        public SettingsViewModel()
+        {
+            _settings = AppSettings.Instance;
 
-		private void SaveSettings()
-		{
-			try
-			{
-				if (!ValidateExtensions(EncryptionExtensions))
-				{
-					MessageBox.Show(
-						"Invalid encryption extensions format. Use comma-separated extensions like: .docx,.xlsx,.pdf",
-						"Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
+            LogFormats = new ObservableCollection<string> { "JSON", "XML" };
+            Languages = new ObservableCollection<string> { "en-US", "fr-FR" };
 
-				if (!ValidateExtensions(PriorityExtensions))
-				{
-					MessageBox.Show(
-						"Invalid priority extensions format. Use comma-separated extensions like: .docx,.xlsx",
-						"Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
+            _selectedLogFormat = _settings.LogFormat;
+            _businessSoftware = _settings.BusinessSoftware;
+            _selectedLanguage = _settings.Language;
+            _priorityExtensions = _settings.PriorityExtensionsCsv;
+            _maxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
 
-				if (!long.TryParse(MaxParallelFileSizeKo, out long maxSizeKo) || maxSizeKo < 0)
-				{
-					MessageBox.Show(
-						"Max parallel file size must be a positive number (in Ko). Use 0 to disable the limit.",
-						"Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-					return;
-				}
+            // Initialise les checkboxes en cochant celles qui sont dans les settings actuels
+            var currentEncryption = (_settings.EncryptionExtensions ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(e => e.ToLowerInvariant())
+                .ToHashSet();
 
-				_settings.LogFormat = SelectedLogFormat;
-				_settings.EncryptionExtensions = EncryptionExtensions;
-				_settings.BusinessSoftware = BusinessSoftware;
-				_settings.Language = SelectedLanguage;
+            EncryptionExtensionItems = new ObservableCollection<EncryptionExtensionItem>(
+                AvailableExtensions.Select(ext =>
+                    new EncryptionExtensionItem(ext, currentEncryption.Contains(ext)))
+            );
 
-				// IMPORTANT: écrire via CSV -> remplit la List<string> en interne
-				_settings.PriorityExtensionsCsv = PriorityExtensions;
+            SaveCommand   = new RelayCommand(_ => SaveSettings());
+            CancelCommand = new RelayCommand(_ => CloseWindow());
+            ResetCommand  = new RelayCommand(_ => ResetToDefaults());
+        }
 
-				_settings.MaxParallelFileSizeKo = maxSizeKo;
+        /// <summary>Construit la string CSV à partir des checkboxes cochées.</summary>
+        private string GetEncryptionExtensionsCsv()
+        {
+            return string.Join(",", EncryptionExtensionItems
+                .Where(i => i.IsChecked)
+                .Select(i => i.Extension));
+        }
 
-				_settings.Save();
+        private void SaveSettings()
+        {
+            try
+            {
+                if (!ValidateExtensions(PriorityExtensions))
+                {
+                    MessageBox.Show(
+                        "Invalid priority extensions format. Use comma-separated extensions like: .docx,.xlsx",
+                        "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-				// Recharge le logger selon le nouveau LogFormat (n'impacte pas les features "pause")
-				LogService.Instance.ReloadFromSettings();
+                if (!long.TryParse(MaxParallelFileSizeKo, out long maxSizeKo) || maxSizeKo < 0)
+                {
+                    MessageBox.Show(
+                        "Max parallel file size must be a positive number (in Ko). Use 0 to disable the limit.",
+                        "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-				// Applique la langue
-				LanguageManager.Instance.ChangeLanguage(SelectedLanguage);
+                _settings.LogFormat             = SelectedLogFormat;
+                _settings.EncryptionExtensions  = GetEncryptionExtensionsCsv();
+                _settings.BusinessSoftware      = BusinessSoftware;
+                _settings.Language              = SelectedLanguage;
+                _settings.PriorityExtensionsCsv = PriorityExtensions;
+                _settings.MaxParallelFileSizeKo = maxSizeKo;
 
-				CloseWindow();
+                _settings.Save();
+                LogService.Instance.ReloadFromSettings();
+                LanguageManager.Instance.ChangeLanguage(SelectedLanguage);
 
-				MessageBox.Show("Settings saved successfully!", "Success",
-					MessageBoxButton.OK, MessageBoxImage.Information);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show($"Error saving settings: {ex.Message}", "Error",
-					MessageBoxButton.OK, MessageBoxImage.Error);
-			}
-		}
+                CloseWindow();
 
-		private bool ValidateExtensions(string extensions)
-		{
-			if (string.IsNullOrWhiteSpace(extensions))
-				return true;
+                MessageBox.Show("Settings saved successfully!", "Success",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving settings: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-			return extensions
-				.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-				.All(ext => ext.StartsWith("."));
-		}
+        private bool ValidateExtensions(string extensions)
+        {
+            if (string.IsNullOrWhiteSpace(extensions)) return true;
+            return extensions
+                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .All(ext => ext.StartsWith("."));
+        }
 
-		private void ResetToDefaults()
-		{
-			var result = MessageBox.Show(
-				"Are you sure you want to reset all settings to default values?",
-				"Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        private void ResetToDefaults()
+        {
+            var result = MessageBox.Show(
+                "Are you sure you want to reset all settings to default values?",
+                "Confirm Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-			if (result == MessageBoxResult.Yes)
-			{
-				_settings.ResetToDefaults();
+            if (result == MessageBoxResult.Yes)
+            {
+                _settings.ResetToDefaults();
 
-				SelectedLogFormat = _settings.LogFormat;
-				EncryptionExtensions = _settings.EncryptionExtensions;
-				BusinessSoftware = _settings.BusinessSoftware;
-				SelectedLanguage = _settings.Language;
+                SelectedLogFormat     = _settings.LogFormat;
+                BusinessSoftware      = _settings.BusinessSoftware;
+                SelectedLanguage      = _settings.Language;
+                PriorityExtensions    = _settings.PriorityExtensionsCsv;
+                MaxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
 
-				// relire via CSV
-				PriorityExtensions = _settings.PriorityExtensionsCsv;
+                // Recocher les extensions par défaut
+                var defaults = (_settings.EncryptionExtensions ?? "")
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(e => e.ToLowerInvariant())
+                    .ToHashSet();
 
-				MaxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
-			}
-		}
+                foreach (var item in EncryptionExtensionItems)
+                    item.IsChecked = defaults.Contains(item.Extension);
+            }
+        }
 
-		private void CloseWindow()
-		{
-			foreach (Window window in Application.Current.Windows)
-			{
-				if (window.DataContext == this)
-				{
-					window.Close();
-					break;
-				}
-			}
-		}
+        private void CloseWindow()
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window.DataContext == this)
+                {
+                    window.Close();
+                    break;
+                }
+            }
+        }
 
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-	}
+        protected virtual void OnPropertyChanged(string propertyName) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }

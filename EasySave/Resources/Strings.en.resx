@@ -319,7 +319,7 @@
     <value>🔒 Encryption Extensions</value>
   </data>
   <data name="EncryptionHint" xml:space="preserve">
-    <value>Comma-separated extensions to encrypt (e.g., .docx,.xlsx,.pdf)</value>
+    <value>Select the extensions to encrypt</value>
   </data>
   <data name="LogsStorageLabel" xml:space="preserve">
     <value>Logs Storage</value>
