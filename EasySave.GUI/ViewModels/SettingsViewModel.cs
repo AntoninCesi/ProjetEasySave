@@ -64,7 +64,7 @@ namespace EasySave.ViewModels
         private string _maxParallelFileSizeKo;
 
         public event PropertyChangedEventHandler? PropertyChanged;
-		public LanguageManager Lang => LanguageManager.Instance;
+        public LanguageManager Lang => LanguageManager.Instance;
 
         public ObservableCollection<string> LogFormats { get; }
         public ObservableCollection<string> Languages { get; }
@@ -112,11 +112,11 @@ namespace EasySave.ViewModels
             _settings = AppSettings.Instance;
 
             LogFormats = new ObservableCollection<string> { "JSON", "XML" };
-            Languages  = new ObservableCollection<string> { "en-US", "fr-FR" };
+            Languages = new ObservableCollection<string> { "en-US", "fr-FR" };
 
-            _selectedLogFormat    = _settings.LogFormat;
-            _businessSoftware     = _settings.BusinessSoftware;
-            _selectedLanguage     = _settings.Language;
+            _selectedLogFormat = _settings.LogFormat;
+            _businessSoftware = _settings.BusinessSoftware;
+            _selectedLanguage = LanguageManager.Instance.CurrentLanguageCode;
             _maxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
 
             // Checkboxes chiffrement
@@ -140,9 +140,9 @@ namespace EasySave.ViewModels
                     new PriorityExtensionItem(ext, currentPriority.Contains(ext)))
             );
 
-            SaveCommand   = new RelayCommand(_ => SaveSettings());
+            SaveCommand = new RelayCommand(_ => SaveSettings());
             CancelCommand = new RelayCommand(_ => CloseWindow());
-            ResetCommand  = new RelayCommand(_ => ResetToDefaults());
+            ResetCommand = new RelayCommand(_ => ResetToDefaults());
         }
 
         private string GetEncryptionExtensionsCsv() =>
@@ -161,10 +161,10 @@ namespace EasySave.ViewModels
                     return;
                 }
 
-                _settings.LogFormat            = SelectedLogFormat;
+                _settings.LogFormat = SelectedLogFormat;
                 _settings.EncryptionExtensions = GetEncryptionExtensionsCsv();
-                _settings.BusinessSoftware     = BusinessSoftware;
-                _settings.Language             = SelectedLanguage;
+                _settings.BusinessSoftware = BusinessSoftware;
+                _settings.Language = SelectedLanguage;
                 _settings.PriorityExtensionsCsv = GetPriorityExtensionsCsv();
                 _settings.MaxParallelFileSizeKo = maxSizeKo;
 
@@ -190,9 +190,9 @@ namespace EasySave.ViewModels
             {
                 _settings.ResetToDefaults();
 
-                SelectedLogFormat     = _settings.LogFormat;
-                BusinessSoftware      = _settings.BusinessSoftware;
-                SelectedLanguage      = _settings.Language;
+                SelectedLogFormat = _settings.LogFormat;
+                BusinessSoftware = _settings.BusinessSoftware;
+                SelectedLanguage = _settings.Language;
                 MaxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
 
                 var defaults = (_settings.EncryptionExtensions ?? "")
