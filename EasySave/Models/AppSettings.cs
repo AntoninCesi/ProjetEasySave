@@ -55,7 +55,7 @@ namespace EasySave.Models
 			set => MaxParallelFileSizeKo = value;
 		}
 
-		private AppSettings() { }
+		public AppSettings() { }
 
 		/// <summary>
 		/// Compatibilité : certains endroits appellent encore GetPriorityExtensionsArray().

@@ -33,13 +33,34 @@ namespace EasySave.ViewModels
         }
     }
 
+    public class PriorityExtensionItem : INotifyPropertyChanged
+    {
+        private bool _isChecked;
+        public string Extension { get; }
+
+        public bool IsChecked
+        {
+            get => _isChecked;
+            set { _isChecked = value; OnPropertyChanged(nameof(IsChecked)); }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        protected void OnPropertyChanged(string name) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+        public PriorityExtensionItem(string extension, bool isChecked)
+        {
+            Extension = extension;
+            _isChecked = isChecked;
+        }
+    }
+
     public class SettingsViewModel : INotifyPropertyChanged
     {
         private readonly AppSettings _settings;
         private string _selectedLogFormat;
         private string _businessSoftware;
         private string _selectedLanguage;
-        private string _priorityExtensions;
         private string _maxParallelFileSizeKo;
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -47,8 +68,8 @@ namespace EasySave.ViewModels
         public ObservableCollection<string> LogFormats { get; }
         public ObservableCollection<string> Languages { get; }
 
-        // Liste des extensions prédéfinies avec checkboxes
         public ObservableCollection<EncryptionExtensionItem> EncryptionExtensionItems { get; }
+        public ObservableCollection<PriorityExtensionItem> PriorityExtensionItems { get; }
 
         public ICommand SaveCommand { get; }
         public ICommand CancelCommand { get; }
@@ -72,19 +93,12 @@ namespace EasySave.ViewModels
             set { _selectedLanguage = value; OnPropertyChanged(nameof(SelectedLanguage)); }
         }
 
-        public string PriorityExtensions
-        {
-            get => _priorityExtensions;
-            set { _priorityExtensions = value; OnPropertyChanged(nameof(PriorityExtensions)); }
-        }
-
         public string MaxParallelFileSizeKo
         {
             get => _maxParallelFileSizeKo;
             set { _maxParallelFileSizeKo = value; OnPropertyChanged(nameof(MaxParallelFileSizeKo)); }
         }
 
-        // Extensions disponibles dans les checkboxes
         private static readonly string[] AvailableExtensions = new[]
         {
             ".txt", ".docx", ".doc", ".xlsx", ".xls", ".pptx", ".ppt",
@@ -97,15 +111,14 @@ namespace EasySave.ViewModels
             _settings = AppSettings.Instance;
 
             LogFormats = new ObservableCollection<string> { "JSON", "XML" };
-            Languages = new ObservableCollection<string> { "en-US", "fr-FR" };
+            Languages  = new ObservableCollection<string> { "en-US", "fr-FR" };
 
-            _selectedLogFormat = _settings.LogFormat;
-            _businessSoftware = _settings.BusinessSoftware;
-            _selectedLanguage = _settings.Language;
-            _priorityExtensions = _settings.PriorityExtensionsCsv;
+            _selectedLogFormat    = _settings.LogFormat;
+            _businessSoftware     = _settings.BusinessSoftware;
+            _selectedLanguage     = _settings.Language;
             _maxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
 
-            // Initialise les checkboxes en cochant celles qui sont dans les settings actuels
+            // Checkboxes chiffrement
             var currentEncryption = (_settings.EncryptionExtensions ?? "")
                 .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                 .Select(e => e.ToLowerInvariant())
@@ -116,31 +129,31 @@ namespace EasySave.ViewModels
                     new EncryptionExtensionItem(ext, currentEncryption.Contains(ext)))
             );
 
+            // Checkboxes priorité
+            var currentPriority = _settings.GetPriorityExtensionsArray()
+                .Select(e => e.ToLowerInvariant())
+                .ToHashSet();
+
+            PriorityExtensionItems = new ObservableCollection<PriorityExtensionItem>(
+                AvailableExtensions.Select(ext =>
+                    new PriorityExtensionItem(ext, currentPriority.Contains(ext)))
+            );
+
             SaveCommand   = new RelayCommand(_ => SaveSettings());
             CancelCommand = new RelayCommand(_ => CloseWindow());
             ResetCommand  = new RelayCommand(_ => ResetToDefaults());
         }
 
-        /// <summary>Construit la string CSV à partir des checkboxes cochées.</summary>
-        private string GetEncryptionExtensionsCsv()
-        {
-            return string.Join(",", EncryptionExtensionItems
-                .Where(i => i.IsChecked)
-                .Select(i => i.Extension));
-        }
+        private string GetEncryptionExtensionsCsv() =>
+            string.Join(",", EncryptionExtensionItems.Where(i => i.IsChecked).Select(i => i.Extension));
+
+        private string GetPriorityExtensionsCsv() =>
+            string.Join(",", PriorityExtensionItems.Where(i => i.IsChecked).Select(i => i.Extension));
 
         private void SaveSettings()
         {
             try
             {
-                if (!ValidateExtensions(PriorityExtensions))
-                {
-                    MessageBox.Show(
-                        "Invalid priority extensions format. Use comma-separated extensions like: .docx,.xlsx",
-                        "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
                 if (!long.TryParse(MaxParallelFileSizeKo, out long maxSizeKo) || maxSizeKo < 0)
                 {
                     MessageBox.Show(
@@ -149,11 +162,11 @@ namespace EasySave.ViewModels
                     return;
                 }
 
-                _settings.LogFormat             = SelectedLogFormat;
-                _settings.EncryptionExtensions  = GetEncryptionExtensionsCsv();
-                _settings.BusinessSoftware      = BusinessSoftware;
-                _settings.Language              = SelectedLanguage;
-                _settings.PriorityExtensionsCsv = PriorityExtensions;
+                _settings.LogFormat            = SelectedLogFormat;
+                _settings.EncryptionExtensions = GetEncryptionExtensionsCsv();
+                _settings.BusinessSoftware     = BusinessSoftware;
+                _settings.Language             = SelectedLanguage;
+                _settings.PriorityExtensionsCsv = GetPriorityExtensionsCsv();
                 _settings.MaxParallelFileSizeKo = maxSizeKo;
 
                 _settings.Save();
@@ -172,14 +185,6 @@ namespace EasySave.ViewModels
             }
         }
 
-        private bool ValidateExtensions(string extensions)
-        {
-            if (string.IsNullOrWhiteSpace(extensions)) return true;
-            return extensions
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .All(ext => ext.StartsWith("."));
-        }
-
         private void ResetToDefaults()
         {
             var result = MessageBox.Show(
@@ -193,10 +198,8 @@ namespace EasySave.ViewModels
                 SelectedLogFormat     = _settings.LogFormat;
                 BusinessSoftware      = _settings.BusinessSoftware;
                 SelectedLanguage      = _settings.Language;
-                PriorityExtensions    = _settings.PriorityExtensionsCsv;
                 MaxParallelFileSizeKo = _settings.MaxParallelFileSizeKo.ToString();
 
-                // Recocher les extensions par défaut
                 var defaults = (_settings.EncryptionExtensions ?? "")
                     .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                     .Select(e => e.ToLowerInvariant())
@@ -204,6 +207,9 @@ namespace EasySave.ViewModels
 
                 foreach (var item in EncryptionExtensionItems)
                     item.IsChecked = defaults.Contains(item.Extension);
+
+                foreach (var item in PriorityExtensionItems)
+                    item.IsChecked = false;
             }
         }
 
