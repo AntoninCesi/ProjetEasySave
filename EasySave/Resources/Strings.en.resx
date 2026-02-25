@@ -151,7 +151,7 @@
     <value>Language:</value>
   </data>
   <data name="CreateJobTitle" xml:space="preserve">
-    <value>📋 CREATE NEW JOB</value>
+    <value>CREATE NEW JOB 📋</value>
   </data>
   <data name="CreateJobSubtitle" xml:space="preserve">
     <value>Configure a new backup job</value>
@@ -172,7 +172,7 @@
     <value>Browse...</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>❌ Cancel</value>
   </data>
   <data name="CreateJob" xml:space="preserve">
     <value>Create Job</value>
@@ -208,7 +208,7 @@
     <value>Job '{0}' created successfully !  Note: Job will be persisted when integrated with Console team's job management.</value>
   </data>
   <data name="BackupInProgress" xml:space="preserve">
-    <value>⚡ BACKUP IN PROGRESS</value>
+    <value>BACKUP IN PROGRESS ⚡</value>
   </data>
   <data name="Files" xml:space="preserve">
     <value>📁 Files:</value>
@@ -298,7 +298,7 @@
     <value>🗑️ Delete Job</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
-    <value>⚙️ SETTINGS</value>
+    <value>SETTINGS ⚙️</value>
   </data>
   <data name="SettingsSubtitle" xml:space="preserve">
     <value>Configure application preferences</value>
@@ -361,7 +361,7 @@
     <value>✅ Save</value>
   </data>
   <data name="BackupInProgressTitle" xml:space="preserve">
-    <value>⚡ BACKUP IN PROGRESS</value>
+    <value>BACKUP IN PROGRESS ⚡</value>
   </data>
   <data name="FilesLabel" xml:space="preserve">
     <value>📁 Files:</value>
@@ -377,5 +377,29 @@
   </data>
   <data name="CurrentFileLabel" xml:space="preserve">
     <value>📄 Current file:</value>
+  </data>
+  <data name="ConfirmReset" xml:space="preserve">
+    <value>Confirm Reset</value>
+  </data>
+  <data name="ConfirmResetMessage" xml:space="preserve">
+    <value>Are you sure you want to reset all settings to default values?</value>
+  </data>
+  <data name="DeleteJobConfirmMessage" xml:space="preserve">
+    <value>Delete job '{0}'?</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Settings saved successfully!</value>
+  </data>
+  <data name="AllBackupsCompleted" xml:space="preserve">
+    <value>All backups completed!</value>
+  </data>
+  <data name="MaxSizeError" xml:space="preserve">
+    <value>Max parallel file size must be a positive number (in Ko). Use 0 to disable the limit.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="BackupFailedMessage" xml:space="preserve">
+    <value>Backup '{0}' failed: {1}</value>
   </data>
 </root>

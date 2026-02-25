@@ -151,7 +151,7 @@
     <value>Langue :</value>
   </data>
   <data name="CreateJobTitle" xml:space="preserve">
-    <value>📋 CRÉER UN NOUVEAU TRAVAIL</value>
+    <value>CRÉER UN NOUVEAU TRAVAIL 📋</value>
   </data>
   <data name="CreateJobSubtitle" xml:space="preserve">
     <value>Configurer un nouveau travail de sauvegarde</value>
@@ -172,7 +172,7 @@
     <value>Parcourir...</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Annuler</value>
+    <value>❌ Annuler</value>
   </data>
   <data name="CreateJob" xml:space="preserve">
     <value>Créer le travail</value>
@@ -208,7 +208,7 @@
     <value>Travail '{0}' créé avec succès !\n\nRemarque : Le travail sera persisté lors de l'intégration avec la gestion des travaux de l'équipe Console.</value>
   </data>
   <data name="BackupInProgress" xml:space="preserve">
-    <value>⚡ SAUVEGARDE EN COURS</value>
+    <value>SAUVEGARDE EN COURS ⚡</value>
   </data>
   <data name="Files" xml:space="preserve">
     <value>📁 Fichiers :</value>
@@ -298,7 +298,7 @@
     <value>🗑️ Supprimer</value>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
-    <value>⚙️ PARAMÈTRES</value>
+    <value>PARAMÈTRES ⚙️</value>
   </data>
   <data name="SettingsSubtitle" xml:space="preserve">
     <value>Configurer les préférences de l'application</value>
@@ -358,7 +358,7 @@
     <value>✅ Sauvegarder</value>
   </data>
   <data name="BackupInProgressTitle" xml:space="preserve">
-    <value>⚡ SAUVEGARDE EN COURS</value>
+    <value>SAUVEGARDE EN COURS ⚡</value>
   </data>
   <data name="FilesLabel" xml:space="preserve">
     <value>📁 Fichiers :</value>
@@ -377,5 +377,29 @@
   </data>
   <data name="BothStorage" xml:space="preserve">
     <value>Les deux</value>
+  </data>
+  <data name="ConfirmReset" xml:space="preserve">
+    <value>Confirmer la réinitialisation</value>
+  </data>
+  <data name="ConfirmResetMessage" xml:space="preserve">
+    <value>Voulez-vous vraiment réinitialiser tous les paramètres ?</value>
+  </data>
+  <data name="DeleteJobConfirmMessage" xml:space="preserve">
+    <value>Supprimer le job '{0}' ?</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Paramètres sauvegardés avec succès !</value>
+  </data>
+  <data name="AllBackupsCompleted" xml:space="preserve">
+    <value>Toutes les sauvegardes sont terminées !</value>
+  </data>
+  <data name="MaxSizeError" xml:space="preserve">
+    <value>La taille max doit être un nombre positif (en Ko). Utilisez 0 pour désactiver.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="BackupFailedMessage" xml:space="preserve">
+    <value>La sauvegarde '{0}' a échoué : {1}</value>
   </data>
 </root>
