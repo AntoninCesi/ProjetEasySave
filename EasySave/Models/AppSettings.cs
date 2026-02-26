@@ -29,7 +29,7 @@ namespace EasySave.Models
         /// <summary>Local | Docker | Both</summary>
         public string LogDestination { get; set; } = "Local";
 
-        public string DockerHost { get; set; } = "localhost";
+        public string DockerHost { get; set; } = "192.168.146.128";
         public int DockerPort { get; set; } = 1051;
 
         /// <summary>
