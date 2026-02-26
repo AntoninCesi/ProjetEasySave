@@ -17,12 +17,6 @@ namespace EasySave.ViewModels
         private bool _isChecked;
         public string Extension { get; }
 
-
-
-
-
-
-
         public bool IsChecked
         {
             get => _isChecked;
