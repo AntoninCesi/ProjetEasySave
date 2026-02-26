@@ -1,13 +1,14 @@
+using EasySave.Commands;
+using EasySave.Models;
+using EasySave.Resources;
+using EasySave.Services;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using EasySave.Commands;
-using EasySave.Models;
-using EasySave.Resources;
-using EasySave.Services;
+using Tool.Utils;
 
 namespace EasySave.ViewModels
 {
@@ -76,6 +77,64 @@ namespace EasySave.ViewModels
         public ICommand CancelCommand { get; }
         public ICommand ResetCommand { get; }
 
+        private bool _isLocalStorageSelected;
+        private bool _isExternalStorageSelected;
+        private bool _isBothStorageSelected;
+
+        public bool IsLocalStorageSelected
+        {
+            get => _isLocalStorageSelected;
+            set
+            {
+                if (_isLocalStorageSelected != value)
+                {
+                    _isLocalStorageSelected = value;
+                    OnPropertyChanged(nameof(IsLocalStorageSelected));
+                    if (value) // ← quand on coche Local, on décoche les autres
+                    {
+                        IsExternalStorageSelected = false;
+                        IsBothStorageSelected = false;
+                    }
+                }
+            }
+        }
+
+        public bool IsExternalStorageSelected
+        {
+            get => _isExternalStorageSelected;
+            set
+            {
+                if (_isExternalStorageSelected != value)
+                {
+                    _isExternalStorageSelected = value;
+                    OnPropertyChanged(nameof(IsExternalStorageSelected));
+                    if (value)
+                    {
+                        IsLocalStorageSelected = false;
+                        IsBothStorageSelected = false;
+                    }
+                }
+            }
+        }
+
+        public bool IsBothStorageSelected
+        {
+            get => _isBothStorageSelected;
+            set
+            {
+                if (_isBothStorageSelected != value)
+                {
+                    _isBothStorageSelected = value;
+                    OnPropertyChanged(nameof(IsBothStorageSelected));
+                    if (value)
+                    {
+                        IsLocalStorageSelected = false;
+                        IsExternalStorageSelected = false;
+                    }
+                }
+            }
+        }
+
         public string SelectedLogFormat
         {
             get => _selectedLogFormat;
@@ -114,6 +173,9 @@ namespace EasySave.ViewModels
             LogFormats = new ObservableCollection<string> { "JSON", "XML" };
             Languages = new ObservableCollection<string> { "en-US", "fr-FR" };
 
+            _isLocalStorageSelected = _settings.LogDestination == "Local";
+            _isExternalStorageSelected = _settings.LogDestination == "Docker";
+            _isBothStorageSelected = _settings.LogDestination == "Both";
             _selectedLogFormat = _settings.LogFormat;
             _businessSoftware = _settings.BusinessSoftware;
             _selectedLanguage = LanguageManager.Instance.CurrentLanguageCode;
@@ -161,11 +223,22 @@ namespace EasySave.ViewModels
                     return;
                 }
 
+<<<<<<< HEAD
                 _settings.LogFormat = SelectedLogFormat;
                 _settings.EncryptionExtensions = GetEncryptionExtensionsCsv();
                 _settings.BusinessSoftware = BusinessSoftware;
                 _settings.Language = SelectedLanguage;
                 _settings.PriorityExtensionsCsv = GetPriorityExtensionsCsv();
+=======
+                _settings.LogDestination = IsExternalStorageSelected ? "Docker"
+                         : IsBothStorageSelected ? "Both"
+                         : "Local";
+                _settings.LogFormat             = SelectedLogFormat;
+                _settings.EncryptionExtensions  = GetEncryptionExtensionsCsv();
+                _settings.BusinessSoftware      = BusinessSoftware;
+                _settings.Language              = SelectedLanguage;
+                _settings.PriorityExtensionsCsv = PriorityExtensions;
+>>>>>>> feature/ServerDocker
                 _settings.MaxParallelFileSizeKo = maxSizeKo;
 
                 _settings.Save();

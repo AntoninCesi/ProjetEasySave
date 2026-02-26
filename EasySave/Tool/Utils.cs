@@ -23,4 +23,11 @@ namespace Tool.Utils
 		ACTIVE = ON,
 		FINISHED = END
 	}
+
+    public enum LogStorageMode
+    {
+        Local,
+        External,
+        Both
+    }
 }

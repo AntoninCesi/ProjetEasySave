@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using EasyLog;
 
@@ -7,6 +8,7 @@ namespace EasySave.Services
 	public sealed class LogService
 	{
 		private static LogService? _instance;
+
 		public static LogService Instance => _instance ??= new LogService();
 
 		private EasyLogger _logger;
@@ -24,23 +26,27 @@ namespace EasySave.Services
 			_logger = CreateLoggerFromSettings();
 		}
 
-		private static EasyLogger CreateLoggerFromSettings()
-		{
-			// Dossier logs : bin/.../Logs
-			string baseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
-			Directory.CreateDirectory(baseFolder);
+        private static EasyLogger CreateLoggerFromSettings()
+        {
+            var s = Models.AppSettings.Instance;
+            string fmt = s.LogFormat ?? "JSON";
+            LogFormat format = fmt.Equals("XML", StringComparison.OrdinalIgnoreCase)
+                ? LogFormat.Xml : LogFormat.Json;
 
-			// Format depuis les settings (ex: "JSON" / "XML")
-			string fmt = Models.AppSettings.Instance.LogFormat ?? "JSON";
+            string baseFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
-			LogFormat format = fmt.Equals("XML", StringComparison.OrdinalIgnoreCase)
-				? LogFormat.Xml
-				: LogFormat.Json;
+            var sinks = new List<ILogSink>();
 
-			return new EasyLogger(format, baseFolder);
-		}
+            bool useLocal = s.LogDestination is "Local" or "Both";
+            bool useDocker = s.LogDestination is "Docker" or "Both";
 
-		/// <summary>
+            if (useLocal)
+                sinks.Add(new LocalFileSink(baseFolder));
+
+            return new EasyLogger(format, sinks.ToArray());
+        }
+
+        /// <summary>
 		/// Log d'un fichier copié (signature conservée)
 		/// </summary>
 		public void WriteLog(string jobName, string source, string target, long fileSize, long transferTime)

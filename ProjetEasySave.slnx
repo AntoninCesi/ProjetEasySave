@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="EasyLog/EasyLog.csproj" />
-  <Project Path="EasySave/EasySave.csproj" />
   <Project Path="EasySave.GUI/EasySave.GUI.csproj" />
+  <Project Path="EasySave/EasySave.csproj" />
+  <Project Path="LogServerDocker/LogServerDocker.csproj" Id="f861345a-189b-44dd-a91e-df53b372d79d" />
 </Solution>
