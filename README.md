@@ -45,13 +45,6 @@ EasySave is a backup solution designed for Windows that provides both full and d
 
 ## Architecture
 
-### Design Patterns
-- **MVVM**: Model-View-ViewModel pattern for clean UI separation
-- **Strategy**: Pluggable backup algorithms
-- **Observer**: Real-time progress notifications
-- **Factory**: Strategy creation and dependency injection
-- **Singleton**: Shared services and configuration
-
 ### Project Structure
 ```
 ProjetEasySave/
@@ -120,37 +113,6 @@ ProjetEasySave/
 
 ## Configuration
 
-Settings are stored in `%APPDATA%\EasySave\settings.json`
-
-### Example Configuration
-
-```json
-{
-  "LogFormat": "JSON",
-  "EncryptionExtensions": ".docx,.xlsx,.pptx",
-  "BusinessSoftware": "CalculatorApp",
-  "Language": "en-US",
-  "PriorityExtensions": [".pdf", ".docx"],
-  "MaxParallelFileSizeKo": 10240,
-  "LogDestination": "Both",
-  "DockerHost": "localhost",
-  "DockerPort": 5000
-}
-```
-
-### Configuration Options
-
-| Setting | Description | Default |
-|---------|-------------|---------|
-| `LogFormat` | Log file format | JSON |
-| `EncryptionExtensions` | Comma-separated file extensions to encrypt | .docx,.xlsx,.pptx |
-| `BusinessSoftware` | Process name to detect (pauses backup) | CalculatorApp |
-| `Language` | UI language (en-US or fr-FR) | en-US |
-| `PriorityExtensions` | File extensions to transfer first | [] |
-| `MaxParallelFileSizeKo` | Large file threshold in kilobytes | 0 (disabled) |
-| `LogDestination` | Where to send logs (Local/Docker/Both) | Local |
-| `DockerHost` | Docker server hostname | localhost |
-| `DockerPort` | Docker server TCP port | 5000 |
 
 ## Docker Logging
 
@@ -173,64 +135,7 @@ Settings are stored in `%APPDATA%\EasySave\settings.json`
 - **Auto-Reconnect**: Automatically reconnects if connection is lost
 - **Thread-Safe**: Multiple backup jobs can log simultaneously
 
-## Technical Details
 
-### Parallel Execution Rules
-
-When running multiple jobs in parallel:
-
-1. **Priority Files First**: Files with priority extensions transfer before others across all jobs
-2. **Single Large File**: Only one large file (above threshold) transfers at a time
-3. **Independent Control**: Each job can be paused/resumed/stopped independently
-
-### Interruptible Copy
-
-Files are copied in 80KB blocks with pause/stop checks between each block:
-- Ensures response time under 1 second
-- Automatically cleans up incomplete files on stop
-- Uses `CancellationToken` and `ManualResetEventSlim` for control
-
-### Encryption
-
-Files matching specified extensions are automatically encrypted using CryptoSoft service before being saved to the destination.
-
-## Logs
-
-Logs are written to `Logs/` directory (when local logging is enabled) with one file per day:
-- `2026-02-26.json` or `2026-02-26.xml`
-
-Log entries include:
-- Timestamp
-- Job name
-- Source and destination paths
-- File size
-- Transfer time
-- Event type (FileCopied, JobStarted, JobCompleted, Error)
-
-## Troubleshooting
-
-### Backup Won't Start
-
-**Issue**: Nothing happens when clicking "Run Selected"  
-**Solution**: Check if business software is running. Close it or change the setting.
-
-### Pause/Stop Not Responding
-
-**Issue**: Backup continues after clicking pause/stop  
-**Solution**: If copying a very large file, wait up to 1 second. Encryption operations are not interruptible.
-
-### Docker Logs Not Appearing
-
-**Issue**: Logs sent locally but not to Docker  
-**Solution**: 
-- Verify Docker server is running
-- Check host and port configuration
-- Look for connection errors in local logs
-
-### Files Remain Locked After Stop
-
-**Issue**: Cannot delete or modify backup destination files  
-**Solution**: The application properly closes all handles. Check for antivirus interference.
 
 ## Performance
 
@@ -246,14 +151,6 @@ Log entries include:
 - Business software detection by process name only
 - No incremental backup (only full and differential)
 
-## Future Improvements
-
-- Incremental backup strategy
-- Cloud storage destinations (Azure, AWS, Google Cloud)
-- Email notifications
-- Backup scheduling
-- Bandwidth throttling
-- Dark mode UI
 
 ## License
 
@@ -263,9 +160,6 @@ This project is an educational application developed.
 
 Yudracknight (Jennifer) , Luckas , Adem , Kemo (Hakam) and Antonin
 
-## Support
-
-For questions or issues, please contact your project supervisor or refer to the technical documentation in the `Documentation/` folder.
 
 ---
 
