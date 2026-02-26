@@ -24,10 +24,18 @@ namespace EasySave.Models
 		public string BusinessSoftware { get; set; } = "CalculatorApp";
 		public string Language { get; set; } = "en-US";
 
-		/// <summary>
-		/// Extensions prioritaires (back-end). Les fichiers avec ces extensions passent en premier.
-		/// </summary>
-		public List<string> PriorityExtensions { get; set; } = new();
+        // Ajoutez dans la classe AppSettings :
+
+        /// <summary>Local | Docker | Both</summary>
+        public string LogDestination { get; set; } = "Local";
+
+        public string DockerHost { get; set; } = "localhost";
+        public int DockerPort { get; set; } = 1051;
+
+        /// <summary>
+        /// Extensions prioritaires (back-end). Les fichiers avec ces extensions passent en premier.
+        /// </summary>
+        public List<string> PriorityExtensions { get; set; } = new();
 
 		/// <summary>
 		/// Taille max (Ko) au-delà de laquelle un fichier est considéré "gros".

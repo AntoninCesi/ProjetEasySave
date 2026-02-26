@@ -68,7 +68,11 @@ namespace EasySave.ViewModels
                 {
                     _isLocalStorageSelected = value;
                     OnPropertyChanged(nameof(IsLocalStorageSelected));
-                    if (value) ShowStoragePopup("Local Storage");
+                    if (value) // ← quand on coche Local, on décoche les autres
+                    {
+                        IsExternalStorageSelected = false;
+                        IsBothStorageSelected = false;
+                    }
                 }
             }
         }
@@ -82,7 +86,11 @@ namespace EasySave.ViewModels
                 {
                     _isExternalStorageSelected = value;
                     OnPropertyChanged(nameof(IsExternalStorageSelected));
-                    if (value) ShowStoragePopup("External Storage");
+                    if (value)
+                    {
+                        IsLocalStorageSelected = false;
+                        IsBothStorageSelected = false;
+                    }
                 }
             }
         }
@@ -96,15 +104,13 @@ namespace EasySave.ViewModels
                 {
                     _isBothStorageSelected = value;
                     OnPropertyChanged(nameof(IsBothStorageSelected));
-                    if (value) ShowStoragePopup("Both Storage");
+                    if (value)
+                    {
+                        IsLocalStorageSelected = false;
+                        IsExternalStorageSelected = false;
+                    }
                 }
             }
-        }
-
-        private void ShowStoragePopup(string storageType)
-        {
-            MessageBox.Show($"You selected: {storageType}", "Storage Selection",
-                            MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         public string SelectedLogFormat
@@ -152,6 +158,9 @@ namespace EasySave.ViewModels
             LogFormats = new ObservableCollection<string> { "JSON", "XML" };
             Languages = new ObservableCollection<string> { "en-US", "fr-FR" };
 
+            _isLocalStorageSelected = _settings.LogDestination == "Local";
+            _isExternalStorageSelected = _settings.LogDestination == "Docker";
+            _isBothStorageSelected = _settings.LogDestination == "Both";
             _selectedLogFormat = _settings.LogFormat;
             _businessSoftware = _settings.BusinessSoftware;
             _selectedLanguage = _settings.Language;
@@ -202,6 +211,9 @@ namespace EasySave.ViewModels
                     return;
                 }
 
+                _settings.LogDestination = IsExternalStorageSelected ? "Docker"
+                         : IsBothStorageSelected ? "Both"
+                         : "Local";
                 _settings.LogFormat             = SelectedLogFormat;
                 _settings.EncryptionExtensions  = GetEncryptionExtensionsCsv();
                 _settings.BusinessSoftware      = BusinessSoftware;
