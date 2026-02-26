@@ -40,8 +40,11 @@ namespace EasySave.Services
             bool useLocal = s.LogDestination is "Local" or "Both";
             bool useDocker = s.LogDestination is "Docker" or "Both";
 
+
             if (useLocal)
                 sinks.Add(new LocalFileSink(baseFolder));
+            if (useDocker)
+                sinks.Add(new DockerSocketSink(s.DockerHost, s.DockerPort));
 
             return new EasyLogger(format, sinks.ToArray());
         }

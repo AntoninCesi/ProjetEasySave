@@ -223,22 +223,18 @@ namespace EasySave.ViewModels
                     return;
                 }
 
-<<<<<<< HEAD
+
                 _settings.LogFormat = SelectedLogFormat;
                 _settings.EncryptionExtensions = GetEncryptionExtensionsCsv();
                 _settings.BusinessSoftware = BusinessSoftware;
                 _settings.Language = SelectedLanguage;
                 _settings.PriorityExtensionsCsv = GetPriorityExtensionsCsv();
-=======
+
                 _settings.LogDestination = IsExternalStorageSelected ? "Docker"
                          : IsBothStorageSelected ? "Both"
                          : "Local";
-                _settings.LogFormat             = SelectedLogFormat;
-                _settings.EncryptionExtensions  = GetEncryptionExtensionsCsv();
-                _settings.BusinessSoftware      = BusinessSoftware;
-                _settings.Language              = SelectedLanguage;
-                _settings.PriorityExtensionsCsv = PriorityExtensions;
->>>>>>> feature/ServerDocker
+
+
                 _settings.MaxParallelFileSizeKo = maxSizeKo;
 
                 _settings.Save();
