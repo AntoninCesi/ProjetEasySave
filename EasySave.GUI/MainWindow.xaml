@@ -83,6 +83,13 @@
                       HorizontalGridLinesBrush="#F1F2F6" SelectionChanged="DataGrid_SelectionChanged">
 
                 <DataGrid.Columns>
+                    <!-- Colonne de sélection avec checkbox -->
+                    <DataGridCheckBoxColumn Binding="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" 
+                                            Width="60">
+                        <DataGridCheckBoxColumn.Header>
+                            <TextBlock Text="Select" x:Name="ColSelectHeader"/>
+                        </DataGridCheckBoxColumn.Header>
+                    </DataGridCheckBoxColumn>
                     <DataGridTextColumn x:Name="ColJobName"
                                         Header="Job Name"
                                         Binding="{Binding name}" 
@@ -145,9 +152,9 @@
                     FontWeight="Bold" 
                     BorderThickness="0"/>
             <Button x:Name="BtnRunSelection"
-                    Content="▶️ Run All Jobs"
+                    Content="▶️ Run Selected"
                     Command="{Binding RunSelectionCommand}"
-                    Width="140" 
+                    Width="160" 
                     Height="40" 
                     Margin="5" 
                     Cursor="Hand" 

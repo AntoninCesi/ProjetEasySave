@@ -41,7 +41,8 @@ namespace EasySave.GUI
             BtnSettings.Content       = lang["Settings"];
             BtnDeleteJob.Content      = lang["DeleteJob"];
             BtnCreateJob.Content      = lang["CreateNewJob"];
-            BtnRunSelection.Content   = lang["RunSelection"];
+            BtnRunSelection.Content   = lang["RunSelected"];  // ✨ Modifié
+            ColSelectHeader.Text      = lang["Select"];        // ✨ Ajouté
             ColJobName.Header         = lang["JobName"];
             ColSourcePath.Header      = lang["SourcePath"];
             ColDestinationPath.Header = lang["DestinationPath"];

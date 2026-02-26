@@ -619,6 +619,24 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
+        ///   Recherche une chaîne localisée semblable à Aucun travail sélectionné.
+        /// </summary>
+        internal static string NoJobsSelected {
+            get {
+                return ResourceManager.GetString("NoJobsSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Aucun travail sélectionné.\n\nVeuillez cocher au moins un travail à exécuter..
+        /// </summary>
+        internal static string NoJobsSelectedMessage {
+            get {
+                return ResourceManager.GetString("NoJobsSelectedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Recherche une chaîne localisée semblable à Fichier original créé :\n{0}\n\nContenu : {1}.
         /// </summary>
         internal static string OriginalFileCreated {
@@ -745,7 +763,16 @@ namespace EasySave.Resources {
         }
         
         /// <summary>
-        ///   Recherche une chaîne localisée semblable à ▶️ Lancer tous les jobs.
+        ///   Recherche une chaîne localisée semblable à ▶️ Lancer sélection.
+        /// </summary>
+        internal static string RunSelected {
+            get {
+                return ResourceManager.GetString("RunSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à ▶️ Lancer.
         /// </summary>
         internal static string RunSelection {
             get {
@@ -759,6 +786,15 @@ namespace EasySave.Resources {
         internal static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Recherche une chaîne localisée semblable à Sélect..
+        /// </summary>
+        internal static string Select {
+            get {
+                return ResourceManager.GetString("Select", resourceCulture);
             }
         }
         
