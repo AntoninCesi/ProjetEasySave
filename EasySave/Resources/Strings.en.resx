@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>EASYSAVE</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>Manage and monitor your backup jobs</value>
+  </data>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>EasySave v2.0 - Dashboard</value>
+  </data>
+  <data name="JobName" xml:space="preserve">
+    <value>Job Name</value>
+  </data>
+  <data name="SourcePath" xml:space="preserve">
+    <value>Source Path</value>
+  </data>
+  <data name="DestinationPath" xml:space="preserve">
+    <value>Destination Path</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>⚙️ Settings</value>
+  </data>
+  <data name="CreateNewJob" xml:space="preserve">
+    <value>➕ Create Job</value>
+  </data>
+  <data name="RunSelection" xml:space="preserve">
+    <value>▶️ Run All Jobs</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="CreateJobTitle" xml:space="preserve">
+    <value>CREATE NEW JOB 📋</value>
+  </data>
+  <data name="CreateJobSubtitle" xml:space="preserve">
+    <value>Configure a new backup job</value>
+  </data>
+  <data name="JobNameLabel" xml:space="preserve">
+    <value>📝 Job Name</value>
+  </data>
+  <data name="SourceFolderLabel" xml:space="preserve">
+    <value>📂 Source Folder</value>
+  </data>
+  <data name="DestinationFolderLabel" xml:space="preserve">
+    <value>💾 Destination Folder</value>
+  </data>
+  <data name="BackupTypeLabel" xml:space="preserve">
+    <value>⚙️ Backup Type</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>❌ Cancel</value>
+  </data>
+  <data name="CreateJob" xml:space="preserve">
+    <value>Create Job</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="Differential" xml:space="preserve">
+    <value>Differential</value>
+  </data>
+  <data name="ValidationError" xml:space="preserve">
+    <value>Validation Error</value>
+  </data>
+  <data name="PleaseEnterJobName" xml:space="preserve">
+    <value>Please enter a job name.</value>
+  </data>
+  <data name="PleaseSelectSource" xml:space="preserve">
+    <value>Please select a source folder.</value>
+  </data>
+  <data name="PleaseSelectDestination" xml:space="preserve">
+    <value>Please select a destination folder.</value>
+  </data>
+  <data name="SourceNotExist" xml:space="preserve">
+    <value>Source folder does not exist.</value>
+  </data>
+  <data name="SourceDestinationSame" xml:space="preserve">
+    <value>Source and destination folders cannot be the same.</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="JobCreatedSuccess" xml:space="preserve">
+    <value>Job '{0}' created successfully !  Note: Job will be persisted when integrated with Console team's job management.</value>
+  </data>
+  <data name="BackupInProgress" xml:space="preserve">
+    <value>BACKUP IN PROGRESS ⚡</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>📁 Files:</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>💾 Data:</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>⚡ Speed:</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>⏱️ Remaining:</value>
+  </data>
+  <data name="CurrentFile" xml:space="preserve">
+    <value>📄 Current file:</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>⏸️ Pause</value>
+  </data>
+  <data name="EncryptionSuccess" xml:space="preserve">
+    <value>✅ Encryption successful! Encrypted file: {0}\n\n⏱️ Time: {1} ms</value>
+  </data>
+  <data name="EncryptionFailed" xml:space="preserve">
+    <value>❌ Encryption failed! Error: {0}</value>
+  </data>
+  <data name="DecryptionSuccess" xml:space="preserve">
+    <value>✅ Decryption successful!\n\n⏱️ Time: {0} ms</value>
+  </data>
+  <data name="OriginalFileCreated" xml:space="preserve">
+    <value>Original file created:\n{0}\n\nContent: {1}</value>
+  </data>
+  <data name="CheckConsole" xml:space="preserve">
+    <value>Check the console for multi-threading logs!</value>
+  </data>
+  <data name="NoJobs" xml:space="preserve">
+    <value>No Jobs</value>
+  </data>
+  <data name="NoJobsMessage" xml:space="preserve">
+    <value>No backup jobs to run. Please create a job first by clicking 'Create New Job'.</value>
+  </data>
+  <data name="BackupBlocked" xml:space="preserve">
+    <value>Backup Blocked</value>
+  </data>
+  <data name="BackupBlockedMessage" xml:space="preserve">
+    <value>Cannot start backup: Business software '{0}' is running.\n\nPlease close the business software and try again.</value>
+  </data>
+	<data name="State" xml:space="preserve">
+    <value>Status</value>
+  </data>
+	<data name="Play" xml:space="preserve">
+    <value>▶️ Play</value>
+  </data>
+	<data name="Resume" xml:space="preserve">
+    <value>▶️ Resume</value>
+  </data>
+	<data name="Stop" xml:space="preserve">
+    <value>⏹️ Stop</value>
+  </data>
+	<data name="PauseAll" xml:space="preserve">
+    <value>⏸️ Pause All</value>
+  </data>
+	<data name="ResumeAll" xml:space="preserve">
+    <value>▶️ Resume All</value>
+  </data>
+	<data name="StopAll" xml:space="preserve">
+    <value>⏹️ Stop All</value>
+  </data>
+	<data name="JobPaused" xml:space="preserve">
+    <value>⏸️ Job paused</value>
+  </data>
+	<data name="JobResumed" xml:space="preserve">
+    <value>▶️ Job resumed</value>
+  </data>
+	<data name="JobStopped" xml:space="preserve">
+    <value>⏹️ Job stopped</value>
+  </data>
+	<data name="AllJobsPaused" xml:space="preserve">
+    <value>⏸️ All active jobs paused</value>
+  </data>
+	<data name="AllJobsResumed" xml:space="preserve">
+    <value>▶️ All jobs resumed</value>
+  </data>
+	<data name="AllJobsStopped" xml:space="preserve">
+    <value>⏹️ All jobs stopped</value>
+  </data>
+  <data name="DeleteJob" xml:space="preserve">
+    <value>🗑️ Delete Job</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>SETTINGS ⚙️</value>
+  </data>
+  <data name="SettingsSubtitle" xml:space="preserve">
+    <value>Configure application preferences</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>🌍 Language</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Select your preferred language</value>
+  </data>
+  <data name="LogFormatLabel" xml:space="preserve">
+    <value>📝 Log Format</value>
+  </data>
+  <data name="LogFormatHint" xml:space="preserve">
+    <value>Choose the format for log files</value>
+  </data>
+  <data name="EncryptionLabel" xml:space="preserve">
+    <value>🔒 Encryption Extensions</value>
+  </data>
+  <data name="EncryptionHint" xml:space="preserve">
+    <value>Select the extensions to encrypt</value>
+  </data>
+  <data name="LogsStorageLabel" xml:space="preserve">
+    <value>🗂️ Logs Storage</value>
+  </data>
+  <data name="LogsStorageHint" xml:space="preserve">
+    <value>Select logs storage type:</value>
+  </data>
+  <data name="LocalStorage" xml:space="preserve">
+    <value>Local Storage</value>
+  </data>
+	<data name="BothStorage" xml:space="preserve">
+    <value>Both</value>
+  </data>
+  <data name="ExternalStorage" xml:space="preserve">
+    <value>External Storage</value>
+  </data>
+  <data name="BusinessSoftwareLabel" xml:space="preserve">
+    <value>💼 Business Software</value>
+  </data>
+  <data name="BusinessSoftwareHint" xml:space="preserve">
+    <value>Process name to monitor (e.g., calc for Calculator)</value>
+  </data>
+  <data name="PriorityExtensionsLabel" xml:space="preserve">
+    <value>⭐ Priority Extensions</value>
+  </data>
+  <data name="PriorityExtensionsHint" xml:space="preserve">
+    <value>Files transferred first across all jobs</value>
+  </data>
+  <data name="MaxFileSizeLabel" xml:space="preserve">
+    <value>⚖️ Max Parallel File Size (Ko)</value>
+  </data>
+  <data name="MaxFileSizeHint" xml:space="preserve">
+    <value>Files larger than this cannot transfer in parallel. 0 = disabled</value>
+  </data>
+  <data name="ResetToDefaults" xml:space="preserve">
+    <value>🔄 Reset to Defaults</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>✅ Save</value>
+  </data>
+  <data name="BackupInProgressTitle" xml:space="preserve">
+    <value>BACKUP IN PROGRESS ⚡</value>
+  </data>
+  <data name="FilesLabel" xml:space="preserve">
+    <value>📁 Files:</value>
+  </data>
+  <data name="DataLabel" xml:space="preserve">
+    <value>💾 Data:</value>
+  </data>
+  <data name="SpeedLabel" xml:space="preserve">
+    <value>⚡ Speed:</value>
+  </data>
+  <data name="RemainingLabel" xml:space="preserve">
+    <value>⏱️ Remaining:</value>
+  </data>
+  <data name="CurrentFileLabel" xml:space="preserve">
+    <value>📄 Current file:</value>
+  </data>
+  <data name="ConfirmReset" xml:space="preserve">
+    <value>Confirm Reset</value>
+  </data>
+  <data name="ConfirmResetMessage" xml:space="preserve">
+    <value>Are you sure you want to reset all settings to default values?</value>
+  </data>
+  <data name="DeleteJobConfirmMessage" xml:space="preserve">
+    <value>Delete job '{0}'?</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Settings saved successfully!</value>
+  </data>
+  <data name="AllBackupsCompleted" xml:space="preserve">
+    <value>All backups completed!</value>
+  </data>
+  <data name="MaxSizeError" xml:space="preserve">
+    <value>Max parallel file size must be a positive number (in Ko). Use 0 to disable the limit.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="BackupFailedMessage" xml:space="preserve">
+    <value>Backup '{0}' failed: {1}</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="RunSelected" xml:space="preserve">
+    <value>▶️ Run Selected</value>
+  </data>
+  <data name="NoJobsSelected" xml:space="preserve">
+    <value>No Jobs Selected</value>
+  </data>
+  <data name="NoJobsSelectedMessage" xml:space="preserve">
+    <value>No jobs selected.\n\nPlease check at least one job to run.</value>
+  </data>
+</root>

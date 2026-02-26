@@ -1,44 +1,56 @@
 using System;
+using System.Threading;
 using EasySave.Models;
 using Tool.Utils;
 
 namespace EasySave.Strategies
 {
     /// <summary>
-    /// Factory pour créer et exécuter les stratégies de sauvegarde
-    /// Version optimisée : l'observateur est maintenant dans BackupJob
+    /// Factory for creating and executing backup strategies.
+    /// Accepts shared parallel controls to inject into strategies via constructor.
     /// </summary>
     public class BackupStrategyFactory
     {
         /// <summary>
-        /// Exécute une sauvegarde selon le type spécifié dans le job
+        /// Creates a strategy and immediately executes it.
+        /// Used for single-job execution without parallel controls.
         /// </summary>
         public static void ExecuteBackup(BackupJob job)
         {
             if (job == null)
                 throw new ArgumentNullException(nameof(job));
 
-            // Créer et exécuter la stratégie appropriée
-            IBackupStrategy strategy = CreateStrategy(job.type);
-            strategy.Execute(job);
+            CreateStrategy(job.type).Execute(job);
         }
 
         /// <summary>
-        /// Crée une instance de la stratégie appropriée
+        /// Creates a strategy without parallel controls (sequential use).
         /// </summary>
         public static IBackupStrategy CreateStrategy(BackupTypes backupType)
         {
-            switch (backupType)
+            return backupType switch
             {
-                case BackupTypes.FULL:
-                    return new FullBackupStrategy();
+                BackupTypes.FULL => new FullBackupStrategy(),
+                BackupTypes.DIFFERENTIAL => new DifferentialBackupStrategy(),
+                _ => throw new ArgumentException($"Unsupported backup type: {backupType}")
+            };
+        }
 
-                case BackupTypes.DIFFERENTIAL:
-                    return new DifferentialBackupStrategy();
-
-                default:
-                    throw new ArgumentException($"Type de sauvegarde non supporté : {backupType}");
-            }
+        /// <summary>
+        /// Creates a strategy with shared parallel controls injected via constructor.
+        /// Used by BackupExecutionManager when running multiple jobs in parallel.
+        /// </summary>
+        public static IBackupStrategy CreateStrategy(
+            BackupTypes backupType,
+            SemaphoreSlim largeFileSemaphore,
+            ref int pendingPriorityFiles)
+        {
+            return backupType switch
+            {
+                BackupTypes.FULL => new FullBackupStrategy(largeFileSemaphore, ref pendingPriorityFiles),
+                BackupTypes.DIFFERENTIAL => new DifferentialBackupStrategy(largeFileSemaphore, ref pendingPriorityFiles),
+                _ => throw new ArgumentException($"Unsupported backup type: {backupType}")
+            };
         }
     }
 }

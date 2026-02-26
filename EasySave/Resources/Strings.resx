@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppTitle" xml:space="preserve">
+    <value>EASYSAVE</value>
+  </data>
+  <data name="AppSubtitle" xml:space="preserve">
+    <value>Gérez et surveillez vos travaux de sauvegarde</value>
+  </data>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>EasySave v2.0 - Tableau de bord</value>
+  </data>
+  <data name="JobName" xml:space="preserve">
+    <value>Nom du travail</value>
+  </data>
+  <data name="SourcePath" xml:space="preserve">
+    <value>Chemin source</value>
+  </data>
+  <data name="DestinationPath" xml:space="preserve">
+    <value>Chemin de destination</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>⚙️ Paramètres</value>
+  </data>
+  <data name="CreateNewJob" xml:space="preserve">
+    <value>➕ Créer un job</value>
+  </data>
+  <data name="RunSelection" xml:space="preserve">
+    <value>▶️ Lancer tous les jobs</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Langue :</value>
+  </data>
+  <data name="CreateJobTitle" xml:space="preserve">
+    <value>CRÉER UN NOUVEAU TRAVAIL 📋</value>
+  </data>
+  <data name="CreateJobSubtitle" xml:space="preserve">
+    <value>Configurer un nouveau travail de sauvegarde</value>
+  </data>
+  <data name="JobNameLabel" xml:space="preserve">
+    <value>📝 Nom du travail</value>
+  </data>
+  <data name="SourceFolderLabel" xml:space="preserve">
+    <value>📂 Dossier source</value>
+  </data>
+  <data name="DestinationFolderLabel" xml:space="preserve">
+    <value>💾 Dossier de destination</value>
+  </data>
+  <data name="BackupTypeLabel" xml:space="preserve">
+    <value>⚙️ Type de sauvegarde</value>
+  </data>
+  <data name="Browse" xml:space="preserve">
+    <value>Parcourir...</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>❌ Annuler</value>
+  </data>
+  <data name="CreateJob" xml:space="preserve">
+    <value>Créer le travail</value>
+  </data>
+  <data name="Complete" xml:space="preserve">
+    <value>Complète</value>
+  </data>
+  <data name="Differential" xml:space="preserve">
+    <value>Différentielle</value>
+  </data>
+  <data name="ValidationError" xml:space="preserve">
+    <value>Erreur de validation</value>
+  </data>
+  <data name="PleaseEnterJobName" xml:space="preserve">
+    <value>Veuillez entrer un nom de travail.</value>
+  </data>
+  <data name="PleaseSelectSource" xml:space="preserve">
+    <value>Veuillez sélectionner un dossier source.</value>
+  </data>
+  <data name="PleaseSelectDestination" xml:space="preserve">
+    <value>Veuillez sélectionner un dossier de destination.</value>
+  </data>
+  <data name="SourceNotExist" xml:space="preserve">
+    <value>Le dossier source n'existe pas.</value>
+  </data>
+  <data name="SourceDestinationSame" xml:space="preserve">
+    <value>Les dossiers source et destination ne peuvent pas être identiques.</value>
+  </data>
+  <data name="Success" xml:space="preserve">
+    <value>Succès</value>
+  </data>
+  <data name="JobCreatedSuccess" xml:space="preserve">
+    <value>Travail '{0}' créé avec succès !\n\nRemarque : Le travail sera persisté lors de l'intégration avec la gestion des travaux de l'équipe Console.</value>
+  </data>
+  <data name="BackupInProgress" xml:space="preserve">
+    <value>SAUVEGARDE EN COURS ⚡</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>📁 Fichiers :</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>💾 Données :</value>
+  </data>
+  <data name="Speed" xml:space="preserve">
+    <value>⚡ Vitesse :</value>
+  </data>
+  <data name="Remaining" xml:space="preserve">
+    <value>⏱️ Restant :</value>
+  </data>
+  <data name="CurrentFile" xml:space="preserve">
+    <value>📄 Fichier actuel :</value>
+  </data>
+  <data name="Pause" xml:space="preserve">
+    <value>⏸️ Pause</value>
+  </data>
+  <data name="EncryptionSuccess" xml:space="preserve">
+    <value>✅ Cryptage réussi !\n\nFichier crypté : {0}\n\n⏱️ Temps : {1} ms</value>
+  </data>
+  <data name="EncryptionFailed" xml:space="preserve">
+    <value>❌ Échec du cryptage !\n\nErreur : {0}</value>
+  </data>
+  <data name="DecryptionSuccess" xml:space="preserve">
+    <value>✅ Décryptage réussi !\n\n⏱️ Temps : {0} ms</value>
+  </data>
+  <data name="OriginalFileCreated" xml:space="preserve">
+    <value>Fichier original créé :\n{0}\n\nContenu : {1}</value>
+  </data>
+  <data name="CheckConsole" xml:space="preserve">
+    <value>Consultez la console pour les logs multi-threading !</value>
+  </data>
+  <data name="NoJobs" xml:space="preserve">
+    <value>Aucun travail</value>
+  </data>
+  <data name="NoJobsMessage" xml:space="preserve">
+    <value>Aucun travail de sauvegarde à exécuter.\n\nVeuillez d'abord créer un travail en cliquant sur 'Créer un travail'.</value>
+  </data>
+  <data name="BackupBlocked" xml:space="preserve">
+    <value>Sauvegarde bloquée</value>
+  </data>
+  <data name="BackupBlockedMessage" xml:space="preserve">
+    <value>Impossible de démarrer la sauvegarde : Le logiciel métier '{0}' est en cours d'exécution.\n\nVeuillez fermer le logiciel métier et réessayer.</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Play" xml:space="preserve">
+    <value>▶️ Lecture</value>
+  </data>
+  <data name="Resume" xml:space="preserve">
+    <value>▶️ Reprendre</value>
+  </data>
+  <data name="Stop" xml:space="preserve">
+    <value>⏹️ Arrêt</value>
+  </data>
+  <data name="PauseAll" xml:space="preserve">
+    <value>⏸️ Tout mettre en pause</value>
+  </data>
+  <data name="ResumeAll" xml:space="preserve">
+    <value>▶️ Tout reprendre</value>
+  </data>
+  <data name="StopAll" xml:space="preserve">
+    <value>⏹️ Tout arrêter</value>
+  </data>
+  <data name="JobPaused" xml:space="preserve">
+    <value>⏸️ Travail mis en pause</value>
+  </data>
+  <data name="JobResumed" xml:space="preserve">
+    <value>▶️ Travail repris</value>
+  </data>
+  <data name="JobStopped" xml:space="preserve">
+    <value>⏹️ Travail arrêté</value>
+  </data>
+  <data name="AllJobsPaused" xml:space="preserve">
+    <value>⏸️ Tous les travaux actifs mis en pause</value>
+  </data>
+  <data name="AllJobsResumed" xml:space="preserve">
+    <value>▶️ Tous les travaux repris</value>
+  </data>
+  <data name="AllJobsStopped" xml:space="preserve">
+    <value>⏹️ Tous les travaux arrêtés</value>
+  </data>
+  <data name="DeleteJob" xml:space="preserve">
+    <value>🗑️ Supprimer</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>PARAMÈTRES ⚙️</value>
+  </data>
+  <data name="SettingsSubtitle" xml:space="preserve">
+    <value>Configurer les préférences de l'application</value>
+  </data>
+  <data name="LanguageLabel" xml:space="preserve">
+    <value>🌍 Langue</value>
+  </data>
+  <data name="LanguageHint" xml:space="preserve">
+    <value>Sélectionnez votre langue préférée</value>
+  </data>
+  <data name="LogFormatLabel" xml:space="preserve">
+    <value>📝 Format des logs</value>
+  </data>
+  <data name="LogFormatHint" xml:space="preserve">
+    <value>Choisissez le format des fichiers log</value>
+  </data>
+  <data name="EncryptionLabel" xml:space="preserve">
+    <value>🔒 Extensions à chiffrer</value>
+  </data>
+  <data name="EncryptionHint" xml:space="preserve">
+    <value>Sélectionnez les extensions a crypter</value>
+  </data>
+  <data name="LogsStorageLabel" xml:space="preserve">
+    <value>🗂️ Stockage des logs</value>
+  </data>
+  <data name="LogsStorageHint" xml:space="preserve">
+    <value>Sélectionnez le type de stockage :</value>
+  </data>
+  <data name="LocalStorage" xml:space="preserve">
+    <value>Stockage local</value>
+  </data>
+  <data name="ExternalStorage" xml:space="preserve">
+    <value>Stockage externe</value>
+  </data>
+  <data name="BusinessSoftwareLabel" xml:space="preserve">
+    <value>💼 Logiciel métier</value>
+  </data>
+  <data name="BusinessSoftwareHint" xml:space="preserve">
+    <value>Nom du processus à surveiller (ex: calc)</value>
+  </data>
+  <data name="PriorityExtensionsLabel" xml:space="preserve">
+    <value>⭐ Extensions prioritaires</value>
+  </data>
+  <data name="PriorityExtensionsHint" xml:space="preserve">
+    <value>Ces fichiers seront transférés en premier</value>
+  </data>
+  <data name="MaxFileSizeLabel" xml:space="preserve">
+    <value>⚖️ Taille max parallèle (Ko)</value>
+  </data>
+  <data name="MaxFileSizeHint" xml:space="preserve">
+    <value>Fichiers plus grands non transférés en parallèle. 0 = désactivé</value>
+  </data>
+  <data name="ResetToDefaults" xml:space="preserve">
+    <value>🔄 Réinitialiser</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>✅ Sauvegarder</value>
+  </data>
+  <data name="BackupInProgressTitle" xml:space="preserve">
+    <value>SAUVEGARDE EN COURS ⚡</value>
+  </data>
+  <data name="FilesLabel" xml:space="preserve">
+    <value>📁 Fichiers :</value>
+  </data>
+  <data name="DataLabel" xml:space="preserve">
+    <value>💾 Données :</value>
+  </data>
+  <data name="SpeedLabel" xml:space="preserve">
+    <value>⚡ Vitesse :</value>
+  </data>
+  <data name="RemainingLabel" xml:space="preserve">
+    <value>⏱️ Restant :</value>
+  </data>
+  <data name="CurrentFileLabel" xml:space="preserve">
+    <value>📄 Fichier en cours :</value>
+  </data>
+  <data name="BothStorage" xml:space="preserve">
+    <value>Les deux</value>
+  </data>
+  <data name="ConfirmReset" xml:space="preserve">
+    <value>Confirmer la réinitialisation</value>
+  </data>
+  <data name="ConfirmResetMessage" xml:space="preserve">
+    <value>Voulez-vous vraiment réinitialiser tous les paramètres ?</value>
+  </data>
+  <data name="DeleteJobConfirmMessage" xml:space="preserve">
+    <value>Supprimer le job '{0}' ?</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Paramètres sauvegardés avec succès !</value>
+  </data>
+  <data name="AllBackupsCompleted" xml:space="preserve">
+    <value>Toutes les sauvegardes sont terminées !</value>
+  </data>
+  <data name="MaxSizeError" xml:space="preserve">
+    <value>La taille max doit être un nombre positif (en Ko). Utilisez 0 pour désactiver.</value>
+  </data>
+  <data name="ErrorTitle" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="BackupFailedMessage" xml:space="preserve">
+    <value>La sauvegarde '{0}' a échoué : {1}</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Sélect.</value>
+  </data>
+  <data name="RunSelected" xml:space="preserve">
+    <value>▶️ Lancer sélection</value>
+  </data>
+  <data name="NoJobsSelected" xml:space="preserve">
+    <value>Aucun travail sélectionné</value>
+  </data>
+  <data name="NoJobsSelectedMessage" xml:space="preserve">
+    <value>Aucun travail sélectionné.\n\nVeuillez cocher au moins un travail à exécuter.</value>
+  </data>
+</root>

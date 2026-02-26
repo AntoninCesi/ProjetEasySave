@@ -1,85 +1,109 @@
 using System;
 using System.Threading;
 using EasySave.Models;
+using Tool.Utils;
 
 namespace EasySave.Strategies
 {
-    /// <summary>
-    /// Observateur simplifié pour suivre la progression des sauvegardes
-    /// Stocke : nombre de fichiers, taille totale, temps
-    /// </summary>
-    public class BackupProgressObserver
-    {
-        private readonly object _lock = new object();
+	/// <summary>
+	/// Observateur simplifié pour suivre la progression des sauvegardes.
+	/// Stocke : nombre de fichiers, taille totale, temps.
+	/// Fournit des events pour l'UI (progression + statut + erreurs).
+	/// </summary>
+	public class BackupProgressObserver
+	{
+		private readonly object _lock = new object();
 
-        private int _filesSaved;
-        private long _totalSize;
-        private DateTime _backupStartTime;
+		private int _filesSaved;
+		private long _totalSize;
+		private DateTime _backupStartTime;
 
-        // Événement de progression
-        public event Action<FileInfos> OnProgressChanged;
+		// Événement de progression
+		public event Action<FileInfos>? OnProgressChanged;
 
-        // Événement d’erreur
-        public event Action<string> OnErrorOccurred;
+		// Événement de changement de statut (attendu par l'UI)
+		public event Action<BackupStateResum>? OnStatusChanged;
 
-        public BackupProgressObserver()
-        {
-            _backupStartTime = DateTime.Now;
-        }
+		// Événement d’erreur
+		public event Action<string>? OnErrorOccurred;
 
-        public void NotifyFileSaved(long fileSize, TimeSpan fileDuration)
-        {
-            FileInfos progress;
+		public BackupProgressObserver()
+		{
+			_backupStartTime = DateTime.Now;
+		}
 
-            lock (_lock)
-            {
-                _filesSaved++;
-                _totalSize += fileSize;
+		/// <summary>
+		/// Déclenche l'event OnStatusChanged de manière asynchrone (ThreadPool).
+		/// </summary>
+		public void NotifyStatusChanged(BackupStateResum newStatus)
+		{
+			ThreadPool.QueueUserWorkItem(_ =>
+				OnStatusChanged?.Invoke(newStatus)
+			);
+		}
 
-                progress = new FileInfos
-                {
-                    FilesSaved = _filesSaved,
-                    TotalSize = _totalSize,
-                    TotalBackupTime = DateTime.Now - _backupStartTime,
-                    LastFileDuration = fileDuration
-                };
-            }
+		/// <summary>
+		/// Alias de compatibilité : certains anciens codes appellent UpdateStatus().
+		/// On redirige simplement vers NotifyStatusChanged().
+		/// </summary>
+		public void UpdateStatus(BackupStateResum newStatus)
+		{
+			NotifyStatusChanged(newStatus);
+		}
 
-            // Notification asynchrone hors lock
-            ThreadPool.QueueUserWorkItem(_ =>
-                OnProgressChanged?.Invoke(progress)
-            );
-        }
+		public void NotifyFileSaved(long fileSize, TimeSpan fileDuration)
+		{
+			FileInfos progress;
 
-        public void NotifyError(string message)
-        {
-            ThreadPool.QueueUserWorkItem(_ =>
-                OnErrorOccurred?.Invoke(message)
-            );
-        }
+			lock (_lock)
+			{
+				_filesSaved++;
+				_totalSize += fileSize;
 
-        public FileInfos GetProgress()
-        {
-            lock (_lock)
-            {
-                return new FileInfos
-                {
-                    FilesSaved = _filesSaved,
-                    TotalSize = _totalSize,
-                    TotalBackupTime = DateTime.Now - _backupStartTime,
-                    LastFileDuration = TimeSpan.Zero
-                };
-            }
-        }
+				progress = new FileInfos
+				{
+					FilesSaved = _filesSaved,
+					TotalSize = _totalSize,
+					TotalBackupTime = DateTime.Now - _backupStartTime,
+					LastFileDuration = fileDuration
+				};
+			}
 
-        public void Reset()
-        {
-            lock (_lock)
-            {
-                _filesSaved = 0;
-                _totalSize = 0;
-                _backupStartTime = DateTime.Now;
-            }
-        }
-    }
+			// Notification asynchrone hors lock
+			ThreadPool.QueueUserWorkItem(_ =>
+				OnProgressChanged?.Invoke(progress)
+			);
+		}
+
+		public void NotifyError(string message)
+		{
+			ThreadPool.QueueUserWorkItem(_ =>
+				OnErrorOccurred?.Invoke(message)
+			);
+		}
+
+		public FileInfos GetProgress()
+		{
+			lock (_lock)
+			{
+				return new FileInfos
+				{
+					FilesSaved = _filesSaved,
+					TotalSize = _totalSize,
+					TotalBackupTime = DateTime.Now - _backupStartTime,
+					LastFileDuration = TimeSpan.Zero
+				};
+			}
+		}
+
+		public void Reset()
+		{
+			lock (_lock)
+			{
+				_filesSaved = 0;
+				_totalSize = 0;
+				_backupStartTime = DateTime.Now;
+			}
+		}
+	}
 }

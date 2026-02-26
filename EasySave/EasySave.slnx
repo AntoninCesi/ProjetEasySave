@@ -1,4 +1,14 @@
 <Solution>
+<<<<<<< HEAD
+<<<<<<< Updated upstream
+  <Project Path="C:\Users\derom\ProjetEasySave\EasyLog\EasyLog.csproj" />
+  <Project Path="C:\Users\derom\ProjetEasySave\EasySave\EasySave.csproj" />
+=======
+  <Project Path="C:\Users\Anto\ProjetEasySave\EasyLog\EasyLog.csproj" />
+  <Project Path="C:\Users\Anto\ProjetEasySave\EasySave\EasySave.csproj" />
+>>>>>>> Stashed changes
+=======
   <Project Path="C:\Users\ademr\source\repos\ProjetEasySave\EasyLog\EasyLog.csproj" />
   <Project Path="C:\Users\ademr\source\repos\ProjetEasySave\EasySave\EasyLog.csproj" />
+>>>>>>> origin/dev
 </Solution>

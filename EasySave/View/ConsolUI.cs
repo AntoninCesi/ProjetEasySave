@@ -9,15 +9,15 @@ using EasySave.ViewModels;
 
 namespace EasySave.View
 {
-    public class ConsoleUI : IUserInterface
+    public class ConsoleUI 
     {
         private readonly MessageProvider messageProvider;
-        private readonly Controller _controller;
+        private readonly MainViewModel _controller;
 
         // Verrou pour écrire dans la console sans chevauchement
         private readonly object _consoleLock = new object();
 
-        public ConsoleUI(Controller controller)
+        public ConsoleUI(MainViewModel controller)
         {
             _controller = controller;
             bool isFrench = AskLanguage();
@@ -58,7 +58,7 @@ namespace EasySave.View
 
         private void createBackupJob(BackupTypes type)
         {
-           
+
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskSourceDirectory)));
             string sourcePath = Console.ReadLine() ?? string.Empty;
 
@@ -67,7 +67,7 @@ namespace EasySave.View
                 Console.WriteLine("Le répertoire source n'existe pas ou est vide.");
                 return;
             }
-            
+
             Console.Write(messageProvider.Resolve(new Message(MessageType.AskDestinationDirectory)));
             string destinationPath = Console.ReadLine() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(destinationPath) || !Directory.Exists(destinationPath))
