@@ -71,7 +71,7 @@ ProjetEasySave/
 ```
 
 ### Technologies
-- .NET 10
+- .NET 10 / 8
 - C# 12
 - WPF (Windows Presentation Foundation)
 - PlantUML for documentation
