@@ -1,4 +1,4 @@
-# EasySave
+# EasySave 
 
 A professional backup management application with real-time control, parallel execution, and Docker logging integration.
 
@@ -65,7 +65,6 @@ ProjetEasySave/
 
 ### Technologies
 - .NET 10 / 8
-- C# 12
 - WPF (Windows Presentation Foundation)
 - PlantUML for documentation
 
@@ -78,7 +77,7 @@ ProjetEasySave/
 ### Installation
 
 1. Download the latest release
-2. Extract the archive
+2. Extract the folder
 3. Run `EasySave.GUI.exe` for graphical interface or `EasySave.exe` for console
 
 ### Basic Usage
