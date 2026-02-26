@@ -257,7 +257,7 @@ Log entries include:
 
 ## License
 
-This project is an educational application developed as part of software engineering coursework.
+This project is an educational application developed.
 
 ## Authors
 
