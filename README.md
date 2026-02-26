@@ -81,7 +81,7 @@ ProjetEasySave/
 ### Prerequisites
 - Windows 10 or later
 - .NET 10.0 Runtime
-
+- .NET 8.0 Runtime
 ### Installation
 
 1. Download the latest release
