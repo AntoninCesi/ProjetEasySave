@@ -402,4 +402,16 @@
   <data name="BackupFailedMessage" xml:space="preserve">
     <value>Backup '{0}' failed: {1}</value>
   </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="RunSelected" xml:space="preserve">
+    <value>▶️ Run Selected</value>
+  </data>
+  <data name="NoJobsSelected" xml:space="preserve">
+    <value>No Jobs Selected</value>
+  </data>
+  <data name="NoJobsSelectedMessage" xml:space="preserve">
+    <value>No jobs selected.\n\nPlease check at least one job to run.</value>
+  </data>
 </root>

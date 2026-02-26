@@ -402,4 +402,16 @@
   <data name="BackupFailedMessage" xml:space="preserve">
     <value>La sauvegarde '{0}' a échoué : {1}</value>
   </data>
+  <data name="Select" xml:space="preserve">
+    <value>Sélect.</value>
+  </data>
+  <data name="RunSelected" xml:space="preserve">
+    <value>▶️ Lancer sélection</value>
+  </data>
+  <data name="NoJobsSelected" xml:space="preserve">
+    <value>Aucun travail sélectionné</value>
+  </data>
+  <data name="NoJobsSelectedMessage" xml:space="preserve">
+    <value>Aucun travail sélectionné.\n\nVeuillez cocher au moins un travail à exécuter.</value>
+  </data>
 </root>

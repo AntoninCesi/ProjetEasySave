@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using EasySave.Models;
 using EasySave.Services;
 using EasySave.Strategies;
@@ -9,12 +11,9 @@ using SysDirInfo = System.IO.DirectoryInfo;
 
 namespace EasySave.Strategies
 {
-    /// <summary>
-    /// Full backup strategy with encryption based on checked extensions in Settings
-    /// </summary>
     public class FullBackupStrategy : IBackupStrategy
     {
-        private SemaphoreSlim largeFileSemaphore;
+        private SemaphoreSlim largeFileSemaphore = new SemaphoreSlim(1);
         private int pendingPriorityFiles;
 
         public FullBackupStrategy(SemaphoreSlim largeFileSemaphore, ref int pendingPriorityFiles)
@@ -23,9 +22,7 @@ namespace EasySave.Strategies
             this.pendingPriorityFiles = pendingPriorityFiles;
         }
 
-        public FullBackupStrategy()
-        {
-        }
+        public FullBackupStrategy() { }
 
         public void Execute(BackupJob job)
         {
@@ -74,7 +71,6 @@ namespace EasySave.Strategies
                 job.progressObserver.UpdateStatus(BackupStateResum.ERROR);
                 job.status.LastActionTimestamp = DateTime.Now;
                 job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
-
                 throw new Exception($"Full backup error: {ex.Message}", ex);
             }
         }
@@ -88,26 +84,30 @@ namespace EasySave.Strategies
 
             foreach (SysFileInfo file in sourceDir.GetFiles())
             {
+                // STOP
+                job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+
+                // PAUSE
+                job.PauseEvent.Wait(job.CancellationTokenSource.Token);
+
+                // Business software check
                 if (BusinessSoftwareMonitor.Instance.IsBusinessSoftwareRunning())
                 {
                     LogService.Instance.LogBusinessSoftwareEvent(
                         job.name,
                         "Backup stopped - Business software detected"
                     );
-
                     throw new OperationCanceledException("Business software detected");
                 }
 
                 DateTime startTime = DateTime.Now;
-
                 string destFilePath = Path.Combine(destinationPath, file.Name);
 
                 try
                 {
-                    CopyAndEncryptFile(file, destFilePath);
+                    CopyAndEncryptFile(file, destFilePath, job);
 
                     TimeSpan duration = DateTime.Now - startTime;
-
                     job.progressObserver.NotifyFileSaved(file.Length, duration);
 
                     LogService.Instance.WriteLog(
@@ -118,6 +118,11 @@ namespace EasySave.Strategies
                         (long)duration.TotalMilliseconds
                     );
                 }
+                catch (OperationCanceledException)
+                {
+                    job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
+                    throw;
+                }
                 catch
                 {
                     job.progressObserver.NotifyFileSaved(0, TimeSpan.Zero);
@@ -126,55 +131,65 @@ namespace EasySave.Strategies
 
             foreach (SysDirInfo subDir in sourceDir.GetDirectories())
             {
-                string destSubDir = Path.Combine(destinationPath, subDir.Name);
+                // STOP check between directories too
+                job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+                job.PauseEvent.Wait(job.CancellationTokenSource.Token);
 
-                CopyDirectoryRecursive(subDir.FullName, destSubDir, job);
+                CopyDirectoryRecursive(subDir.FullName, Path.Combine(destinationPath, subDir.Name), job);
+            }
+        }
+
+        private void CopyAndEncryptFile(SysFileInfo file, string destFilePath, BackupJob job)
+        {
+            string encryptionExtensions = AppSettings.Instance.EncryptionExtensions;
+            bool shouldEncrypt = CryptoSoftService.ShouldEncrypt(file.FullName, encryptionExtensions);
+
+            if (shouldEncrypt)
+            {
+                var result = CryptoSoftService.EncryptFile(file.FullName, destFilePath);
+
+                if (!result.Success)
+                {
+                    Console.WriteLine($"Encryption failed: {file.Name}");
+                    CopyFileInterruptible(file.FullName, destFilePath, job);
+                }
+                else
+                {
+                    Console.WriteLine($"Encrypted: {file.Name}");
+                }
+            }
+            else
+            {
+                CopyFileInterruptible(file.FullName, destFilePath, job);
             }
         }
 
         /// <summary>
-        /// Encrypt only if extension is checked in Settings
+        /// Interruptible copy — checks Pause/Stop every 80KB
         /// </summary>
-        private void CopyAndEncryptFile(SysFileInfo file, string destFilePath)
+        private void CopyFileInterruptible(string sourcePath, string destPath, BackupJob job)
         {
+            const int bufferSize = 81920; // 80 KB
+            byte[] buffer = new byte[bufferSize];
+
             try
             {
-                // liste venant des cases cochées
-                string encryptionExtensions = AppSettings.Instance.EncryptionExtensions;
-
-                bool shouldEncrypt = CryptoSoftService.ShouldEncrypt(
-                    file.FullName,
-                    encryptionExtensions
-                );
-
-                if (shouldEncrypt)
+                using (var src = new FileStream(sourcePath, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize, FileOptions.SequentialScan))
+                using (var dst = new FileStream(destPath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize, FileOptions.SequentialScan))
                 {
-                    var result = CryptoSoftService.EncryptFile(
-                        file.FullName,
-                        destFilePath
-                    );
-
-                    if (!result.Success)
+                    int bytesRead;
+                    while ((bytesRead = src.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        Console.WriteLine($"Encryption failed: {file.Name}");
-
-                        file.CopyTo(destFilePath, true);
+                        job.CancellationTokenSource.Token.ThrowIfCancellationRequested();
+                        job.PauseEvent.Wait(job.CancellationTokenSource.Token);
+                        dst.Write(buffer, 0, bytesRead);
                     }
-                    else
-                    {
-                        Console.WriteLine($"Encrypted: {file.Name}");
-                    }
-                }
-                else
-                {
-                    file.CopyTo(destFilePath, true);
                 }
             }
-            catch (Exception ex)
+            catch (OperationCanceledException)
             {
-                Console.WriteLine($"Encryption error: {ex.Message}");
-
-                file.CopyTo(destFilePath, true);
+                try { if (File.Exists(destPath)) File.Delete(destPath); } catch { }
+                throw;
             }
         }
     }

@@ -178,60 +178,15 @@
 
             <Button x:Name="BtnReset" Grid.Column="1" Command="{Binding ResetCommand}"
                     Width="160" Height="45" Margin="5,0" Background="#E67E22" Foreground="White"
-                    FontWeight="SemiBold" FontSize="13" BorderThickness="0" Cursor="Hand">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Template"><Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value></Setter>
-                        <Style.Triggers><Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#D35400"/>
-                        </Trigger></Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+                    FontWeight="SemiBold" FontSize="13" BorderThickness="0" Cursor="Hand"/>
 
             <Button x:Name="BtnCancel" Grid.Column="2" Command="{Binding CancelCommand}"
                     Width="110" Height="45" Margin="5,0" Background="#95A5A6" Foreground="White"
-                    FontWeight="SemiBold" FontSize="13" BorderThickness="0" Cursor="Hand">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Template"><Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value></Setter>
-                        <Style.Triggers><Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#7F8C8D"/>
-                        </Trigger></Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+                    FontWeight="SemiBold" FontSize="13" BorderThickness="0" Cursor="Hand"/>
 
             <Button x:Name="BtnSave" Grid.Column="3" Command="{Binding SaveCommand}"
                     Width="110" Height="45" Margin="5,0" Background="#27AE60" Foreground="White"
-                    FontWeight="Bold" FontSize="13" BorderThickness="0" Cursor="Hand">
-                <Button.Style>
-                    <Style TargetType="Button">
-                        <Setter Property="Template"><Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}" CornerRadius="8" BorderThickness="0">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value></Setter>
-                        <Style.Triggers><Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#229954"/>
-                        </Trigger></Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+                    FontWeight="Bold" FontSize="13" BorderThickness="0" Cursor="Hand"/>
         </Grid>
     </Grid>
 </Window>

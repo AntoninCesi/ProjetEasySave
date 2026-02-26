@@ -131,15 +131,18 @@ namespace EasySave.ViewModels
             }
         }
 
-        /// Runs ALL jobs in PARALLEL (simultaneously)
+        /// Runs SELECTED jobs in PARALLEL (simultaneously)
         /// Each job gets its own ProgressWindow
         private async void RunAllJobsParallel()
         {
-            if (BackupJobs.Count == 0)
+            // Filtrer uniquement les jobs sélectionnés
+            var selectedJobs = BackupJobs.Where(j => j.IsSelected).ToList();
+
+            if (selectedJobs.Count == 0)
             {
                 MessageBox.Show(
-                    Lang["NoJobsMessage"],
-                    Lang["NoJobs"],
+                    Lang["NoJobsSelectedMessage"],
+                    Lang["NoJobsSelected"],
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
@@ -158,13 +161,18 @@ namespace EasySave.ViewModels
                 return;
             }
 
-            // Create ProgressWindow for each job
+            // Create ProgressWindow for each SELECTED job
             var progressWindows = new List<Window>();
             var tasks = new List<Task>();
 
             for (int jobId = 0; jobId < BackupJobs.Count; jobId++)
             {
                 var jobToRun = BackupJobs[jobId];
+                
+                // Ignorer les jobs non sélectionnés
+                if (!jobToRun.IsSelected)
+                    continue;
+
                 var backendJob = _backupManager.getJobById(jobId);
 
                 if (backendJob == null) continue;
